@@ -240,3 +240,132 @@ export function StatsCard({
     </Card>
   );
 }
+
+// Main ReportsCharts component that combines all charts
+export function ReportsCharts({
+  academicReports,
+  quranReports,
+  behaviorReports,
+  activeTab,
+}: {
+  academicReports: any[];
+  quranReports: any[];
+  behaviorReports: any[];
+  activeTab: string;
+}) {
+  // Process data for charts based on active tab
+  const getChartData = () => {
+    if (activeTab === "academic") {
+      // Academic reports data
+      const subjectData: { [key: string]: number } = {};
+      academicReports.forEach((report) => {
+        subjectData[report.subject] = (subjectData[report.subject] || 0) + 1;
+      });
+
+      return {
+        bar: Object.entries(subjectData).map(([name, value]) => ({
+          name,
+          value,
+          color: "#3B82F6",
+        })),
+        pie: Object.entries(subjectData).map(([name, value], index) => ({
+          name,
+          value,
+          color: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444"][index % 4],
+        })),
+      };
+    } else if (activeTab === "quran") {
+      // Quran reports data
+      const fluencyData: { [key: string]: number } = {};
+      quranReports.forEach((report) => {
+        fluencyData[report.fluencyLevel] =
+          (fluencyData[report.fluencyLevel] || 0) + 1;
+      });
+
+      return {
+        bar: Object.entries(fluencyData).map(([name, value]) => ({
+          name,
+          value,
+          color:
+            name === "excellent"
+              ? "#10B981"
+              : name === "good"
+              ? "#3B82F6"
+              : name === "fair"
+              ? "#F59E0B"
+              : "#EF4444",
+        })),
+        pie: Object.entries(fluencyData).map(([name, value]) => ({
+          name,
+          value,
+          color:
+            name === "excellent"
+              ? "#10B981"
+              : name === "good"
+              ? "#3B82F6"
+              : name === "fair"
+              ? "#F59E0B"
+              : "#EF4444",
+        })),
+      };
+    } else {
+      // Behavior reports data
+      const categoryData: { [key: string]: number } = {};
+      const priorityData: { [key: string]: number } = {};
+
+      behaviorReports.forEach((report) => {
+        categoryData[report.category] =
+          (categoryData[report.category] || 0) + 1;
+        priorityData[report.priority] =
+          (priorityData[report.priority] || 0) + 1;
+      });
+
+      return {
+        bar: Object.entries(categoryData).map(([name, value]) => ({
+          name,
+          value,
+          color: "#3B82F6",
+        })),
+        pie: Object.entries(priorityData).map(([name, value]) => ({
+          name,
+          value,
+          color:
+            name === "critical"
+              ? "#EF4444"
+              : name === "high"
+              ? "#F59E0B"
+              : name === "medium"
+              ? "#3B82F6"
+              : "#10B981",
+        })),
+      };
+    }
+  };
+
+  const chartData = getChartData();
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <BarChart
+        title={
+          activeTab === "academic"
+            ? "Distribusi Mata Pelajaran"
+            : activeTab === "quran"
+            ? "Distribusi Tingkat Kelancaran"
+            : "Distribusi Kategori Perilaku"
+        }
+        data={chartData.bar}
+      />
+      <PieChart
+        title={
+          activeTab === "academic"
+            ? "Proporsi Mata Pelajaran"
+            : activeTab === "quran"
+            ? "Proporsi Tingkat Kelancaran"
+            : "Proporsi Prioritas"
+        }
+        data={chartData.pie}
+      />
+    </div>
+  );
+}

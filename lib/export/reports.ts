@@ -66,31 +66,31 @@ export const exportAcademicReportsToPDF = (
 
   // Add table
   const tableData = reports.map((report) => [
-    report.studentName,
-    report.subject,
+    report.studentName || "",
+    report.subject || "",
     report.gradeType === "number"
       ? `${report.gradeNumber}/100`
       : report.gradeType === "letter"
-      ? report.gradeLetter
+      ? report.gradeLetter || ""
       : report.gradeType === "description"
       ? "Deskripsi"
       : "-",
-    report.semester,
-    report.academicYear,
+    report.semester || "",
+    report.academicYear || "",
     report.notes || "-",
-    report.ustadName,
+    report.ustadName || "",
     new Date(report.createdAt).toLocaleDateString("id-ID"),
   ]);
 
   const tableHeaders = [
-    "Nama Santri",
-    "Mata Pelajaran",
-    "Nilai",
-    "Semester",
-    "Tahun",
-    "Catatan",
-    "Ustad",
-    "Tanggal",
+    ["Nama Santri"],
+    ["Mata Pelajaran"],
+    ["Nilai"],
+    ["Semester"],
+    ["Tahun"],
+    ["Catatan"],
+    ["Ustad"],
+    ["Tanggal"],
   ];
 
   autoTable(doc, {
@@ -131,25 +131,25 @@ export const exportQuranReportsToPDF = (
 
   // Add table
   const tableData = reports.map((report) => [
-    report.studentName,
-    report.surah,
+    report.studentName || "",
+    report.surah || "",
     `${report.ayatStart} - ${report.ayatEnd}`,
-    report.fluencyLevel,
+    report.fluencyLevel || "",
     report.notes || "-",
     report.nextAssignment || "-",
-    report.ustadName,
+    report.ustadName || "",
     new Date(report.testDate).toLocaleDateString("id-ID"),
   ]);
 
   const tableHeaders = [
-    "Nama Santri",
-    "Surah",
-    "Ayat",
-    "Tingkat Kelancaran",
-    "Catatan",
-    "Tugas Berikutnya",
-    "Ustad",
-    "Tanggal",
+    ["Nama Santri"],
+    ["Surah"],
+    ["Ayat"],
+    ["Tingkat Kelancaran"],
+    ["Catatan"],
+    ["Tugas Berikutnya"],
+    ["Ustad"],
+    ["Tanggal"],
   ];
 
   autoTable(doc, {
@@ -206,17 +206,17 @@ export const exportBehaviorReportsToPDF = (
   ]);
 
   const tableHeaders = [
-    "Nama Santri",
-    "Judul",
-    "Kategori",
-    "Prioritas",
-    "Tanggal",
-    "Status",
-    "Tindakan",
-    "Perlu Follow-up",
-    "Tanggal Follow-up",
-    "Ustad",
-    "Dibuat",
+    ["Nama Santri"],
+    ["Judul"],
+    ["Kategori"],
+    ["Prioritas"],
+    ["Tanggal"],
+    ["Status"],
+    ["Tindakan"],
+    ["Perlu Follow-up"],
+    ["Tanggal Follow-up"],
+    ["Ustad"],
+    ["Dibuat"],
   ];
 
   autoTable(doc, {
@@ -288,6 +288,56 @@ export const exportQuranReportsToExcel = (
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws);
   XLSX.writeFile(wb, `${filename}.xlsx`);
+};
+
+// Generic export functions that can be used by the admin dashboard
+export const exportToPDF = async (
+  reports: any[],
+  reportType: string,
+  filters: any
+) => {
+  switch (reportType) {
+    case "academic":
+      exportAcademicReportsToPDF(
+        reports as AcademicReportExport[],
+        "Laporan Akademik Santri"
+      );
+      break;
+    case "quran":
+      exportQuranReportsToPDF(
+        reports as QuranReportExport[],
+        "Laporan Hafalan Quran Santri"
+      );
+      break;
+    case "behavior":
+      exportBehaviorReportsToPDF(
+        reports as BehaviorReportExport[],
+        "Laporan Perilaku Santri"
+      );
+      break;
+    default:
+      throw new Error(`Unknown report type: ${reportType}`);
+  }
+};
+
+export const exportToExcel = async (
+  reports: any[],
+  reportType: string,
+  filters: any
+) => {
+  switch (reportType) {
+    case "academic":
+      exportAcademicReportsToExcel(reports as AcademicReportExport[]);
+      break;
+    case "quran":
+      exportQuranReportsToExcel(reports as QuranReportExport[]);
+      break;
+    case "behavior":
+      exportBehaviorReportsToExcel(reports as BehaviorReportExport[]);
+      break;
+    default:
+      throw new Error(`Unknown report type: ${reportType}`);
+  }
 };
 
 // Export Behavior Reports to Excel
