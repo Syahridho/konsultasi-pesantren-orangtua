@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { useChatPreferences } from "@/hooks/use-local-storage";
 import "@/styles/chat.css";
 
-export default function ChatPage() {
+function ChatPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,7 +40,7 @@ export default function ChatPage() {
   useEffect(() => {
     const userId = searchParams.get("userId");
     const userName = searchParams.get("userName");
-    
+
     if (userId && userName && session?.user?.id) {
       // Find or create chat with this user
       const findOrCreateChat = async () => {
@@ -49,53 +49,60 @@ export default function ChatPage() {
           const { ref, get } = await import("firebase/database");
           const { database } = await import("@/lib/firebase");
           const { createChat } = await import("@/lib/secure-chat");
-          
+
           // Check if chat already exists
           const chatsRef = ref(database, "chats");
           const snapshot = await get(chatsRef);
-          
+
           let foundChatId: string | null = null;
-          
+
           if (snapshot.exists()) {
             const allChats = snapshot.val();
-            
+
             // Find existing chat with this user
             for (const chatId in allChats) {
               const chat = allChats[chatId];
               if (
-                (chat.participant1Id === session.user.id && chat.participant2Id === userId) ||
-                (chat.participant2Id === session.user.id && chat.participant1Id === userId)
+                (chat.participant1Id === session.user.id &&
+                  chat.participant2Id === userId) ||
+                (chat.participant2Id === session.user.id &&
+                  chat.participant1Id === userId)
               ) {
                 foundChatId = chatId;
                 break;
               }
             }
           }
-          
+
           // If chat doesn't exist, create it
           if (!foundChatId) {
-            const result = await createChat(userId, decodeURIComponent(userName));
+            const result = await createChat(
+              userId,
+              decodeURIComponent(userName)
+            );
             foundChatId = result.chatId;
           }
-          
+
           // Select the chat
           if (foundChatId) {
             setSelectedChatId(foundChatId);
-            
+
             // Keep sidebar closed on mobile to show chat window
             if (typeof window !== "undefined" && window.innerWidth < 768) {
               setSidebarOpen(false);
             }
-            
+
             // Show notification
-            toast.success(`Membuka chat dengan ${decodeURIComponent(userName)}`);
+            toast.success(
+              `Membuka chat dengan ${decodeURIComponent(userName)}`
+            );
           }
         } catch (error) {
           console.error("Error finding/creating chat:", error);
           toast.error("Gagal membuka chat");
         }
       };
-      
+
       findOrCreateChat();
     }
   }, [searchParams, session?.user?.id]);
@@ -175,7 +182,9 @@ export default function ChatPage() {
     <div className="h-screen bg-white flex flex-col">
       {/* Navigation Bar */}
       <div className="border-b bg-white px-4 py-3 flex items-center gap-3 shrink-0">
-        <Link href={session?.user?.role === "orangtua" ? "/home" : "/dashboard"}>
+        <Link
+          href={session?.user?.role === "orangtua" ? "/home" : "/dashboard"}
+        >
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="w-4 h-4" />
             Kembali
@@ -186,7 +195,7 @@ export default function ChatPage() {
         </div>
         <div className="w-20"></div>
       </div>
-      
+
       <div className="flex flex-1 relative overflow-hidden">
         {/* Mobile Sidebar Toggle */}
         <div className="md:hidden absolute top-4 left-4 z-20">
@@ -237,5 +246,22 @@ export default function ChatPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading chat...</p>
+          </div>
+        </div>
+      }
+    >
+      <ChatPageContent />
+    </Suspense>
   );
 }

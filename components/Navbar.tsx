@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+// Type definition for navigation items
+type NavigationItem = {
+  name: string;
+  href: string;
+  icon?: React.FC<{ className?: string }>;
+};
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -36,20 +43,20 @@ export default function Navbar() {
   }, []);
 
   // Navigation untuk user yang belum login
-  const guestNavigation = [
+  const guestNavigation: NavigationItem[] = [
     { name: "Beranda", href: "#" },
     { name: "Fitur", href: "#features" },
     { name: "Tentang Kami", href: "#about" },
   ];
 
   // Navigation untuk orangtua yang sudah login
-  const orangtuaNavigation = [
+  const orangtuaNavigation: NavigationItem[] = [
     { name: "Beranda", href: "/home", icon: Home },
     { name: "Chat", href: "/chat", icon: MessageCircle },
   ];
 
   // Navigation untuk admin/ustad yang sudah login
-  const adminUstadNavigation = [
+  const adminUstadNavigation: NavigationItem[] = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Chat", href: "/chat", icon: MessageCircle },
   ];
@@ -103,7 +110,6 @@ export default function Navbar() {
               href={item.href}
               className="text-sm font-medium text-gray-700 transition-colors flex items-center gap-1"
               style={{
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ["--hover-color" as any]: settings.primaryColor,
               }}
               onMouseEnter={(e) =>
@@ -111,7 +117,8 @@ export default function Navbar() {
               }
               onMouseLeave={(e) => (e.currentTarget.style.color = "")}
             >
-              {"icon" in item && item.icon && <item.icon className="w-4 h-4" />}
+              {item.icon &&
+                React.createElement(item.icon, { className: "w-4 h-4" })}
               {item.name}
             </Link>
           ))}
@@ -219,9 +226,10 @@ export default function Navbar() {
                         className="text-base font-medium text-gray-700 hover:text-primary transition-colors py-2 flex items-center gap-2"
                         onClick={() => setIsOpen(false)}
                       >
-                        {"icon" in item && item.icon && (
-                          <item.icon className="w-4 h-4" />
-                        )}
+                        {item.icon &&
+                          React.createElement(item.icon, {
+                            className: "w-4 h-4",
+                          })}
                         {item.name}
                       </Link>
                     ))}
