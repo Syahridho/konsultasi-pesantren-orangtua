@@ -24,8 +24,12 @@ import {
   GraduationCap,
   Shield,
   MessageCircle,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { useClasses } from "@/lib/hooks/useClasses";
 
 interface DashboardSidebarProps {
   role: "admin" | "ustad" | "orangtua";
@@ -51,7 +55,6 @@ const menuItems = {
       label: "Semua Santri",
       icon: GraduationCap,
     },
-    { href: "/dashboard/kelas-ustad", label: "Kelas Saya", icon: BookOpen },
     { href: "/dashboard/kelas-ustad", label: "Kelas Saya", icon: BookOpen },
     { href: "/dashboard/konsultasi", label: "Konsultasi", icon: BookOpen },
     { href: "/dashboard/chat", label: "Chat", icon: MessageCircle },
@@ -81,7 +84,15 @@ const roleIcons = {
 export default function DashboardSidebar({ role }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [isClassesExpanded, setIsClassesExpanded] = useState(false);
   const RoleIcon = roleIcons[role];
+
+  // Fetch ustad's classes if role is ustad
+  const { classes: ustadClasses, loading: classesLoading } = useClasses(
+    role === "ustad" && session?.user?.id
+      ? { ustadId: session.user.id }
+      : undefined
+  );
 
   const handleSignOut = () => {
     signOut({ callbackUrl: "/login" });
@@ -105,6 +116,69 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         {menuItems[role].map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
+
+          // Special handling for "Kelas Saya" menu item
+          if (role === "ustad" && item.href === "/dashboard/kelas-ustad") {
+            return (
+              <div key={item.href}>
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-start mb-1",
+                    pathname.startsWith("/dashboard/kelas-ustad") &&
+                      "bg-primary text-white hover:bg-primary/90"
+                  )}
+                  onClick={() => setIsClassesExpanded(!isClassesExpanded)}
+                >
+                  <Icon className="w-4 h-4 mr-3" />
+                  {item.label}
+                  {isClassesExpanded ? (
+                    <ChevronDown className="w-4 h-4 ml-auto" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 ml-auto" />
+                  )}
+                </Button>
+
+                {isClassesExpanded && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    {classesLoading ? (
+                      <div className="text-sm text-gray-500 py-2">
+                        Memuat...
+                      </div>
+                    ) : ustadClasses && ustadClasses.length > 0 ? (
+                      ustadClasses.map((classItem) => (
+                        <Link
+                          key={classItem.id}
+                          href={`/dashboard/kelas-ustad/${classItem.id}`}
+                        >
+                          <Button
+                            variant={
+                              pathname ===
+                              `/dashboard/kelas-ustad/${classItem.id}`
+                                ? "secondary"
+                                : "ghost"
+                            }
+                            className={cn(
+                              "w-full justify-start text-sm h-8",
+                              pathname ===
+                                `/dashboard/kelas-ustad/${classItem.id}` &&
+                                "bg-secondary"
+                            )}
+                          >
+                            {classItem.name}
+                          </Button>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="text-sm text-gray-500 py-2">
+                        Tidak ada kelas
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           return (
             <Link key={item.href} href={item.href}>

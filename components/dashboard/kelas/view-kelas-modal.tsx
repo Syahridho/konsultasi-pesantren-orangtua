@@ -19,6 +19,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Users, Calendar, Clock, User, BookOpen } from "lucide-react";
 import { Class } from "@/lib/hooks/useClasses";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ViewKelasModalProps {
   isOpen: boolean;
@@ -57,7 +65,7 @@ export default function ViewKelasModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Detail Kelas</DialogTitle>
           <DialogDescription>
@@ -227,34 +235,44 @@ export default function ViewKelasModal({
                     Daftar Santri
                   </label>
                   <div className="mt-2 max-h-60 overflow-y-auto">
-                    <div className="space-y-2">
-                      {Object.entries(kelas.studentIds).map(
-                        ([studentId, studentInfo]) => (
-                          <div
-                            key={studentId}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                          >
-                            <div>
-                              <p className="font-medium">{studentId}</p>
-                              <p className="text-sm text-gray-500">
-                                Terdaftar: {formatDate(studentInfo.enrolledAt)}
-                              </p>
-                            </div>
-                            <Badge
-                              variant={
-                                studentInfo.status === "active"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                            >
-                              {studentInfo.status === "active"
-                                ? "Aktif"
-                                : "Tidak Aktif"}
-                            </Badge>
-                          </div>
-                        )
-                      )}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nama</TableHead>
+                          <TableHead>NIS</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Tanggal Daftar</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {Object.entries(kelas.studentIds).map(
+                          ([studentId, studentInfo]) => (
+                            <TableRow key={studentId}>
+                              <TableCell className="font-medium">
+                                {studentId}
+                              </TableCell>
+                              <TableCell>{studentInfo.nis || "-"}</TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    studentInfo.status === "active"
+                                      ? "default"
+                                      : "secondary"
+                                  }
+                                >
+                                  {studentInfo.status === "active"
+                                    ? "Aktif"
+                                    : "Tidak Aktif"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {formatDate(studentInfo.enrolledAt)}
+                              </TableCell>
+                            </TableRow>
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
                   </div>
                 </div>
               )}

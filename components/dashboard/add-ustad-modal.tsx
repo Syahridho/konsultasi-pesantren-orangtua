@@ -31,6 +31,7 @@ interface UstadData {
   email: string;
   phone?: string;
   password: string;
+  specialization?: string;
 }
 
 interface FormValues {
@@ -52,6 +53,7 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
         email: "",
         phone: "",
         password: "",
+        specialization: "",
       },
     },
   });
@@ -161,6 +163,26 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
                       <FormControl>
                         <Input placeholder="08123456789" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="ustad.specialization"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Keahlian Mata Pelajaran</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Contoh: Matematika, IPA, Al-Quran"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Pisahkan beberapa mata pelajaran dengan koma (,)
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

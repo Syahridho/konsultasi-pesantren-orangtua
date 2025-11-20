@@ -136,6 +136,7 @@ export async function POST(request: NextRequest) {
       name: ustadData.name,
       email: ustadData.email,
       phone: ustadData.phone || null,
+      specialization: ustadData.specialization || null,
       role: ustadData.role || "ustad",
       createdAt: new Date().toISOString(),
     };

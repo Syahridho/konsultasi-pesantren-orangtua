@@ -47,13 +47,13 @@ export default function ReportsDashboard() {
     dateFrom: "",
     dateTo: "",
     subject: "",
-    category: "",
-    priority: "",
-    status: "",
+    category: "all",
+    priority: "all",
+    status: "all",
     academicYear: "",
-    semester: "",
+    semester: "all",
     surah: "",
-    fluencyLevel: "",
+    fluencyLevel: "all",
     page: 1,
     limit: 50,
   });
@@ -69,7 +69,7 @@ export default function ReportsDashboard() {
     studentId: filters.studentId || undefined,
     ustadId: filters.ustadId || undefined,
     academicYear: filters.academicYear || undefined,
-    semester: filters.semester || undefined,
+    semester: filters.semester === "all" ? undefined : filters.semester,
     subject: filters.subject || undefined,
     page: filters.page,
     limit: filters.limit,
@@ -85,7 +85,8 @@ export default function ReportsDashboard() {
     studentId: filters.studentId || undefined,
     ustadId: filters.ustadId || undefined,
     surah: filters.surah || undefined,
-    fluencyLevel: filters.fluencyLevel || undefined,
+    fluencyLevel:
+      filters.fluencyLevel === "all" ? undefined : filters.fluencyLevel,
     dateFrom: filters.dateFrom || undefined,
     dateTo: filters.dateTo || undefined,
     page: filters.page,
@@ -101,9 +102,9 @@ export default function ReportsDashboard() {
   } = useBehaviorReports({
     studentId: filters.studentId || undefined,
     ustadId: filters.ustadId || undefined,
-    category: filters.category || undefined,
-    priority: filters.priority || undefined,
-    status: filters.status || undefined,
+    category: filters.category === "all" ? undefined : filters.category,
+    priority: filters.priority === "all" ? undefined : filters.priority,
+    status: filters.status === "all" ? undefined : filters.status,
     dateFrom: filters.dateFrom || undefined,
     dateTo: filters.dateTo || undefined,
     page: filters.page,
@@ -145,13 +146,13 @@ export default function ReportsDashboard() {
       dateFrom: "",
       dateTo: "",
       subject: "",
-      category: "",
-      priority: "",
-      status: "",
+      category: "all",
+      priority: "all",
+      status: "all",
       academicYear: "",
-      semester: "",
+      semester: "all",
       surah: "",
-      fluencyLevel: "",
+      fluencyLevel: "all",
       page: 1,
       limit: 50,
     });
@@ -354,7 +355,7 @@ export default function ReportsDashboard() {
                       <SelectValue placeholder="Pilih semester" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Semua</SelectItem>
+                      <SelectItem value="all">Semua</SelectItem>
                       <SelectItem value="1">Semester 1</SelectItem>
                       <SelectItem value="2">Semester 2</SelectItem>
                     </SelectContent>
@@ -389,7 +390,7 @@ export default function ReportsDashboard() {
                       <SelectValue placeholder="Pilih tingkat" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Semua</SelectItem>
+                      <SelectItem value="all">Semua</SelectItem>
                       <SelectItem value="excellent">Excellent</SelectItem>
                       <SelectItem value="good">Good</SelectItem>
                       <SelectItem value="fair">Fair</SelectItem>
@@ -414,7 +415,7 @@ export default function ReportsDashboard() {
                       <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Semua</SelectItem>
+                      <SelectItem value="all">Semua</SelectItem>
                       <SelectItem value="academic">Akademik</SelectItem>
                       <SelectItem value="behavior">Perilaku</SelectItem>
                       <SelectItem value="discipline">Disiplin</SelectItem>
@@ -436,7 +437,7 @@ export default function ReportsDashboard() {
                       <SelectValue placeholder="Pilih prioritas" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Semua</SelectItem>
+                      <SelectItem value="all">Semua</SelectItem>
                       <SelectItem value="critical">Kritis</SelectItem>
                       <SelectItem value="high">Tinggi</SelectItem>
                       <SelectItem value="medium">Sedang</SelectItem>
@@ -457,7 +458,7 @@ export default function ReportsDashboard() {
                       <SelectValue placeholder="Pilih status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Semua</SelectItem>
+                      <SelectItem value="all">Semua</SelectItem>
                       <SelectItem value="open">Terbuka</SelectItem>
                       <SelectItem value="in_progress">Dalam Proses</SelectItem>
                       <SelectItem value="resolved">Selesai</SelectItem>

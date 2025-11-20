@@ -17,6 +17,7 @@ export interface Class {
     {
       enrolledAt: string;
       status: string;
+      nis?: string;
     }
   >;
   studentCount: number;

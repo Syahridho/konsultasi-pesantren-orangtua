@@ -49,6 +49,7 @@ export async function GET(
         name: ustadData.name,
         email: ustadData.email,
         phone: ustadData.phone || "",
+        specialization: ustadData.specialization || "",
         role: ustadData.role,
         createdAt: ustadData.createdAt,
       },
@@ -106,6 +107,7 @@ export async function PUT(
       name: ustadData.name,
       email: ustadData.email,
       phone: ustadData.phone || "",
+      specialization: ustadData.specialization || "",
       updatedAt: new Date().toISOString(),
     };
 

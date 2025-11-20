@@ -28,6 +28,7 @@ import {
   MessageCircle,
   FileText,
   X,
+  School,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
@@ -81,6 +82,11 @@ const menuItems = Object.freeze({
       href: "/dashboard/santri",
       label: "Data Santri",
       icon: GraduationCap,
+    }),
+    Object.freeze({
+      href: "/dashboard/kelas-ustad",
+      label: "Data Kelas",
+      icon: School,
     }),
     Object.freeze({
       href: "/dashboard/ustad/lapor",
@@ -224,6 +230,7 @@ const SidebarContent = memo(
               <Button
                 variant="ghost"
                 className="w-full justify-start p-2 hover:bg-accent/30"
+                suppressHydrationWarning
               >
                 <Avatar className="w-8 h-8 mr-3">
                   <AvatarFallback className="bg-primary text-primary-foreground">

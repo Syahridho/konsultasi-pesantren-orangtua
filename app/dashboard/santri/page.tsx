@@ -55,6 +55,8 @@ import {
   Loader2,
 } from "lucide-react";
 import api from "@/lib/api";
+import { useClasses } from "@/lib/hooks/useClasses";
+import { useSubjects } from "@/lib/hooks/useSubjects";
 
 interface Santri {
   id: string;
@@ -102,7 +104,9 @@ export default function SantriPage() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedSantri, setSelectedSantri] = useState<Santri | null>(null);
-  const [reportType, setReportType] = useState<"hafalan" | "akademik" | "perilaku">("hafalan");
+  const [reportType, setReportType] = useState<
+    "hafalan" | "akademik" | "perilaku"
+  >("hafalan");
   const [submittingReport, setSubmittingReport] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState({
     nama: true,
@@ -127,16 +131,29 @@ export default function SantriPage() {
       surat: "",
       ayat: "",
       predikat: "Lancar",
+      catatan: "",
     },
     akademik: {
       mapel: "",
+      kelasId: "",
       nilai: 0,
+      catatan: "",
     },
     perilaku: {
       catatan: "",
       jenis: "Prestasi",
     },
   });
+
+  // Class and subjects management
+  const { classes, loading: classesLoading } = useClasses({
+    ustadId: session?.user?.role === "ustad" ? session.user.id : undefined,
+  });
+  const {
+    subjects,
+    loading: subjectsLoading,
+    error: subjectsError,
+  } = useSubjects(reportForm.akademik.kelasId);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -206,6 +223,10 @@ export default function SantriPage() {
 
         setSantriList(santriData);
         setParents(parentsData);
+
+        // Note: Subjects are now dynamically loaded based on selected class
+        // The old mapelList approach has been replaced with useSubjects hook
+        // This code is kept for reference but no longer actively used
 
         // Log debug info if available
         if (response.data.debug) {
@@ -362,6 +383,10 @@ export default function SantriPage() {
   const openReportModal = (santri: Santri) => {
     setSelectedSantri(santri);
     setReportType("hafalan");
+    setReportForm({
+      ...reportForm,
+      akademik: { kelasId: "", mapel: "", nilai: 0, catatan: "" },
+    });
     setShowReportModal(true);
   };
 
@@ -394,39 +419,53 @@ export default function SantriPage() {
           studentId: selectedSantri.id,
           surah: reportForm.hafalan.surat,
           ayatStart: parseInt(reportForm.hafalan.ayat.split("-")[0]) || 1,
-          ayatEnd: parseInt(reportForm.hafalan.ayat.split("-")[1] || reportForm.hafalan.ayat) || 1,
+          ayatEnd:
+            parseInt(
+              reportForm.hafalan.ayat.split("-")[1] || reportForm.hafalan.ayat
+            ) || 1,
           fluencyLevel: fluencyMap[reportForm.hafalan.predikat] || "good",
           testDate: new Date().toISOString().split("T")[0],
+          notes: reportForm.hafalan.catatan,
         });
 
         if (response.status === 200) {
           toast.success("Laporan hafalan berhasil disimpan");
           setReportForm({
             ...reportForm,
-            hafalan: { surat: "", ayat: "", predikat: "Lancar" },
+            hafalan: { surat: "", ayat: "", predikat: "Lancar", catatan: "" },
           });
           setShowReportModal(false);
         }
       } else if (reportType === "akademik") {
-        if (!reportForm.akademik.mapel) {
-          toast.error("Mata pelajaran wajib diisi");
+        if (!reportForm.akademik.kelasId) {
+          toast.error("Kelas wajib dipilih terlebih dahulu");
           return;
         }
 
+        // Get class name for the subject field
+        const selectedClass = classes.find(
+          (c) => c.id === reportForm.akademik.kelasId
+        );
+        const subjectName =
+          reportForm.akademik.kelasId === "other"
+            ? "Lainnya"
+            : selectedClass?.name || "Unknown";
+
         const response = await api.post("/api/reports/academic", {
           studentId: selectedSantri.id,
-          subject: reportForm.akademik.mapel,
+          subject: subjectName,
           gradeType: "number",
           gradeNumber: reportForm.akademik.nilai,
           semester: "1",
           academicYear: new Date().getFullYear().toString(),
+          notes: reportForm.akademik.catatan,
         });
 
         if (response.status === 200) {
           toast.success("Laporan akademik berhasil disimpan");
           setReportForm({
             ...reportForm,
-            akademik: { mapel: "", nilai: 0 },
+            akademik: { kelasId: "", mapel: "", nilai: 0, catatan: "" },
           });
           setShowReportModal(false);
         }
@@ -463,13 +502,14 @@ export default function SantriPage() {
       }
     } catch (error: any) {
       console.error("Error submitting report:", error);
-      toast.error("Gagal menyimpan laporan: " + (error.response?.data?.error || error.message));
+      toast.error(
+        "Gagal menyimpan laporan: " +
+          (error.response?.data?.error || error.message)
+      );
     } finally {
       setSubmittingReport(false);
     }
   };
-
-
 
   if (status === "loading" || loading) {
     return (
@@ -596,7 +636,9 @@ export default function SantriPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="orangTuaId">Orang Tua <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="orangTuaId">
+                    Orang Tua <span className="text-red-500">*</span>
+                  </Label>
                   <Select
                     value={formData.orangTuaId}
                     onValueChange={(value) =>
@@ -621,7 +663,9 @@ export default function SantriPage() {
                     </SelectContent>
                   </Select>
                   {!formData.orangTuaId && (
-                    <p className="text-sm text-red-500">* Santri harus memiliki orang tua</p>
+                    <p className="text-sm text-red-500">
+                      * Santri harus memiliki orang tua
+                    </p>
                   )}
                 </div>
 
@@ -663,7 +707,10 @@ export default function SantriPage() {
                 className="pl-8"
               />
             </div>
-            <Popover open={showColumnSettings} onOpenChange={setShowColumnSettings}>
+            <Popover
+              open={showColumnSettings}
+              onOpenChange={setShowColumnSettings}
+            >
               <PopoverTrigger asChild>
                 <Button variant="outline" size="icon">
                   <Settings className="h-4 w-4" />
@@ -718,10 +765,14 @@ export default function SantriPage() {
                 <TableRow>
                   {visibleColumns.nama && <TableHead>Nama</TableHead>}
                   {visibleColumns.nis && <TableHead>NIS</TableHead>}
-                  {visibleColumns.jenisKelamin && <TableHead>Jenis Kelamin</TableHead>}
+                  {visibleColumns.jenisKelamin && (
+                    <TableHead>Jenis Kelamin</TableHead>
+                  )}
                   {visibleColumns.orangTua && <TableHead>Orang Tua</TableHead>}
                   {visibleColumns.kontak && <TableHead>Kontak</TableHead>}
-                  {visibleColumns.tahunDaftar && <TableHead>Tahun Daftar</TableHead>}
+                  {visibleColumns.tahunDaftar && (
+                    <TableHead>Tahun Daftar</TableHead>
+                  )}
                   <TableHead className="text-right">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
@@ -729,20 +780,26 @@ export default function SantriPage() {
                 {filteredSantriList.map((santri) => (
                   <TableRow key={santri.id}>
                     {visibleColumns.nama && (
-                      <TableCell className="font-medium">{santri.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {santri.name}
+                      </TableCell>
                     )}
                     {visibleColumns.nis && (
                       <TableCell>{santri.nis || "-"}</TableCell>
                     )}
                     {visibleColumns.jenisKelamin && (
                       <TableCell>
-                        {santri.jenisKelamin === "L" ? "Laki-laki" : "Perempuan"}
+                        {santri.jenisKelamin === "L"
+                          ? "Laki-laki"
+                          : "Perempuan"}
                       </TableCell>
                     )}
                     {visibleColumns.orangTua && (
                       <TableCell>
                         <div>
-                          <div className="font-medium">{santri.orangTuaName}</div>
+                          <div className="font-medium">
+                            {santri.orangTuaName}
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             {santri.orangTuaEmail}
                           </div>
@@ -766,7 +823,8 @@ export default function SantriPage() {
                           <Eye className="w-4 h-4" />
                         </Button>
 
-                        {(session?.user.role === "admin" || session?.user.role === "ustad") && (
+                        {(session?.user.role === "admin" ||
+                          session?.user.role === "ustad") && (
                           <>
                             <Button
                               size="sm"
@@ -980,9 +1038,7 @@ export default function SantriPage() {
       <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>
-              Buat Laporan untuk {selectedSantri?.name}
-            </DialogTitle>
+            <DialogTitle>Buat Laporan untuk {selectedSantri?.name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* Tab Buttons */}
@@ -1040,7 +1096,10 @@ export default function SantriPage() {
                       onChange={(e) =>
                         setReportForm({
                           ...reportForm,
-                          hafalan: { ...reportForm.hafalan, surat: e.target.value },
+                          hafalan: {
+                            ...reportForm.hafalan,
+                            surat: e.target.value,
+                          },
                         })
                       }
                       disabled={submittingReport}
@@ -1055,7 +1114,10 @@ export default function SantriPage() {
                       onChange={(e) =>
                         setReportForm({
                           ...reportForm,
-                          hafalan: { ...reportForm.hafalan, ayat: e.target.value },
+                          hafalan: {
+                            ...reportForm.hafalan,
+                            ayat: e.target.value,
+                          },
                         })
                       }
                       disabled={submittingReport}
@@ -1083,6 +1145,25 @@ export default function SantriPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hafalan-catatan">Catatan Tambahan</Label>
+                  <Textarea
+                    id="hafalan-catatan"
+                    placeholder="Tambahkan catatan atau keterangan tambahan..."
+                    rows={3}
+                    value={reportForm.hafalan.catatan}
+                    onChange={(e) =>
+                      setReportForm({
+                        ...reportForm,
+                        hafalan: {
+                          ...reportForm.hafalan,
+                          catatan: e.target.value,
+                        },
+                      })
+                    }
+                    disabled={submittingReport}
+                  />
+                </div>
               </div>
             )}
 
@@ -1090,31 +1171,41 @@ export default function SantriPage() {
             {reportType === "akademik" && (
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="mapel">Mata Pelajaran</Label>
+                  <Label htmlFor="kelas">Kelas</Label>
                   <Select
-                    value={reportForm.akademik.mapel}
-                    onValueChange={(value) =>
+                    value={reportForm.akademik.kelasId}
+                    onValueChange={(value) => {
                       setReportForm({
                         ...reportForm,
-                        akademik: { ...reportForm.akademik, mapel: value },
-                      })
-                    }
+                        akademik: {
+                          ...reportForm.akademik,
+                          kelasId: value,
+                          mapel: "", // Reset subject when class changes
+                        },
+                      });
+                    }}
+                    disabled={classesLoading}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih mata pelajaran" />
+                      <SelectValue placeholder="Pilih kelas terlebih dahulu" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Matematika">Matematika</SelectItem>
-                      <SelectItem value="Fiqih">Fiqih</SelectItem>
-                      <SelectItem value="Aqidah">Aqidah</SelectItem>
-                      <SelectItem value="Bahasa Arab">Bahasa Arab</SelectItem>
-                      <SelectItem value="Bahasa Indonesia">Bahasa Indonesia</SelectItem>
-                      <SelectItem value="IPA">IPA</SelectItem>
-                      <SelectItem value="IPS">IPS</SelectItem>
-                      <SelectItem value="Al-Quran">Al-Quran</SelectItem>
-                      <SelectItem value="Hadis">Hadis</SelectItem>
-                      <SelectItem value="Tarikh">Tarikh</SelectItem>
-                      <SelectItem value="Bahasa Inggris">Bahasa Inggris</SelectItem>
+                      {classesLoading ? (
+                        <div className="flex items-center justify-center p-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                          <span className="ml-2 text-sm">Memuat kelas...</span>
+                        </div>
+                      ) : classes.length === 0 ? (
+                        <div className="p-2 text-sm text-muted-foreground">
+                          Tidak ada kelas tersedia
+                        </div>
+                      ) : (
+                        classes.map((kelas) => (
+                          <SelectItem key={kelas.id} value={kelas.id}>
+                            {kelas.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -1175,7 +1266,10 @@ export default function SantriPage() {
                     onChange={(e) =>
                       setReportForm({
                         ...reportForm,
-                        perilaku: { ...reportForm.perilaku, catatan: e.target.value },
+                        perilaku: {
+                          ...reportForm.perilaku,
+                          catatan: e.target.value,
+                        },
                       })
                     }
                     disabled={submittingReport}

@@ -45,6 +45,9 @@ export default function LaporPage() {
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [selectedKelas, setSelectedKelas] = useState<string>("");
 
+  // Dynamic subjects based on ustad's classes
+  const [mapelList, setMapelList] = useState<string[]>([]);
+
   // Step 2: Select Santri
   const [allSantriList, setAllSantriList] = useState<Santri[]>([]);
   const [selectedSantri, setSelectedSantri] = useState<string>("");
@@ -59,11 +62,13 @@ export default function LaporPage() {
     surat: "",
     ayat: "",
     predikat: "Lancar",
+    catatan: "",
   });
 
   const [akademikForm, setAkademikForm] = useState({
     mapel: "",
     nilai: 0,
+    catatan: "",
   });
 
   const [perilakuForm, setPerilakuForm] = useState({
@@ -85,8 +90,8 @@ export default function LaporPage() {
   };
 
   const validateAkademik = () => {
-    if (!akademikForm.mapel.trim()) {
-      toast.error("Mata pelajaran harus diisi");
+    if (!selectedKelas.trim()) {
+      toast.error("Kelas harus dipilih terlebih dahulu");
       return false;
     }
     if (akademikForm.nilai < 0 || akademikForm.nilai > 100) {
@@ -121,10 +126,77 @@ export default function LaporPage() {
         const kelasData = await kelasResponse.json();
         setKelasList(kelasData.classes || []);
 
-        // Fetch all santri from Firebase Realtime Database
+        // Extract subjects from ustad's specialization and common subjects
+        const subjects = new Set<string>();
+
+        // Add default subjects as fallback
+        const defaultSubjects = [
+          "Matematika",
+          "Bahasa Indonesia",
+          "Bahasa Arab",
+          "Bahasa Inggris",
+          "IPA",
+          "IPS",
+          "Pendidikan Agama Islam",
+          "Al-Quran",
+          "Hadist",
+          "Akidah Akhlak",
+          "Fiqih",
+          "Sejarah Islam",
+          "PKn",
+          "Penjaskes",
+          "Seni Budaya",
+          "Prakarya",
+          "TIK",
+          "Bimbingan Konseling",
+        ];
+
+        // Add default subjects first
+        defaultSubjects.forEach((subject) => subjects.add(subject));
+
+        // Add subjects from ustad's specialization if available
         const { ref, get } = await import("firebase/database");
         const { database } = await import("@/lib/firebase");
+        const userRef = ref(database, `users/${session.user.id}`);
+        const userSnapshot = await get(userRef);
 
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+          if (userData.specialization) {
+            const specializationSubjects = userData.specialization
+              .split(",")
+              .map((s: string) => s.trim());
+            specializationSubjects.forEach((subject: string) =>
+              subjects.add(subject)
+            );
+          }
+        }
+
+        // Add subjects from the classes that this ustad teaches
+        if (kelasData.classes && kelasData.classes.length > 0) {
+          kelasData.classes.forEach((kelas: any) => {
+            // If class name contains subject information, extract it
+            // For example: "Kelas 7 A - Matematika" would extract "Matematika"
+            const classNameParts = kelas.name.split(" - ");
+            if (classNameParts.length > 1) {
+              const potentialSubject =
+                classNameParts[classNameParts.length - 1].trim();
+              if (
+                potentialSubject &&
+                !potentialSubject.match(/^(Kelas \d+|[A-Z]|\d+)$/)
+              ) {
+                subjects.add(potentialSubject);
+              }
+            }
+          });
+        }
+
+        // Debug: Log the extracted subjects
+        console.log("Extracted subjects:", Array.from(subjects));
+
+        setMapelList(Array.from(subjects).sort());
+
+        // Fetch all santri from Firebase Realtime Database
         const usersRef = ref(database, "users");
         const usersSnapshot = await get(usersRef);
 
@@ -221,7 +293,7 @@ export default function LaporPage() {
             parseInt(hafalanForm.ayat.split("-")[1] || hafalanForm.ayat) || 1,
           fluencyLevel: fluencyMap[hafalanForm.predikat] || "good",
           testDate: new Date().toISOString().split("T")[0],
-          notes: "",
+          notes: hafalanForm.catatan,
           mataPelajaran: "Al-Quran", // Tambahkan field mata pelajaran
         }),
       });
@@ -232,7 +304,7 @@ export default function LaporPage() {
       }
 
       toast.success("Laporan hafalan berhasil disimpan");
-      setHafalanForm({ surat: "", ayat: "", predikat: "Lancar" });
+      setHafalanForm({ surat: "", ayat: "", predikat: "Lancar", catatan: "" });
     } catch (error: any) {
       console.error("Error submitting hafalan report:", error);
       toast.error(error.message || "Gagal menyimpan laporan hafalan");
@@ -251,18 +323,22 @@ export default function LaporPage() {
         throw new Error("User not authenticated");
       }
 
+      // Get class name for the subject field
+      const selectedClass = kelasList.find((k) => k.id === selectedKelas);
+      const className = selectedClass?.name || "Unknown";
+
       const response = await fetch("/api/reports/academic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           studentId: selectedSantri,
-          subject: akademikForm.mapel,
+          subject: className,
           gradeType: "number",
           gradeNumber: akademikForm.nilai,
           semester: "1",
           academicYear: new Date().getFullYear().toString(),
-          notes: "",
-          mataPelajaran: akademikForm.mapel, // Tambahkan field mata pelajaran
+          notes: akademikForm.catatan,
+          mataPelajaran: className, // Use class name as mata pelajaran
         }),
       });
 
@@ -272,7 +348,7 @@ export default function LaporPage() {
       }
 
       toast.success("Laporan akademik berhasil disimpan");
-      setAkademikForm({ mapel: "", nilai: 0 });
+      setAkademikForm({ mapel: "", nilai: 0, catatan: "" });
     } catch (error: any) {
       console.error("Error submitting akademik report:", error);
       toast.error(error.message || "Gagal menyimpan laporan akademik");
@@ -544,6 +620,22 @@ export default function LaporPage() {
                     <option value="Kurang">Kurang</option>
                   </select>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hafalan-catatan">Catatan Tambahan</Label>
+                  <Textarea
+                    id="hafalan-catatan"
+                    placeholder="Tambahkan catatan atau keterangan tambahan..."
+                    rows={3}
+                    value={hafalanForm.catatan}
+                    onChange={(e) =>
+                      setHafalanForm({
+                        ...hafalanForm,
+                        catatan: e.target.value,
+                      })
+                    }
+                    disabled={submitting}
+                  />
+                </div>
                 <Button type="submit" disabled={submitting} className="w-full">
                   {submitting ? (
                     <>
@@ -564,32 +656,15 @@ export default function LaporPage() {
             {activeTab === "akademik" && (
               <form onSubmit={onSubmitAkademik} className="space-y-4 mt-6">
                 <div className="space-y-2">
-                  <Label htmlFor="mapel">Mata Pelajaran</Label>
-                  <select
-                    id="mapel"
-                    value={akademikForm.mapel}
-                    onChange={(e) =>
-                      setAkademikForm({
-                        ...akademikForm,
-                        mapel: e.target.value,
-                      })
+                  <Label htmlFor="kelas-terpilih">Kelas</Label>
+                  <Input
+                    id="kelas-terpilih"
+                    value={
+                      kelasList.find((k) => k.id === selectedKelas)?.name || ""
                     }
-                    disabled={submitting}
+                    disabled={true}
                     className="w-full p-2 border rounded-md bg-background"
-                  >
-                    <option value="">Pilih mata pelajaran</option>
-                    <option value="Matematika">Matematika</option>
-                    <option value="Fiqih">Fiqih</option>
-                    <option value="Aqidah">Aqidah</option>
-                    <option value="Bahasa Arab">Bahasa Arab</option>
-                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                    <option value="IPA">IPA</option>
-                    <option value="IPS">IPS</option>
-                    <option value="Al-Quran">Al-Quran</option>
-                    <option value="Hadis">Hadis</option>
-                    <option value="Tarikh">Tarikh</option>
-                    <option value="Bahasa Inggris">Bahasa Inggris</option>
-                  </select>
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="nilai">Nilai (0-100)</Label>
@@ -604,6 +679,22 @@ export default function LaporPage() {
                       setAkademikForm({
                         ...akademikForm,
                         nilai: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    disabled={submitting}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="akademik-catatan">Catatan Tambahan</Label>
+                  <Textarea
+                    id="akademik-catatan"
+                    placeholder="Tambahkan catatan atau keterangan tambahan..."
+                    rows={3}
+                    value={akademikForm.catatan}
+                    onChange={(e) =>
+                      setAkademikForm({
+                        ...akademikForm,
+                        catatan: e.target.value,
                       })
                     }
                     disabled={submitting}

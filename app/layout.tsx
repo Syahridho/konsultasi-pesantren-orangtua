@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { MetadataProvider } from "@/components/providers/metadata-provider";
 import { Toaster } from "sonner";
 import { generateMetadata as generateSiteMetadata } from "@/lib/metadata";
+import { ErrorBoundary } from "@/components/error";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProviderWrapper>
-          <ThemeProvider>
-            <MetadataProvider />
-            {children}
-            <Toaster position="top-right" richColors />
-          </ThemeProvider>
-        </SessionProviderWrapper>
+        <ErrorBoundary>
+          <SessionProviderWrapper>
+            <ThemeProvider>
+              <MetadataProvider />
+              {children}
+              <Toaster position="top-right" richColors />
+            </ThemeProvider>
+          </SessionProviderWrapper>
+        </ErrorBoundary>
       </body>
     </html>
   );

@@ -56,6 +56,13 @@ api.interceptors.response.use(
         error.message
       );
 
+      // Log additional error details for debugging
+      if (error.response) {
+        console.error(`[API] Status: ${error.response.status}`);
+        console.error(`[API] Status Text: ${error.response.statusText}`);
+        console.error(`[API] Response Data:`, error.response.data);
+      }
+
       if (error.code === "ECONNABORTED") {
         console.error(
           `[API] Request timed out after ${error.config.timeout}ms`

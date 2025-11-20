@@ -223,7 +223,7 @@ export default function Navbar() {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="text-base font-medium text-gray-700 hover:text-primary transition-colors py-2 flex items-center gap-2"
+                        className="text-base font-medium text-gray-700 hover:text-primary transition-colors py-2 px-4 flex items-center gap-2"
                         onClick={() => setIsOpen(false)}
                       >
                         {item.icon &&

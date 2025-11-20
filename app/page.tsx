@@ -44,7 +44,10 @@ export default function HomePage() {
               <>
                 <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
                   {settings.heroTitle}
-                  <span className="block" style={{ color: settings.primaryColor }}>
+                  <span
+                    className="block"
+                    style={{ color: settings.primaryColor }}
+                  >
                     {settings.heroSubtitle}
                   </span>
                 </h1>
@@ -56,9 +59,9 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
-                style={{ 
+                style={{
                   backgroundColor: settings.primaryColor,
-                  color: 'white'
+                  color: "white",
                 }}
                 className="hover:opacity-90 transition-opacity"
                 asChild
@@ -73,11 +76,11 @@ export default function HomePage() {
         </div>
 
         {/* Decorative Elements */}
-        <div 
+        <div
           className="absolute top-20 left-10 w-20 h-20 rounded-full opacity-20 blur-xl"
           style={{ backgroundColor: settings.primaryColor }}
         ></div>
-        <div 
+        <div
           className="absolute bottom-20 right-10 w-32 h-32 rounded-full opacity-20 blur-xl"
           style={{ backgroundColor: settings.secondaryColor }}
         ></div>
@@ -100,13 +103,16 @@ export default function HomePage() {
             {/* Feature Card 1 */}
             <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
-                <div 
+                <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center mb-4"
-                  style={{ 
+                  style={{
                     backgroundColor: `${settings.primaryColor}20`,
                   }}
                 >
-                  <BookOpen className="w-7 h-7" style={{ color: settings.primaryColor }} />
+                  <BookOpen
+                    className="w-7 h-7"
+                    style={{ color: settings.primaryColor }}
+                  />
                 </div>
                 <CardTitle className="text-xl">Monitoring Hafalan</CardTitle>
                 <CardDescription>
@@ -117,16 +123,25 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.primaryColor }} />
-                    Update harian otomatis
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.primaryColor }}
+                    />
+                    Update harian
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.primaryColor }} />
-                    Grafik perkembangan visual
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.primaryColor }}
+                    />
+                    Monitoring Santri
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.primaryColor }} />
-                    Notifikasi milestone
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.primaryColor }}
+                    />
+                    Notifikasi
                   </li>
                 </ul>
               </CardContent>
@@ -135,11 +150,14 @@ export default function HomePage() {
             {/* Feature Card 2 */}
             <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
-                <div 
+                <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center mb-4"
                   style={{ backgroundColor: `${settings.secondaryColor}20` }}
                 >
-                  <MessageCircle className="w-7 h-7" style={{ color: settings.secondaryColor }} />
+                  <MessageCircle
+                    className="w-7 h-7"
+                    style={{ color: settings.secondaryColor }}
+                  />
                 </div>
                 <CardTitle className="text-xl">
                   Chat Konsultasi Ustadz
@@ -152,16 +170,25 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.secondaryColor }} />
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.secondaryColor }}
+                    />
                     Real-time messaging
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.secondaryColor }} />
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.secondaryColor }}
+                    />
                     History percakapan tersimpan
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.secondaryColor }} />
-                    File sharing capability
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.secondaryColor }}
+                    />
+                    Sharing capability
                   </li>
                 </ul>
               </CardContent>
@@ -170,11 +197,14 @@ export default function HomePage() {
             {/* Feature Card 3 */}
             <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
-                <div 
+                <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center mb-4"
                   style={{ backgroundColor: `${settings.accentColor}20` }}
                 >
-                  <GraduationCap className="w-7 h-7" style={{ color: settings.accentColor }} />
+                  <GraduationCap
+                    className="w-7 h-7"
+                    style={{ color: settings.accentColor }}
+                  />
                 </div>
                 <CardTitle className="text-xl">Laporan Akademik</CardTitle>
                 <CardDescription>
@@ -184,16 +214,25 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.accentColor }} />
-                    Nilai semester terstruktur
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.accentColor }}
+                    />
+                    Nilai Harian
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.accentColor }} />
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.accentColor }}
+                    />
                     Analisis performa
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.accentColor }} />
-                    Export PDF reports
+                    <CheckCircle
+                      className="w-4 h-4 mr-2"
+                      style={{ color: settings.accentColor }}
+                    />
+                    Laporan Perilaku Santri Baik/Buruk
                   </li>
                 </ul>
               </CardContent>
@@ -215,11 +254,14 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div 
+                  <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: `${settings.primaryColor}20` }}
                   >
-                    <Shield className="w-6 h-6" style={{ color: settings.primaryColor }} />
+                    <Shield
+                      className="w-6 h-6"
+                      style={{ color: settings.primaryColor }}
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -233,11 +275,14 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div 
+                  <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: `${settings.secondaryColor}20` }}
                   >
-                    <Users className="w-6 h-6" style={{ color: settings.secondaryColor }} />
+                    <Users
+                      className="w-6 h-6"
+                      style={{ color: settings.secondaryColor }}
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -253,11 +298,14 @@ export default function HomePage() {
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div 
+                  <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: `${settings.accentColor}20` }}
                   >
-                    <Clock className="w-6 h-6" style={{ color: settings.accentColor }} />
+                    <Clock
+                      className="w-6 h-6"
+                      style={{ color: settings.accentColor }}
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -271,40 +319,25 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div 
+                  <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: `${settings.secondaryColor}20` }}
                   >
-                    <CheckCircle className="w-6 h-6" style={{ color: settings.secondaryColor }} />
+                    <CheckCircle
+                      className="w-6 h-6"
+                      style={{ color: settings.secondaryColor }}
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Terverifikasi & Bersertifikat
+                      Pantauan Dari Ustad
                     </h3>
                     <p className="text-gray-600">
-                      Platform telah digunakan oleh 50+ pesantren dengan
-                      testimoni positif dari pengguna.
+                      Menerima semua laporan dari pengurus/ustad.
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-16 text-center">
-              <Button
-                size="lg"
-                style={{ 
-                  backgroundColor: settings.primaryColor,
-                  color: 'white'
-                }}
-                className="hover:opacity-90 transition-opacity"
-                asChild
-              >
-                <Link href="/register">Daftar Sekarang</Link>
-              </Button>
-              <p className="mt-4 text-sm text-gray-600">
-                Gratis 30 hari untuk pesantren pendaftar pertama
-              </p>
             </div>
           </div>
         </div>
@@ -316,11 +349,13 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <div className="flex items-center space-x-2 mb-2">
-                <div 
+                <div
                   className="flex h-8 w-8 items-center justify-center rounded-lg"
                   style={{ backgroundColor: settings.primaryColor }}
                 >
-                  <span className="text-white font-bold text-lg">{settings.logoText}</span>
+                  <span className="text-white font-bold text-lg">
+                    {settings.logoText}
+                  </span>
                 </div>
                 <span className="font-bold text-xl">{settings.siteName}</span>
               </div>
@@ -329,32 +364,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="flex space-x-6">
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Facebook
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Instagram
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Twitter
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                LinkedIn
-              </a>
-            </div>
+            <div className="flex space-x-6"></div>
           </div>
         </div>
       </footer>
