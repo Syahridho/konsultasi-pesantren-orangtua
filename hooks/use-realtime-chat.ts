@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
-import { ref, onValue, query, orderByChild, get } from "firebase/database";
+import { ref, onValue, get } from "firebase/database";
 import { database } from "@/lib/firebase";
 import {
   checkUserOnlineStatus,
@@ -49,11 +49,9 @@ export function useRealtimeChat(chatId: string | null) {
       try {
         console.log(`[DEBUG] Loading initial messages for chatId: ${chatId}`);
 
-        // Use direct Firebase access for consistency with real-time listener
-        const messagesRef = query(
-          ref(database, `chats/${chatId}/messages`),
-          orderByChild("createdAt")
-        );
+        // Load messages without ordering to avoid index requirement
+        // We'll sort on client side
+        const messagesRef = ref(database, `chats/${chatId}/messages`);
 
         const snapshot = await get(messagesRef);
 
@@ -69,14 +67,24 @@ export function useRealtimeChat(chatId: string | null) {
             });
           });
 
+          // Sort by createdAt on client side
+          initialMessages.sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateA - dateB;
+          });
+
+          // Limit to last 100 messages
+          const limitedMessages = initialMessages.slice(-100);
+
           console.log(
-            `[DEBUG] Loaded ${initialMessages.length} initial messages`
+            `[DEBUG] Loaded ${limitedMessages.length} initial messages`
           );
           console.log(
             `[DEBUG] Initial message IDs:`,
-            initialMessages.map((m: Message) => m.id)
+            limitedMessages.map((m: Message) => m.id)
           );
-          setMessages(initialMessages);
+          setMessages(limitedMessages);
         } else {
           console.log(`[DEBUG] No messages found for chat ${chatId}`);
           setMessages([]);
@@ -93,10 +101,7 @@ export function useRealtimeChat(chatId: string | null) {
       );
       console.log(`[DEBUG] Firebase path: chats/${chatId}/messages`);
 
-      const messagesRef = query(
-        ref(database, `chats/${chatId}/messages`),
-        orderByChild("createdAt")
-      );
+      const messagesRef = ref(database, `chats/${chatId}/messages`);
 
       const unsubscribe = onValue(
         messagesRef,
@@ -111,6 +116,13 @@ export function useRealtimeChat(chatId: string | null) {
                 id: messageId,
                 ...message,
               });
+            });
+
+            // Sort by createdAt on client side
+            messagesArray.sort((a, b) => {
+              const dateA = new Date(a.createdAt).getTime();
+              const dateB = new Date(b.createdAt).getTime();
+              return dateA - dateB;
             });
 
             console.log(

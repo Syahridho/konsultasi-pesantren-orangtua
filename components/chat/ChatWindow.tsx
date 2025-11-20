@@ -113,31 +113,31 @@ export default function ChatWindow({
       }
 
       try {
-        const response = await fetch(`/api/chat/${chatId}/messages`);
-        if (response.ok) {
-          const chatData = await response.json();
-          // Try to get participant name from messages first
-          if (chatData.messages && chatData.messages.length > 0) {
-            const otherParticipantMsg = chatData.messages.find(
-              (msg: any) => msg.senderName !== currentUserName
+        // Get chat info directly from Firebase Realtime Database
+        const { ref, get } = await import("firebase/database");
+        const { database } = await import("@/lib/firebase");
+        
+        const chatRef = ref(database, `chats/${chatId}`);
+        const snapshot = await get(chatRef);
+        
+        if (snapshot.exists()) {
+          const chatData = snapshot.val();
+          // Determine other participant based on current user
+          const otherParticipantName = 
+            chatData.participant1Id === currentUserId
+              ? chatData.participant2Name
+              : chatData.participant1Name;
+          
+          setOtherParticipantName(otherParticipantName);
+        } else {
+          // Fallback: try to get from messages
+          if (messages.length > 0) {
+            const otherMsg = messages.find(
+              (msg) => msg.senderId !== currentUserId
             );
-            if (otherParticipantMsg) {
-              setOtherParticipantName(otherParticipantMsg.senderName);
-              setLoadingChatInfo(false);
-              return;
+            if (otherMsg) {
+              setOtherParticipantName(otherMsg.senderName);
             }
-          }
-        }
-
-        // If we can't get from messages, try to get from chat data
-        const chatResponse = await fetch("/api/chat");
-        if (chatResponse.ok) {
-          const chatListData = await chatResponse.json();
-          const currentChat = chatListData.chats.find(
-            (chat: any) => chat.id === chatId
-          );
-          if (currentChat && currentChat.otherParticipantName) {
-            setOtherParticipantName(currentChat.otherParticipantName);
           }
         }
       } catch (error) {
@@ -148,7 +148,7 @@ export default function ChatWindow({
     };
 
     fetchChatInfo();
-  }, [chatId, currentUserName]);
+  }, [chatId, currentUserId]);
 
   // Mark messages as read when chat is opened or when user interacts with messages
   useEffect(() => {
@@ -206,7 +206,7 @@ export default function ChatWindow({
 
   if (!chatId) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50">
+      <div className="flex-1 flex items-center justify-center bg-gray-50 h-full">
         <div className="text-center">
           <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg

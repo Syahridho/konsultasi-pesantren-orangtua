@@ -244,8 +244,16 @@ export function CreateClassWizard({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Backdrop Overlay */}
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        onClick={handleExit}
+        aria-hidden="true"
+      />
+      
+      {/* Modal Container */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl">
+        <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl z-10">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <h2 className="text-2xl font-semibold text-gray-900">

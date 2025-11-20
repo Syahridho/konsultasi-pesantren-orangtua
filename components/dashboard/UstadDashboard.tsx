@@ -197,7 +197,7 @@ export default function UstadDashboard() {
             <BookOpen className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-600">
+            <div className="text-2xl font-bold text-primary">
               {stats.laporanByCategory.hafalan}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -212,7 +212,7 @@ export default function UstadDashboard() {
             <FileText className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-secondary">
               {stats.laporanByCategory.akademik}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -317,7 +317,7 @@ export default function UstadDashboard() {
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-emerald-600 h-2.5 rounded-full"
+                  className="bg-primary h-2.5 rounded-full"
                   style={{
                     width: `${
                       (stats.laporanByCategory.hafalan / stats.totalLaporan) *
@@ -337,7 +337,7 @@ export default function UstadDashboard() {
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-blue-600 h-2.5 rounded-full"
+                  className="bg-secondary h-2.5 rounded-full"
                   style={{
                     width: `${
                       (stats.laporanByCategory.akademik / stats.totalLaporan) *

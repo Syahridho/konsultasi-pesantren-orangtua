@@ -81,7 +81,7 @@ async function getAllParents() {
   return parents;
 }
 
-// GET: Fetch all santri with enhanced data structure
+// GET: Fetch all santri with enhanced data structure (NEW FORMAT + backward compatibility)
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -127,9 +127,9 @@ export async function GET(request: NextRequest) {
     const allUsers = usersSnapshot.val();
     const santriList: any[] = [];
     const parents = await getAllParents();
-    let userRoles: { [key: string]: string } = {};
-    let orangtuaCount = 0;
     let totalSantriCount = 0;
+    let newFormatCount = 0;
+    let oldFormatCount = 0;
 
     console.log(
       "[ENHANCED SANTRI API] Processing users to find santri data..."
@@ -138,30 +138,51 @@ export async function GET(request: NextRequest) {
     // Role-based data access
     if (userData.role === "admin" || userData.role === "ustad") {
       // Admin and Ustad can see all students
+      
+      // PRIORITY 1: NEW FORMAT - users with role="santri"
       Object.keys(allUsers).forEach((userId) => {
         const user = allUsers[userId];
-        userRoles[userId] = user.role;
+
+        if (user.role === "santri") {
+          newFormatCount++;
+          
+          // Get parent info
+          let parentData = null;
+          if (user.parentId && allUsers[user.parentId]) {
+            parentData = allUsers[user.parentId];
+          }
+
+          santriList.push({
+            id: userId,
+            name: user.name,
+            nis: user.nis || "",
+            jenisKelamin: user.gender || "",
+            tempatLahir: user.tempatLahir || "",
+            tanggalLahir: user.tanggalLahir || "",
+            tahunDaftar: user.entryYear || "",
+            createdAt: user.createdAt || "",
+            orangTuaId: user.parentId || "",
+            orangTuaName: parentData ? parentData.name : "Tidak ada",
+            orangTuaEmail: parentData ? parentData.email : "",
+            orangTuaPhone: parentData ? parentData.phone || "" : "",
+            dataSource: "new_format",
+          });
+          totalSantriCount++;
+        }
+      });
+
+      // FALLBACK: OLD FORMAT - embedded santri data
+      Object.keys(allUsers).forEach((userId) => {
+        const user = allUsers[userId];
 
         if (user.role === "orangtua") {
-          orangtuaCount++;
-          console.log(
-            `[ENHANCED SANTRI API] Processing orangtua: ${user.name} (${userId})`
-          );
-
           const students = normalizeStudentData(user, userId);
-          console.log(
-            `[ENHANCED SANTRI API] Found ${students.length} santri for ${user.name}`
-          );
-
+          
           students.forEach((student) => {
-            totalSantriCount++;
-            console.log(
-              `[ENHANCED SANTRI API] Adding santri: ${student.name} (${student.id})`
-            );
-
+            oldFormatCount++;
+            
             santriList.push({
               id: student.id,
-              userId: userId,
               name: student.name,
               nis: student.nis || "",
               jenisKelamin: student.gender || student.jenisKelamin || "",
@@ -175,17 +196,48 @@ export async function GET(request: NextRequest) {
               orangTuaPhone: user.phone || "",
               dataSource: student._source,
             });
+            totalSantriCount++;
           });
         }
       });
+      
     } else if (userData.role === "orangtua") {
       // Orangtua can only see their own students
+      
+      // NEW FORMAT: Check studentIds array
+      if (userData.studentIds && Array.isArray(userData.studentIds)) {
+        userData.studentIds.forEach((studentId: string) => {
+          if (allUsers[studentId] && allUsers[studentId].role === "santri") {
+            const student = allUsers[studentId];
+            newFormatCount++;
+            
+            santriList.push({
+              id: studentId,
+              name: student.name,
+              nis: student.nis || "",
+              jenisKelamin: student.gender || "",
+              tempatLahir: student.tempatLahir || "",
+              tanggalLahir: student.tanggalLahir || "",
+              tahunDaftar: student.entryYear || "",
+              createdAt: student.createdAt || "",
+              orangTuaId: session.user.id,
+              orangTuaName: userData.name,
+              orangTuaEmail: userData.email,
+              orangTuaPhone: userData.phone || "",
+              dataSource: "new_format",
+            });
+            totalSantriCount++;
+          }
+        });
+      }
+      
+      // OLD FORMAT: Check embedded students/santri
       const students = normalizeStudentData(userData, session.user.id);
       students.forEach((student) => {
-        totalSantriCount++;
+        oldFormatCount++;
+        
         santriList.push({
           id: student.id,
-          userId: session.user.id,
           name: student.name,
           nis: student.nis || "",
           jenisKelamin: student.gender || student.jenisKelamin || "",
@@ -199,14 +251,12 @@ export async function GET(request: NextRequest) {
           orangTuaPhone: userData.phone || "",
           dataSource: student._source,
         });
+        totalSantriCount++;
       });
     }
 
     console.log(
-      `[ENHANCED SANTRI API] Summary: Found ${orangtuaCount} orangtua with ${totalSantriCount} total santri`
-    );
-    console.log(
-      `[ENHANCED SANTRI API] Returning ${santriList.length} santri records`
+      `[ENHANCED SANTRI API] Summary: Found ${totalSantriCount} total santri (${newFormatCount} new format, ${oldFormatCount} old format)`
     );
 
     return NextResponse.json({
@@ -214,9 +264,9 @@ export async function GET(request: NextRequest) {
       parents,
       debug: {
         totalUsers: Object.keys(allUsers).length,
-        userRoles,
-        orangtuaCount,
         totalSantriCount,
+        newFormatCount,
+        oldFormatCount,
         returnedSantriCount: santriList.length,
         currentUserRole: userData.role,
       },
@@ -230,7 +280,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Create new santri with parent validation
+// POST: Create new santri with parent validation (NEW FORMAT)
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -281,34 +331,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if orangtua can have more students (optional business logic)
-    const currentStudents = normalizeStudentData(
-      parentData,
-      validatedData.orangTuaId
-    );
-    console.log(
-      `[ENHANCED SANTRI API] Parent currently has ${currentStudents.length} students`
-    );
-
-    // Create new santri
-    const newSantriRef = push(
-      ref(database, `users/${validatedData.orangTuaId}/santri`)
-    );
-    const santriId = newSantriRef.key;
+    // NEW FORMAT: Create santri as separate user in root users/
+    const usersRef = ref(database, `users`);
+    const newSantriRef = push(usersRef);
+    const santriId = newSantriRef.key!;
 
     const santriData = {
+      id: santriId,
       name: validatedData.name,
+      email: `santri_${santriId}@pesantren.local`, // Dummy email for display
+      role: "santri",
       nis: validatedData.nis,
+      entryYear: validatedData.tahunDaftar,
+      status: "active",
+      phone: "",
       gender: validatedData.gender,
       tempatLahir: validatedData.tempatLahir,
       tanggalLahir: validatedData.tanggalLahir,
-      tahunDaftar: validatedData.tahunDaftar,
+      parentId: validatedData.orangTuaId, // Link to parent
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       createdBy: session.user.id,
       createdByName: currentUser.name,
     };
 
+    // Save santri to database as separate user
     await set(newSantriRef, santriData);
+
+    // Update parent's studentIds array
+    const currentStudentIds = parentData.studentIds || [];
+    const updatedStudentIds = [...currentStudentIds, santriId];
+    
+    await update(parentRef, {
+      studentIds: updatedStudentIds,
+      updatedAt: new Date().toISOString(),
+    });
 
     console.log("[ENHANCED SANTRI API] Successfully created santri:", santriId);
 
@@ -316,9 +373,7 @@ export async function POST(request: NextRequest) {
       message: "Santri berhasil ditambahkan",
       santriId,
       santriData: {
-        id: santriId,
         ...santriData,
-        orangTuaId: validatedData.orangTuaId,
         orangTuaName: parentData.name,
       },
     });
@@ -339,7 +394,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT: Update santri
+// PUT: Update santri (NEW FORMAT + backward compatibility)
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -373,33 +428,67 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Update santri
-    const santriRef = ref(database, `users/${orangTuaId}/santri/${santriId}`);
-    const santriSnapshot = await get(santriRef);
+    // Get current user name for update tracking
+    const currentUserName = (
+      await get(ref(database, `users/${session.user.id}`))
+    ).val().name;
 
-    if (!santriSnapshot.exists()) {
-      return NextResponse.json(
-        { error: "Santri tidak ditemukan" },
-        { status: 404 }
-      );
+    // Try NEW FORMAT first: santri as separate user
+    const santriUserRef = ref(database, `users/${santriId}`);
+    const santriUserSnapshot = await get(santriUserRef);
+
+    if (santriUserSnapshot.exists()) {
+      const santriData = santriUserSnapshot.val();
+      
+      // Verify this santri belongs to current parent
+      if (santriData.role === "santri" && santriData.parentId === orangTuaId) {
+        const updateData = {
+          ...(validatedData.name && { name: validatedData.name }),
+          ...(validatedData.nis && { nis: validatedData.nis }),
+          ...(validatedData.gender && { gender: validatedData.gender }),
+          ...(validatedData.tempatLahir && { tempatLahir: validatedData.tempatLahir }),
+          ...(validatedData.tanggalLahir && { tanggalLahir: validatedData.tanggalLahir }),
+          ...(validatedData.tahunDaftar && { entryYear: validatedData.tahunDaftar }),
+          updatedAt: new Date().toISOString(),
+          updatedBy: session.user.id,
+          updatedByName: currentUserName,
+        };
+
+        await update(santriUserRef, updateData);
+
+        return NextResponse.json({
+          message: "Data santri berhasil diperbarui",
+          santriId,
+          updateData,
+        });
+      }
     }
 
-    const updateData = {
-      ...validatedData,
-      updatedAt: new Date().toISOString(),
-      updatedBy: session.user.id,
-      updatedByName: (
-        await get(ref(database, `users/${session.user.id}`))
-      ).val().name,
-    };
+    // Fallback to OLD FORMAT: embedded santri data
+    const santriEmbeddedRef = ref(database, `users/${orangTuaId}/santri/${santriId}`);
+    const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
-    await update(santriRef, updateData);
+    if (santriEmbeddedSnapshot.exists()) {
+      const updateData = {
+        ...validatedData,
+        updatedAt: new Date().toISOString(),
+        updatedBy: session.user.id,
+        updatedByName: currentUserName,
+      };
 
-    return NextResponse.json({
-      message: "Data santri berhasil diperbarui",
-      santriId,
-      updateData,
-    });
+      await update(santriEmbeddedRef, updateData);
+
+      return NextResponse.json({
+        message: "Data santri berhasil diperbarui",
+        santriId,
+        updateData,
+      });
+    }
+
+    return NextResponse.json(
+      { error: "Santri tidak ditemukan" },
+      { status: 404 }
+    );
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -416,7 +505,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE: Delete santri
+// DELETE: Delete santri (NEW FORMAT + backward compatibility)
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -436,26 +525,62 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Verify santri exists
-    const santriRef = ref(database, `users/${orangTuaId}/santri/${santriId}`);
-    const santriSnapshot = await get(santriRef);
+    // Try NEW FORMAT first: santri as separate user
+    const santriUserRef = ref(database, `users/${santriId}`);
+    const santriUserSnapshot = await get(santriUserRef);
 
-    if (!santriSnapshot.exists()) {
-      return NextResponse.json(
-        { error: "Santri tidak ditemukan" },
-        { status: 404 }
-      );
+    if (santriUserSnapshot.exists()) {
+      const santriData = santriUserSnapshot.val();
+      
+      // Verify this santri belongs to current parent
+      if (santriData.role === "santri" && santriData.parentId === orangTuaId) {
+        // Delete santri user
+        await remove(santriUserRef);
+
+        // Remove from parent's studentIds
+        const parentRef = ref(database, `users/${orangTuaId}`);
+        const parentSnapshot = await get(parentRef);
+        
+        if (parentSnapshot.exists()) {
+          const parentData = parentSnapshot.val();
+          const currentStudentIds = parentData.studentIds || [];
+          const updatedStudentIds = currentStudentIds.filter((id: string) => id !== santriId);
+          
+          await update(parentRef, {
+            studentIds: updatedStudentIds,
+            updatedAt: new Date().toISOString(),
+          });
+        }
+
+        console.log("[ENHANCED SANTRI API] Successfully deleted santri:", santriId);
+
+        return NextResponse.json({
+          message: "Santri berhasil dihapus",
+          santriId,
+        });
+      }
     }
 
-    // Delete santri
-    await remove(santriRef);
+    // Fallback to OLD FORMAT: embedded santri data
+    const santriEmbeddedRef = ref(database, `users/${orangTuaId}/santri/${santriId}`);
+    const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
-    console.log("[ENHANCED SANTRI API] Successfully deleted santri:", santriId);
+    if (santriEmbeddedSnapshot.exists()) {
+      // Delete santri
+      await remove(santriEmbeddedRef);
 
-    return NextResponse.json({
-      message: "Santri berhasil dihapus",
-      santriId,
-    });
+      console.log("[ENHANCED SANTRI API] Successfully deleted santri (old format):", santriId);
+
+      return NextResponse.json({
+        message: "Santri berhasil dihapus",
+        santriId,
+      });
+    }
+
+    return NextResponse.json(
+      { error: "Santri tidak ditemukan" },
+      { status: 404 }
+    );
   } catch (error) {
     console.error("[ENHANCED SANTRI API] Error deleting santri:", error);
     return NextResponse.json(

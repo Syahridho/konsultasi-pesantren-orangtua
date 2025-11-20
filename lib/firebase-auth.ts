@@ -4,7 +4,7 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
 } from "firebase/auth";
-import { ref, get, set } from "firebase/database";
+import { ref, get, set, push } from "firebase/database";
 import { auth, database } from "./firebase";
 import { secondaryDatabase } from "./firebase-secondary";
 
@@ -106,11 +106,44 @@ export async function registerUser(
       email,
       role,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
-    // Add students data if provided
-    if (students && students.length > 0) {
-      userData.students = students;
+    // NEW FORMAT: Create separate santri users and store references
+    if (students && students.length > 0 && role === "orangtua") {
+      const studentIds: string[] = [];
+
+      // Create each santri as a separate user in the database
+      for (const student of students) {
+        // Generate a unique ID for the santri using Firebase push
+        const usersRef = ref(dbInstance, `users`);
+        const newSantriRef = push(usersRef);
+        const santriId = newSantriRef.key!;
+
+        const santriData = {
+          id: santriId,
+          name: student.name,
+          email: `santri_${santriId}@pesantren.local`, // Dummy email for display
+          role: "santri",
+          nis: student.nis || "",
+          entryYear: student.tahunDaftar || new Date().getFullYear().toString(),
+          status: "active",
+          phone: "",
+          gender: student.gender || "",
+          tempatLahir: student.tempatLahir || "",
+          tanggalLahir: student.tanggalLahir || "",
+          parentId: user.uid, // Link to parent
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        // Save santri to database
+        await set(newSantriRef, santriData);
+        studentIds.push(santriId);
+      }
+
+      // Store only the IDs in the parent user (NEW FORMAT)
+      userData.studentIds = studentIds;
     }
 
     await set(userRef, userData);

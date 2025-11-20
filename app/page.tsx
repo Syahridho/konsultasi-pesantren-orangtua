@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,30 +19,48 @@ import {
   Clock,
   CheckCircle,
 } from "lucide-react";
+import { useSiteSettings } from "@/lib/hooks/useSiteSettings";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function HomePage() {
+  const { settings, loading } = useSiteSettings();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-20 sm:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-secondary/5 py-20 sm:py-32">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
-              Pantau Hafalan & Akademik Santri
-              <span className="block text-emerald-600">Secara Real-time</span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau
-              perkembangan pembelajaran santri dengan sistem yang aman dan
-              terpercaya.
-            </p>
+            {loading ? (
+              <>
+                <Skeleton className="h-16 w-3/4 mx-auto mb-4" />
+                <Skeleton className="h-12 w-1/2 mx-auto mb-6" />
+                <Skeleton className="h-6 w-2/3 mx-auto mb-10" />
+              </>
+            ) : (
+              <>
+                <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
+                  {settings.heroTitle}
+                  <span className="block" style={{ color: settings.primaryColor }}>
+                    {settings.heroSubtitle}
+                  </span>
+                </h1>
+                <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                  {settings.siteDescription}
+                </p>
+              </>
+            )}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
-                className="bg-emerald-600 hover:bg-emerald-700"
+                style={{ 
+                  backgroundColor: settings.primaryColor,
+                  color: 'white'
+                }}
+                className="hover:opacity-90 transition-opacity"
                 asChild
               >
                 <Link href="/register">Mulai Konsultasi</Link>
@@ -53,8 +73,14 @@ export default function HomePage() {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-200 rounded-full opacity-20 blur-xl"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-blue-200 rounded-full opacity-20 blur-xl"></div>
+        <div 
+          className="absolute top-20 left-10 w-20 h-20 rounded-full opacity-20 blur-xl"
+          style={{ backgroundColor: settings.primaryColor }}
+        ></div>
+        <div 
+          className="absolute bottom-20 right-10 w-32 h-32 rounded-full opacity-20 blur-xl"
+          style={{ backgroundColor: settings.secondaryColor }}
+        ></div>
       </section>
 
       {/* Features Section */}
@@ -74,8 +100,13 @@ export default function HomePage() {
             {/* Feature Card 1 */}
             <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
-                <div className="w-14 h-14 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-                  <BookOpen className="w-7 h-7 text-emerald-600" />
+                <div 
+                  className="w-14 h-14 rounded-lg flex items-center justify-center mb-4"
+                  style={{ 
+                    backgroundColor: `${settings.primaryColor}20`,
+                  }}
+                >
+                  <BookOpen className="w-7 h-7" style={{ color: settings.primaryColor }} />
                 </div>
                 <CardTitle className="text-xl">Monitoring Hafalan</CardTitle>
                 <CardDescription>
@@ -86,15 +117,15 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-emerald-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.primaryColor }} />
                     Update harian otomatis
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-emerald-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.primaryColor }} />
                     Grafik perkembangan visual
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-emerald-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.primaryColor }} />
                     Notifikasi milestone
                   </li>
                 </ul>
@@ -104,8 +135,11 @@ export default function HomePage() {
             {/* Feature Card 2 */}
             <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
-                <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <MessageCircle className="w-7 h-7 text-blue-600" />
+                <div 
+                  className="w-14 h-14 rounded-lg flex items-center justify-center mb-4"
+                  style={{ backgroundColor: `${settings.secondaryColor}20` }}
+                >
+                  <MessageCircle className="w-7 h-7" style={{ color: settings.secondaryColor }} />
                 </div>
                 <CardTitle className="text-xl">
                   Chat Konsultasi Ustadz
@@ -118,15 +152,15 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.secondaryColor }} />
                     Real-time messaging
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.secondaryColor }} />
                     History percakapan tersimpan
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.secondaryColor }} />
                     File sharing capability
                   </li>
                 </ul>
@@ -136,8 +170,11 @@ export default function HomePage() {
             {/* Feature Card 3 */}
             <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
-                <div className="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                  <GraduationCap className="w-7 h-7 text-purple-600" />
+                <div 
+                  className="w-14 h-14 rounded-lg flex items-center justify-center mb-4"
+                  style={{ backgroundColor: `${settings.accentColor}20` }}
+                >
+                  <GraduationCap className="w-7 h-7" style={{ color: settings.accentColor }} />
                 </div>
                 <CardTitle className="text-xl">Laporan Akademik</CardTitle>
                 <CardDescription>
@@ -147,15 +184,15 @@ export default function HomePage() {
               <CardContent>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-purple-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.accentColor }} />
                     Nilai semester terstruktur
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-purple-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.accentColor }} />
                     Analisis performa
                   </li>
                   <li className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-purple-500 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" style={{ color: settings.accentColor }} />
                     Export PDF reports
                   </li>
                 </ul>
@@ -178,8 +215,11 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Shield className="w-6 h-6 text-emerald-600" />
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${settings.primaryColor}20` }}
+                  >
+                    <Shield className="w-6 h-6" style={{ color: settings.primaryColor }} />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -193,8 +233,11 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Users className="w-6 h-6 text-blue-600" />
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${settings.secondaryColor}20` }}
+                  >
+                    <Users className="w-6 h-6" style={{ color: settings.secondaryColor }} />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -210,8 +253,11 @@ export default function HomePage() {
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-6 h-6 text-purple-600" />
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${settings.accentColor}20` }}
+                  >
+                    <Clock className="w-6 h-6" style={{ color: settings.accentColor }} />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -225,8 +271,11 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="w-6 h-6 text-orange-600" />
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${settings.secondaryColor}20` }}
+                  >
+                    <CheckCircle className="w-6 h-6" style={{ color: settings.secondaryColor }} />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -244,7 +293,11 @@ export default function HomePage() {
             <div className="mt-16 text-center">
               <Button
                 size="lg"
-                className="bg-emerald-600 hover:bg-emerald-700"
+                style={{ 
+                  backgroundColor: settings.primaryColor,
+                  color: 'white'
+                }}
+                className="hover:opacity-90 transition-opacity"
                 asChild
               >
                 <Link href="/register">Daftar Sekarang</Link>
@@ -263,13 +316,16 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <div className="flex items-center space-x-2 mb-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600">
-                  <span className="text-white font-bold text-lg">P</span>
+                <div 
+                  className="flex h-8 w-8 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: settings.primaryColor }}
+                >
+                  <span className="text-white font-bold text-lg">{settings.logoText}</span>
                 </div>
-                <span className="font-bold text-xl">PesantrenConnect</span>
+                <span className="font-bold text-xl">{settings.siteName}</span>
               </div>
               <p className="text-gray-400 text-sm">
-                © 2024 PesantrenConnect. All rights reserved.
+                © 2024 {settings.siteName}. All rights reserved.
               </p>
             </div>
 

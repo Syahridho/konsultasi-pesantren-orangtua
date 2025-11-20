@@ -4,9 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Menu, LogOut, User } from "lucide-react";
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
+import { Menu, LogOut, User, MessageCircle, Home } from "lucide-react";
+import { useSiteSettings } from "@/lib/hooks/useSiteSettings";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -21,17 +28,38 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { data: session, status } = useSession();
+  const { settings } = useSiteSettings();
 
   // Fix hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const navigation = [
+  // Navigation untuk user yang belum login
+  const guestNavigation = [
     { name: "Beranda", href: "#" },
     { name: "Fitur", href: "#features" },
     { name: "Tentang Kami", href: "#about" },
   ];
+
+  // Navigation untuk orangtua yang sudah login
+  const orangtuaNavigation = [
+    { name: "Beranda", href: "/home", icon: Home },
+    { name: "Chat", href: "/chat", icon: MessageCircle },
+  ];
+
+  // Navigation untuk admin/ustad yang sudah login
+  const adminUstadNavigation = [
+    { name: "Dashboard", href: "/dashboard", icon: Home },
+    { name: "Chat", href: "/chat", icon: MessageCircle },
+  ];
+
+  // Determine which navigation to show
+  const getNavigation = () => {
+    if (!session) return guestNavigation;
+    if (session.user.role === "orangtua") return orangtuaNavigation;
+    return adminUstadNavigation;
+  };
 
   const handleLogout = async () => {
     await signOut({ redirect: true, callbackUrl: "/" });
@@ -53,23 +81,37 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600">
-              <span className="text-white font-bold text-lg">P</span>
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-lg"
+              style={{ backgroundColor: settings.primaryColor }}
+            >
+              <span className="text-white font-bold text-lg">
+                {settings.logoText}
+              </span>
             </div>
             <span className="font-bold text-xl text-gray-900">
-              PesantrenConnect
+              {settings.siteName}
             </span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
-          {navigation.map((item) => (
+          {getNavigation().map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors"
+              className="text-sm font-medium text-gray-700 transition-colors flex items-center gap-1"
+              style={{
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ["--hover-color" as any]: settings.primaryColor,
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.color = settings.primaryColor)
+              }
+              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
             >
+              {"icon" in item && item.icon && <item.icon className="w-4 h-4" />}
               {item.name}
             </Link>
           ))}
@@ -90,7 +132,10 @@ export default function Navbar() {
                   className="relative h-9 w-9 rounded-full"
                 >
                   <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-emerald-600 text-white">
+                    <AvatarFallback
+                      className="text-white"
+                      style={{ backgroundColor: settings.primaryColor }}
+                    >
                       {getUserInitials(session.user?.name)}
                     </AvatarFallback>
                   </Avatar>
@@ -108,11 +153,17 @@ export default function Navbar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link
-                    href="/dashboard"
+                    href={
+                      session.user?.role === "orangtua" ? "/home" : "/dashboard"
+                    }
                     className="flex items-center cursor-pointer"
                   >
                     <User className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
+                    <span>
+                      {session.user?.role === "orangtua"
+                        ? "Beranda"
+                        : "Dashboard"}
+                    </span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -130,7 +181,14 @@ export default function Navbar() {
               <Button variant="ghost" asChild>
                 <Link href="/login">Masuk</Link>
               </Button>
-              <Button asChild>
+              <Button
+                style={{
+                  backgroundColor: settings.primaryColor,
+                  color: "white",
+                }}
+                className="hover:opacity-90 transition-opacity"
+                asChild
+              >
                 <Link href="/register">Daftar Sekarang</Link>
               </Button>
             </>
@@ -148,84 +206,117 @@ export default function Navbar() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col space-y-4 mt-8">
-                {/* Mobile Navigation */}
-                <div className="flex flex-col space-y-3">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-base font-medium text-gray-700 hover:text-emerald-600 transition-colors py-2"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Mobile CTA Buttons */}
-                <div className="flex flex-col space-y-3 pt-4 border-t">
-                  {status === "loading" ? (
-                    <div className="flex flex-col space-y-3">
-                      <Skeleton className="h-9 w-full" />
-                      <Skeleton className="h-9 w-full" />
-                    </div>
-                  ) : session ? (
-                    <>
-                      <div className="flex items-center space-x-3 p-2 bg-muted rounded-lg">
-                        <Avatar className="h-9 w-9">
-                          <AvatarFallback className="bg-emerald-600 text-white">
-                            {getUserInitials(session.user?.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col space-y-1">
-                          <p className="font-medium text-sm">
-                            {session.user?.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {session.user?.email}
-                          </p>
-                        </div>
-                      </div>
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <User className="mr-2 h-4 w-4" />
-                          Dashboard
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="justify-start"
-                        onClick={() => {
-                          handleLogout();
-                          setIsOpen(false);
-                        }}
+                <VisuallyHidden>
+                  <SheetTitle>Navigation Menu</SheetTitle>
+                </VisuallyHidden>
+                <div className="flex flex-col space-y-4 mt-8">
+                  {/* Mobile Navigation */}
+                  <div className="flex flex-col space-y-3">
+                    {getNavigation().map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="text-base font-medium text-gray-700 hover:text-primary transition-colors py-2 flex items-center gap-2"
+                        onClick={() => setIsOpen(false)}
                       >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Keluar
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link href="/login" onClick={() => setIsOpen(false)}>
-                          Masuk
-                        </Link>
-                      </Button>
-                      <Button asChild className="w-full">
-                        <Link href="/register" onClick={() => setIsOpen(false)}>
-                          Daftar Sekarang
-                        </Link>
-                      </Button>
-                    </>
-                  )}
+                        {"icon" in item && item.icon && (
+                          <item.icon className="w-4 h-4" />
+                        )}
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+
+                  {/* Mobile CTA Buttons */}
+                  <div className="flex flex-col space-y-3 pt-4 border-t">
+                    {status === "loading" ? (
+                      <div className="flex flex-col space-y-3">
+                        <Skeleton className="h-9 w-full" />
+                        <Skeleton className="h-9 w-full" />
+                      </div>
+                    ) : session ? (
+                      <>
+                        <div className="flex items-center space-x-3 p-2 bg-muted rounded-lg">
+                          <Avatar className="h-9 w-9">
+                            <AvatarFallback
+                              className="text-white"
+                              style={{ backgroundColor: settings.primaryColor }}
+                            >
+                              {getUserInitials(session.user?.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col space-y-1">
+                            <p className="font-medium text-sm">
+                              {session.user?.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {session.user?.email}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="justify-start"
+                        >
+                          <Link
+                            href={
+                              session.user?.role === "orangtua"
+                                ? "/home"
+                                : "/dashboard"
+                            }
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <User className="mr-2 h-4 w-4" />
+                            {session.user?.role === "orangtua"
+                              ? "Beranda"
+                              : "Dashboard"}
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="justify-start"
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Keluar
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="justify-start"
+                        >
+                          <Link href="/login" onClick={() => setIsOpen(false)}>
+                            Masuk
+                          </Link>
+                        </Button>
+                        <Button
+                          style={{
+                            backgroundColor: settings.primaryColor,
+                            color: "white",
+                          }}
+                          className="w-full hover:opacity-90 transition-opacity"
+                          asChild
+                        >
+                          <Link
+                            href="/register"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            Daftar Sekarang
+                          </Link>
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
           )}
           {!mounted && (
             <Button variant="ghost" size="icon">

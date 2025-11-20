@@ -105,13 +105,19 @@ export default function EditKelasModal({
   const handleInputChange = (field: string, value: any) => {
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof formData],
-          [child]: value,
-        },
-      }));
+      setFormData((prev) => {
+        const parentValue = prev[parent as keyof typeof prev];
+        if (typeof parentValue === 'object' && parentValue !== null) {
+          return {
+            ...prev,
+            [parent]: {
+              ...parentValue,
+              [child]: value,
+            },
+          };
+        }
+        return prev;
+      });
     } else {
       setFormData((prev) => ({
         ...prev,

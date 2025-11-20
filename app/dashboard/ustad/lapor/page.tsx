@@ -4,15 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { db } from "@/lib/firestore";
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,15 +40,15 @@ export default function LaporPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+
   // Step 1: Select Kelas
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [selectedKelas, setSelectedKelas] = useState<string>("");
-  
+
   // Step 2: Select Santri
   const [allSantriList, setAllSantriList] = useState<Santri[]>([]);
   const [selectedSantri, setSelectedSantri] = useState<string>("");
-  
+
   // Step 3: Select Report Type
   const [activeTab, setActiveTab] = useState<
     "hafalan" | "akademik" | "perilaku"
@@ -116,28 +108,30 @@ export default function LaporPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (!session?.user?.id) return;
-      
+
       try {
         setLoading(true);
-        
+
         // Fetch kelas that belong to current ustad
-        const kelasResponse = await fetch(`/api/classes?ustadId=${session.user.id}`);
+        const kelasResponse = await fetch(
+          `/api/classes?ustadId=${session.user.id}`
+        );
         if (!kelasResponse.ok) throw new Error("Failed to fetch classes");
-        
+
         const kelasData = await kelasResponse.json();
         setKelasList(kelasData.classes || []);
-        
+
         // Fetch all santri from Firebase Realtime Database
         const { ref, get } = await import("firebase/database");
         const { database } = await import("@/lib/firebase");
-        
+
         const usersRef = ref(database, "users");
         const usersSnapshot = await get(usersRef);
-        
+
         if (usersSnapshot.exists()) {
           const users = usersSnapshot.val();
           const santriData: Santri[] = [];
-          
+
           Object.keys(users).forEach((userId) => {
             const user = users[userId];
             if (user.role === "santri") {
@@ -149,7 +143,7 @@ export default function LaporPage() {
               });
             }
           });
-          
+
           setAllSantriList(santriData);
         }
       } catch (error) {
@@ -168,14 +162,16 @@ export default function LaporPage() {
     if (!selectedKelas || !kelasList.length || !allSantriList.length) {
       return [];
     }
-    
+
     const selectedKelasData = kelasList.find((k) => k.id === selectedKelas);
     if (!selectedKelasData?.studentIds) return [];
-    
+
     const studentIdsInKelas = Object.keys(selectedKelasData.studentIds);
-    return allSantriList.filter((santri) => studentIdsInKelas.includes(santri.id));
+    return allSantriList.filter((santri) =>
+      studentIdsInKelas.includes(santri.id)
+    );
   }, [selectedKelas, kelasList, allSantriList]);
-  
+
   // Cek autentikasi
   useEffect(() => {
     if (!session) {
@@ -185,13 +181,13 @@ export default function LaporPage() {
       router.push("/dashboard");
     }
   }, [session, router]);
-  
+
   // Reset selections on step back
   const handleKelasChange = (kelasId: string) => {
     setSelectedKelas(kelasId);
     setSelectedSantri(""); // Reset santri selection
   };
-  
+
   const handleSantriChange = (santriId: string) => {
     setSelectedSantri(santriId);
   };
@@ -207,23 +203,39 @@ export default function LaporPage() {
         throw new Error("User not authenticated");
       }
 
-      await addDoc(collection(db, "laporan"), {
-        santriId: selectedSantri,
-        ustadzId: session.user.id,
-        kategori: "hafalan",
-        tanggal: serverTimestamp(),
-        isi: {
-          surat: hafalanForm.surat,
-          ayat: hafalanForm.ayat,
-          predikat: hafalanForm.predikat,
-        },
+      // Map predikat to fluency level
+      const fluencyMap: Record<string, string> = {
+        Lancar: "excellent",
+        Mengulang: "fair",
+        Kurang: "poor",
+      };
+
+      const response = await fetch("/api/reports/quran", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: selectedSantri,
+          surah: hafalanForm.surat,
+          ayatStart: parseInt(hafalanForm.ayat.split("-")[0]) || 1,
+          ayatEnd:
+            parseInt(hafalanForm.ayat.split("-")[1] || hafalanForm.ayat) || 1,
+          fluencyLevel: fluencyMap[hafalanForm.predikat] || "good",
+          testDate: new Date().toISOString().split("T")[0],
+          notes: "",
+          mataPelajaran: "Al-Quran", // Tambahkan field mata pelajaran
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create report");
+      }
 
       toast.success("Laporan hafalan berhasil disimpan");
       setHafalanForm({ surat: "", ayat: "", predikat: "Lancar" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting hafalan report:", error);
-      toast.error("Gagal menyimpan laporan hafalan");
+      toast.error(error.message || "Gagal menyimpan laporan hafalan");
     } finally {
       setSubmitting(false);
     }
@@ -239,22 +251,31 @@ export default function LaporPage() {
         throw new Error("User not authenticated");
       }
 
-      await addDoc(collection(db, "laporan"), {
-        santriId: selectedSantri,
-        ustadzId: session.user.id,
-        kategori: "akademik",
-        tanggal: serverTimestamp(),
-        isi: {
-          mapel: akademikForm.mapel,
-          nilai: akademikForm.nilai,
-        },
+      const response = await fetch("/api/reports/academic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: selectedSantri,
+          subject: akademikForm.mapel,
+          gradeType: "number",
+          gradeNumber: akademikForm.nilai,
+          semester: "1",
+          academicYear: new Date().getFullYear().toString(),
+          notes: "",
+          mataPelajaran: akademikForm.mapel, // Tambahkan field mata pelajaran
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create report");
+      }
 
       toast.success("Laporan akademik berhasil disimpan");
       setAkademikForm({ mapel: "", nilai: 0 });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting akademik report:", error);
-      toast.error("Gagal menyimpan laporan akademik");
+      toast.error(error.message || "Gagal menyimpan laporan akademik");
     } finally {
       setSubmitting(false);
     }
@@ -270,22 +291,38 @@ export default function LaporPage() {
         throw new Error("User not authenticated");
       }
 
-      await addDoc(collection(db, "laporan"), {
-        santriId: selectedSantri,
-        ustadzId: session.user.id,
-        kategori: "perilaku",
-        tanggal: serverTimestamp(),
-        isi: {
-          catatan: perilakuForm.catatan,
-          jenis: perilakuForm.jenis,
-        },
+      const selectedSantriData = allSantriList.find(
+        (s) => s.id === selectedSantri
+      );
+
+      const response = await fetch("/api/reports/behavior", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: selectedSantri,
+          category: "behavior",
+          priority: perilakuForm.jenis === "Prestasi" ? "low" : "medium",
+          title: `Laporan ${perilakuForm.jenis}: ${
+            selectedSantriData?.name || "Santri"
+          }`,
+          description: perilakuForm.catatan,
+          incidentDate: new Date().toISOString().split("T")[0],
+          status: "open",
+          followUpRequired: false,
+          mataPelajaran: "Perilaku", // Tambahkan field mata pelajaran
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create report");
+      }
 
       toast.success("Laporan perilaku berhasil disimpan");
       setPerilakuForm({ catatan: "", jenis: "Prestasi" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting perilaku report:", error);
-      toast.error("Gagal menyimpan laporan perilaku");
+      toast.error(error.message || "Gagal menyimpan laporan perilaku");
     } finally {
       setSubmitting(false);
     }
@@ -375,7 +412,9 @@ export default function LaporPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="santri-select">Nama Santri dari Kelas Terpilih</Label>
+              <Label htmlFor="santri-select">
+                Nama Santri dari Kelas Terpilih
+              </Label>
               <select
                 id="santri-select"
                 value={selectedSantri}
@@ -415,7 +454,7 @@ export default function LaporPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("hafalan")}
-                  className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                     activeTab === "hafalan"
                       ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground"
@@ -427,7 +466,7 @@ export default function LaporPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("akademik")}
-                  className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                     activeTab === "akademik"
                       ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground"
@@ -439,7 +478,7 @@ export default function LaporPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("perilaku")}
-                  className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                     activeTab === "perilaku"
                       ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground"
@@ -498,7 +537,7 @@ export default function LaporPage() {
                       })
                     }
                     disabled={submitting}
-                    className="w-full p-2 border border rounded-md bg-background"
+                    className="w-full p-2 border rounded-md bg-background"
                   >
                     <option value="Lancar">Lancar</option>
                     <option value="Mengulang">Mengulang</option>
@@ -536,7 +575,7 @@ export default function LaporPage() {
                       })
                     }
                     disabled={submitting}
-                    className="w-full p-2 border border rounded-md bg-background"
+                    className="w-full p-2 border rounded-md bg-background"
                   >
                     <option value="">Pilih mata pelajaran</option>
                     <option value="Matematika">Matematika</option>
@@ -601,7 +640,7 @@ export default function LaporPage() {
                       })
                     }
                     disabled={submitting}
-                    className="w-full p-2 border border rounded-md bg-background"
+                    className="w-full p-2 border rounded-md bg-background"
                   >
                     <option value="Prestasi">Prestasi</option>
                     <option value="Pelanggaran">Pelanggaran</option>

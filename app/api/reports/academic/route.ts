@@ -172,6 +172,9 @@ export async function POST(request: NextRequest) {
 
     // Check if ustad has access to this student
     if (userData.role === "ustad") {
+      if (!session.user.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
       const canAccess = await canAccessStudent(
         session.user.id,
         validatedData.studentId

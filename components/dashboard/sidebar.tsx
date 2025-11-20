@@ -91,7 +91,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
     <div className="w-64 bg-white shadow-lg">
       <div className="p-6">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
             <RoleIcon className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -112,7 +112,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                 variant={isActive ? "default" : "ghost"}
                 className={cn(
                   "w-full justify-start mb-1",
-                  isActive && "bg-blue-600 text-white hover:bg-blue-700"
+                  isActive && "bg-primary text-white hover:bg-primary/90"
                 )}
               >
                 <Icon className="w-4 h-4 mr-3" />

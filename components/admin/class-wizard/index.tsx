@@ -117,7 +117,7 @@ export function CreateClassWizard({
   const handleStepClick = useCallback(
     (stepIndex: number) => {
       // Only allow navigation to completed steps or current step
-      if (stepIndex <= currentStep || stepValidation[stepIndex]) {
+      if (stepIndex <= currentStep || stepValidation[stepIndex as keyof typeof stepValidation]) {
         setCurrentStep(stepIndex);
       }
     },
@@ -126,7 +126,7 @@ export function CreateClassWizard({
 
   // Navigate to next step
   const handleNext = useCallback(() => {
-    if (currentStep < steps.length - 1 && stepValidation[currentStep]) {
+    if (currentStep < steps.length - 1 && stepValidation[currentStep as keyof typeof stepValidation]) {
       setCurrentStep((prev) => prev + 1);
     }
   }, [currentStep, stepValidation, steps.length]);
@@ -231,7 +231,7 @@ export function CreateClassWizard({
   }, [stepValidation[0], stepValidation[1]]);
 
   // Check if can proceed to next step
-  const canProceedNext = stepValidation[currentStep];
+  const canProceedNext = stepValidation[currentStep as keyof typeof stepValidation];
   const canSubmit =
     stepValidation[0] && stepValidation[1] && classData.studentIds.length > 0;
 

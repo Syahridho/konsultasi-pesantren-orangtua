@@ -1,0 +1,37 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    
+    "users": {
+      ".indexOn": ["email", "role", "createdAt"]
+    },
+    
+    "chats": {
+      "$chatId": {
+        "messages": {
+          ".indexOn": ["createdAt", "senderId"]
+        },
+        "participants": {
+          ".indexOn": ".value"
+        }
+      }
+    },
+    
+    "quranReports": {
+      ".indexOn": ["studentId", "ustadId", "createdAt", "testDate"]
+    },
+    
+    "academicReports": {
+      ".indexOn": ["studentId", "ustadId", "createdAt", "academicYear", "semester"]
+    },
+    
+    "behaviorReports": {
+      ".indexOn": ["studentId", "ustadId", "createdAt", "incidentDate", "priority", "status"]
+    },
+    
+    "classes": {
+      ".indexOn": ["ustadId", "academicYear"]
+    }
+  }
+}

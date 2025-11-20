@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatWindow from "@/components/chat/ChatWindow";
 import { toast } from "sonner";
@@ -96,8 +97,22 @@ export default function DashboardChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-200px)] bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="flex h-full relative">
+    <div className="h-[calc(100vh-200px)] bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+      {/* Navigation Bar */}
+      <div className="border-b bg-white px-4 py-3 flex items-center gap-3 shrink-0">
+        <Link href="/dashboard">
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Dashboard
+          </Button>
+        </Link>
+        <div className="flex-1 text-center">
+          <h1 className="text-lg font-semibold">Chat</h1>
+        </div>
+        <div className="w-24"></div>
+      </div>
+      
+      <div className="flex flex-1 relative overflow-hidden">
         {/* Mobile Sidebar Toggle */}
         <div className="md:hidden absolute top-4 left-4 z-20">
           <Button

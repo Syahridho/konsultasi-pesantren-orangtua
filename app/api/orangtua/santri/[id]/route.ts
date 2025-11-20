@@ -32,25 +32,39 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get santri data
-    const santriRef = ref(
+    // Try NEW FORMAT first: santri as separate user
+    const santriUserRef = ref(database, `users/${santriId}`);
+    const santriUserSnapshot = await get(santriUserRef);
+
+    if (santriUserSnapshot.exists()) {
+      const santriData = santriUserSnapshot.val();
+      
+      // Verify this santri belongs to current parent
+      if (santriData.parentId === session.user.id) {
+        return NextResponse.json({
+          santri: santriData,
+        });
+      }
+    }
+
+    // Fallback to OLD FORMAT: embedded santri data
+    const santriEmbeddedRef = ref(
       database,
       `users/${session.user.id}/santri/${santriId}`
     );
-    const santriSnapshot = await get(santriRef);
+    const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
-    if (!santriSnapshot.exists()) {
-      return NextResponse.json({ error: "Santri not found" }, { status: 404 });
+    if (santriEmbeddedSnapshot.exists()) {
+      const santriData = santriEmbeddedSnapshot.val();
+      return NextResponse.json({
+        santri: {
+          id: santriId,
+          ...santriData,
+        },
+      });
     }
 
-    const santriData = santriSnapshot.val();
-
-    return NextResponse.json({
-      santri: {
-        id: santriId,
-        ...santriData,
-      },
-    });
+    return NextResponse.json({ error: "Santri not found" }, { status: 404 });
   } catch (error) {
     console.error("Error fetching santri details:", error);
     return NextResponse.json(
@@ -72,7 +86,8 @@ export async function PUT(
     }
 
     const { id: santriId } = await params;
-    const { santriData } = await request.json();
+    const { santriData, studentData } = await request.json();
+    const data = santriData || studentData; // Support both field names
 
     // Get current user's data from Firebase
     const userRef = ref(database, `users/${session.user.id}`);
@@ -90,38 +105,76 @@ export async function PUT(
     }
 
     // Validate required fields
-    if (!santriData.name || !santriData.tanggalLahir) {
+    if (!data.name || !data.tanggalLahir) {
       return NextResponse.json(
         { error: "Santri name and birth date are required" },
         { status: 400 }
       );
     }
 
-    // Update santri data in Firebase
-    const santriRef = ref(
+    // Try NEW FORMAT first: santri as separate user
+    const santriUserRef = ref(database, `users/${santriId}`);
+    const santriUserSnapshot = await get(santriUserRef);
+
+    if (santriUserSnapshot.exists()) {
+      const santriData = santriUserSnapshot.val();
+      
+      // Verify this santri belongs to current parent
+      if (santriData.parentId === session.user.id) {
+        const updateData = {
+          name: data.name,
+          nis: data.nis || "",
+          entryYear: data.tahunDaftar || new Date().getFullYear().toString(),
+          gender: data.gender || "",
+          tempatLahir: data.tempatLahir || "",
+          tanggalLahir: data.tanggalLahir,
+          updatedAt: new Date().toISOString(),
+        };
+
+        await update(santriUserRef, updateData);
+
+        return NextResponse.json({
+          message: "Santri updated successfully",
+          santri: {
+            ...santriData,
+            ...updateData,
+          },
+        });
+      } else {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+    }
+
+    // Fallback to OLD FORMAT: embedded santri data
+    const santriEmbeddedRef = ref(
       database,
       `users/${session.user.id}/santri/${santriId}`
     );
-    const updateData = {
-      name: santriData.name,
-      nis: santriData.nis || "",
-      tahunDaftar:
-        santriData.tahunDaftar || new Date().getFullYear().toString(),
-      gender: santriData.gender || "",
-      tempatLahir: santriData.tempatLahir || "",
-      tanggalLahir: santriData.tanggalLahir,
-      updatedAt: new Date().toISOString(),
-    };
+    const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
-    await update(santriRef, updateData);
+    if (santriEmbeddedSnapshot.exists()) {
+      const updateData = {
+        name: data.name,
+        nis: data.nis || "",
+        tahunDaftar: data.tahunDaftar || new Date().getFullYear().toString(),
+        gender: data.gender || "",
+        tempatLahir: data.tempatLahir || "",
+        tanggalLahir: data.tanggalLahir,
+        updatedAt: new Date().toISOString(),
+      };
 
-    return NextResponse.json({
-      message: "Santri updated successfully",
-      santri: {
-        id: santriId,
-        ...updateData,
-      },
-    });
+      await update(santriEmbeddedRef, updateData);
+
+      return NextResponse.json({
+        message: "Santri updated successfully",
+        santri: {
+          id: santriId,
+          ...updateData,
+        },
+      });
+    }
+
+    return NextResponse.json({ error: "Santri not found" }, { status: 404 });
   } catch (error) {
     console.error("Error updating santri:", error);
     return NextResponse.json(
@@ -159,17 +212,53 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Delete santri from Firebase
-    const santriRef = ref(
+    // Try NEW FORMAT first: santri as separate user
+    const santriUserRef = ref(database, `users/${santriId}`);
+    const santriUserSnapshot = await get(santriUserRef);
+
+    if (santriUserSnapshot.exists()) {
+      const santriData = santriUserSnapshot.val();
+      
+      // Verify this santri belongs to current parent
+      if (santriData.parentId === session.user.id) {
+        // Delete santri user
+        await remove(santriUserRef);
+
+        // Remove from parent's studentIds
+        const currentStudentIds = userData.studentIds || [];
+        const updatedStudentIds = currentStudentIds.filter((id: string) => id !== santriId);
+        
+        await update(userRef, {
+          studentIds: updatedStudentIds,
+          updatedAt: new Date().toISOString(),
+        });
+
+        return NextResponse.json({
+          message: "Santri deleted successfully",
+          santriId,
+        });
+      } else {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+    }
+
+    // Fallback to OLD FORMAT: embedded santri data
+    const santriEmbeddedRef = ref(
       database,
       `users/${session.user.id}/santri/${santriId}`
     );
-    await remove(santriRef);
+    const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
-    return NextResponse.json({
-      message: "Santri deleted successfully",
-      santriId,
-    });
+    if (santriEmbeddedSnapshot.exists()) {
+      await remove(santriEmbeddedRef);
+
+      return NextResponse.json({
+        message: "Santri deleted successfully",
+        santriId,
+      });
+    }
+
+    return NextResponse.json({ error: "Santri not found" }, { status: 404 });
   } catch (error) {
     console.error("Error deleting santri:", error);
     return NextResponse.json(
@@ -187,7 +276,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { santriData } = await request.json();
+    const { santriData, studentData } = await request.json();
+    const data = santriData || studentData; // Support both field names
 
     // Get current user's data from Firebase
     const userRef = ref(database, `users/${session.user.id}`);
@@ -205,37 +295,51 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate required fields
-    if (!santriData.name || !santriData.tanggalLahir) {
+    if (!data.name || !data.tanggalLahir) {
       return NextResponse.json(
         { error: "Santri name and birth date are required" },
         { status: 400 }
       );
     }
 
-    // Add new santri to Firebase
-    const studentsRef = ref(database, `users/${session.user.id}/santri`);
-    const newSantriRef = push(studentsRef);
-    const newSantriId = newSantriRef.key;
+    // NEW FORMAT: Create santri as a separate user in root users/
+    const usersRef = ref(database, `users`);
+    const newSantriRef = push(usersRef);
+    const newSantriId = newSantriRef.key!;
 
     const newSantriData = {
-      name: santriData.name,
-      nis: santriData.nis || "",
-      tahunDaftar:
-        santriData.tahunDaftar || new Date().getFullYear().toString(),
-      gender: santriData.gender || "",
-      tempatLahir: santriData.tempatLahir || "",
-      tanggalLahir: santriData.tanggalLahir,
+      id: newSantriId,
+      name: data.name,
+      email: `santri_${newSantriId}@pesantren.local`, // Dummy email for display
+      role: "santri",
+      nis: data.nis || "",
+      entryYear: data.tahunDaftar || new Date().getFullYear().toString(),
+      status: "active",
+      phone: "",
+      gender: data.gender || "",
+      tempatLahir: data.tempatLahir || "",
+      tanggalLahir: data.tanggalLahir,
+      parentId: session.user.id, // Link to parent
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
+    // Save santri to database as separate user
     await set(newSantriRef, newSantriData);
+
+    // Update parent's studentIds array
+    const currentStudentIds = userData.studentIds || [];
+    const updatedStudentIds = [...currentStudentIds, newSantriId];
+    
+    await update(userRef, {
+      studentIds: updatedStudentIds,
+      updatedAt: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       message: "Santri added successfully",
-      santri: {
-        id: newSantriId,
-        ...newSantriData,
-      },
+      santri: newSantriData,
+      santriId: newSantriId,
     });
   } catch (error) {
     console.error("Error adding santri:", error);

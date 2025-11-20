@@ -1,0 +1,1642 @@
+{
+  "chats": {
+    "-OeM7JT2jYcCxINc2QsP": {
+      "createdAt": "2025-11-18T13:22:12.003Z",
+      "lastMessage": "asdasd",
+      "lastMessageTime": "2025-11-18T13:55:44.206Z",
+      "messages": {
+        "-OeM7KLmqkYTBSvaeJgx": {
+          "createdAt": "2025-11-18T13:22:15.634Z",
+          "senderId": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+          "senderName": "syahridho",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:22:18.924Z",
+            "read": "2025-11-18T13:22:20.117Z",
+            "sent": "2025-11-18T13:22:15.634Z"
+          },
+          "text": "halo"
+        },
+        "-OeM7P-X42sfz9uImB9f": {
+          "createdAt": "2025-11-18T13:22:34.689Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:22:34.747Z",
+            "read": "2025-11-18T13:22:35.782Z",
+            "sent": "2025-11-18T13:22:34.690Z"
+          },
+          "text": "iyaa pak"
+        },
+        "-OeM7S0kmo0PcxWe5lBs": {
+          "createdAt": "2025-11-18T13:22:47.056Z",
+          "senderId": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+          "senderName": "syahridho",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:22:47.114Z",
+            "read": "2025-11-18T13:22:48.146Z",
+            "sent": "2025-11-18T13:22:47.056Z"
+          },
+          "text": "anak lu menrokok sekolah mbak"
+        },
+        "-OeM7Ucs0y8tO7YfJ-un": {
+          "createdAt": "2025-11-18T13:22:57.751Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:22:57.809Z",
+            "read": "2025-11-18T13:22:58.844Z",
+            "sent": "2025-11-18T13:22:57.751Z"
+          },
+          "text": "pukull aja pak"
+        },
+        "-OeM8hFohHFWTaIC0iuD": {
+          "createdAt": "2025-11-18T13:28:15.700Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "read": "2025-11-18T13:34:58.282Z",
+            "sent": "2025-11-18T13:28:15.700Z"
+          },
+          "text": "halo"
+        },
+        "-OeMAMZscMJUhjzuZI10": {
+          "createdAt": "2025-11-18T13:35:31.159Z",
+          "senderId": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+          "senderName": "syahridho",
+          "status": "read",
+          "statusTimestamp": {
+            "read": "2025-11-18T13:36:55.850Z",
+            "sent": "2025-11-18T13:35:31.159Z"
+          },
+          "text": "halo"
+        },
+        "-OeMAyeQCXLaSslTqvmv": {
+          "createdAt": "2025-11-18T13:38:11.258Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:38:19.401Z",
+            "read": "2025-11-18T13:38:24.243Z",
+            "sent": "2025-11-18T13:38:11.258Z"
+          },
+          "text": "ya pak"
+        },
+        "-OeMC-A8C9a_epC-yrJO": {
+          "createdAt": "2025-11-18T13:42:39.592Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "read": "2025-11-18T13:42:47.071Z",
+            "sent": "2025-11-18T13:42:39.592Z"
+          },
+          "text": "halo"
+        },
+        "-OeMC0MhmCy0cJqaUIFx": {
+          "createdAt": "2025-11-18T13:42:44.492Z",
+          "senderId": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+          "senderName": "syahridho",
+          "status": "read",
+          "statusTimestamp": {
+            "read": "2025-11-18T13:42:47.065Z",
+            "sent": "2025-11-18T13:42:44.492Z"
+          },
+          "text": "oyaa pak"
+        },
+        "-OeMCieWkFbozy_0M1H7": {
+          "createdAt": "2025-11-18T13:45:50.016Z",
+          "senderId": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+          "senderName": "syahridho",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:45:50.455Z",
+            "read": "2025-11-18T13:45:51.700Z",
+            "sent": "2025-11-18T13:45:50.016Z"
+          },
+          "text": "halo"
+        },
+        "-OeMCjvF1egtEkYoy7t6": {
+          "createdAt": "2025-11-18T13:45:55.183Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:45:55.477Z",
+            "read": "2025-11-18T13:45:57.256Z",
+            "sent": "2025-11-18T13:45:55.183Z"
+          },
+          "text": "iyaa pak"
+        },
+        "-OeMEyjEtHJIk89w3UsK": {
+          "createdAt": "2025-11-18T13:55:40.142Z",
+          "senderId": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+          "senderName": "syahridho",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:55:40.444Z",
+            "read": "2025-11-18T13:55:42.421Z",
+            "sent": "2025-11-18T13:55:40.142Z"
+          },
+          "text": "iyta lasad"
+        },
+        "-OeMEzi0IaNra9hpjA3Z": {
+          "createdAt": "2025-11-18T13:55:44.160Z",
+          "senderId": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+          "senderName": "Orang Tua Sinta",
+          "status": "read",
+          "statusTimestamp": {
+            "delivered": "2025-11-18T13:55:44.465Z",
+            "read": "2025-11-18T13:55:45.830Z",
+            "sent": "2025-11-18T13:55:44.160Z"
+          },
+          "text": "asdasd"
+        }
+      },
+      "participant1Id": "lhdeTNqeZFYZdb6Kx88VjZHroLm2",
+      "participant1Name": "syahridho",
+      "participant2Id": "VMUFlEdhFBZMlbodVGzmd7phDU42",
+      "participant2Name": "Orang Tua Sinta"
+    },
+    "-OeNPHTgXozQ-NbOoNgN": {
+      "createdAt": "2025-11-18T19:20:19.200Z",
+      "lastMessage": "hallo",
+      "lastMessageTime": "2025-11-18T19:20:26.547Z",
+      "messages": {
+        "-OeNPIINj6QSRTIxv_zL": {
+          "createdAt": "2025-11-18T19:20:22.571Z",
+          "senderId": "W1JhgIagJkZxc1GyWFWUXtCNaOB2",
+          "senderName": "Safiyyah Nabil",
+          "status": "sent",
+          "statusTimestamp": {
+            "sent": "2025-11-18T19:20:22.571Z"
+          },
+          "text": "p"
+        },
+        "-OeNPJFgLllo8bOhSBrU": {
+          "createdAt": "2025-11-18T19:20:26.495Z",
+          "senderId": "W1JhgIagJkZxc1GyWFWUXtCNaOB2",
+          "senderName": "Safiyyah Nabil",
+          "status": "sent",
+          "statusTimestamp": {
+            "sent": "2025-11-18T19:20:26.495Z"
+          },
+          "text": "hallo"
+        }
+      },
+      "participant1Id": "W1JhgIagJkZxc1GyWFWUXtCNaOB2",
+      "participant1Name": "Safiyyah Nabil",
+      "participant2Id": "7rv6FB9lwUeZ3al7yVe9Q9YwwuS2",
+      "participant2Name": "Umar Fadil"
+    }
+  },
+  "classes": {
+    "-OeN2_s3zOrkT4a0zElK": {
+      "academicYear": "2025/2026",
+      "createdAt": "2025-11-18T17:41:09.342Z",
+      "createdBy": "k6f5vL3tkLg91Yw1eMpmz7hMuyt1",
+      "createdByName": "Admin Utama",
+      "name": "Kelas 2B",
+      "schedule": {
+        "days": [
+          "Kamis"
+        ],
+        "endTime": "10:00",
+        "startTime": "09:30"
+      },
+      "status": "active",
+      "studentIds": {
+        "67qxgTNAXpZmyHUJNJsZBde7ixw1": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "8Xgqai07qSMtJlHLuYIp8Nl4scU2": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "BVlxvy0MVyWqUNM5pkrWn0VHtiz1": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "C05Ns8nJRnYBnRTxJYC7FULT5IG2": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "IVJIcy3KcjPvaYxeQ9r4rUFqr642": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "PHew5B9adChxvBUbJr7G9cQC6MJ2": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "Vn9uWjtJiLXLRkcZajAjzgZq4Hz1": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "bOGVQETLxseYxxlpK1YhuSxOri72": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "f5S2gyPjltbsRX1XzTK8Gk8bZWH3": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "fYx0sJ9M6ehNhR5NaqmWi2GWPzx1": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        },
+        "gffbOjXiWoWF2vTeUnTyvhmTJy22": {
+          "enrolledAt": "2025-11-18T17:41:09.342Z",
+          "status": "active"
+        }
+      },
+      "ustadId": "E5Ri4rW9BaTDRwAUErQBA1bQQqR2",
+      "ustadName": "Siti Ghani"
+    },
+    "-OeNDg9NRv2af4O2l9nf": {
+      "academicYear": "2025/2026",
+      "createdAt": "2025-11-18T18:29:38.668Z",
+      "createdBy": "k6f5vL3tkLg91Yw1eMpmz7hMuyt1",
+      "createdByName": "Admin Utama",
+      "name": "Akidah ",
+      "schedule": {
+        "days": [
+          "Kamis"
+        ],
+        "endTime": "09:00",
+        "startTime": "08:30"
+      },
+      "status": "active",
+      "studentIds": {
+        "67qxgTNAXpZmyHUJNJsZBde7ixw1": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "8Xgqai07qSMtJlHLuYIp8Nl4scU2": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "BVlxvy0MVyWqUNM5pkrWn0VHtiz1": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "C05Ns8nJRnYBnRTxJYC7FULT5IG2": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "IVJIcy3KcjPvaYxeQ9r4rUFqr642": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "PHew5B9adChxvBUbJr7G9cQC6MJ2": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "Vn9uWjtJiLXLRkcZajAjzgZq4Hz1": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "bOGVQETLxseYxxlpK1YhuSxOri72": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "f5S2gyPjltbsRX1XzTK8Gk8bZWH3": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "fYx0sJ9M6ehNhR5NaqmWi2GWPzx1": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        },
+        "gffbOjXiWoWF2vTeUnTyvhmTJy22": {
+          "enrolledAt": "2025-11-18T18:29:38.667Z",
+          "status": "active"
+        }
+      },
+      "ustadId": "W1JhgIagJkZxc1GyWFWUXtCNaOB2",
+      "ustadName": "Safiyyah Nabil"
+    }
+  },
+  "users": {
+    "0sMcVynIAteQdKZZuzaRrlq0j2F2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:04.125Z",
+      "currentClasses": 1,
+      "email": "ustad5@pesantren.test",
+      "id": "0sMcVynIAteQdKZZuzaRrlq0j2F2",
+      "name": "Sumayyah Rashid",
+      "phone": "08257139760",
+      "role": "ustad",
+      "specialization": "Ilmu Tajwid",
+      "updatedAt": "2025-11-18T17:35:04.125Z"
+    },
+    "1kEY0TXdDGM4ftRz5EcW6GBwNQ73": {
+      "createdAt": "2025-11-18T15:19:48.245Z",
+      "email": "asdfg@gmail.com",
+      "name": "asdfg",
+      "role": "orangtua",
+      "students": [
+        {
+          "gender": "L",
+          "name": "asdfg",
+          "nis": "12345",
+          "tahunDaftar": "12345",
+          "tanggalLahir": "2025-11-14",
+          "tempatLahir": "pekanbaru"
+        }
+      ]
+    },
+    "25GvEba5V0fNhjq6pBjEMThZhUp1": {
+      "createdAt": "2025-11-18T17:35:55.770Z",
+      "email": "santri13@pesantren.test",
+      "entryYear": "2023",
+      "id": "25GvEba5V0fNhjq6pBjEMThZhUp1",
+      "name": "Hasan Majid",
+      "parentId": "tmU2HHwVX9Wnk1RZB3XAYdgug052",
+      "phone": "08828870518",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:55.770Z"
+    },
+    "26zRqo67jDRPf79IrsOGGY4Dlwz1": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:08.637Z",
+      "currentClasses": 4,
+      "email": "ustad8@pesantren.test",
+      "id": "26zRqo67jDRPf79IrsOGGY4Dlwz1",
+      "name": "Bilal Fadil",
+      "phone": "08379078660",
+      "role": "ustad",
+      "specialization": "Akhlak & Tasawuf",
+      "updatedAt": "2025-11-18T17:35:08.637Z"
+    },
+    "3VZDUxdKAEa7XzYvTndM2XblRqv1": {
+      "createdAt": "2025-11-18T17:36:05.065Z",
+      "email": "orangtua17@pesantren.test",
+      "id": "3VZDUxdKAEa7XzYvTndM2XblRqv1",
+      "name": "Fatimah Habib",
+      "phone": "08911267063",
+      "role": "orangtua",
+      "studentIds": [
+        "hzKJTU9InZSxvZwkhyk0XqoqdMr1"
+      ],
+      "updatedAt": "2025-11-18T17:36:05.066Z"
+    },
+    "55Vmn0rwr8VL2xEE9ye7KhekSzv2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:09.946Z",
+      "currentClasses": 4,
+      "email": "ustad9@pesantren.test",
+      "id": "55Vmn0rwr8VL2xEE9ye7KhekSzv2",
+      "name": "Hafsah Faris",
+      "phone": "08285919250",
+      "role": "ustad",
+      "specialization": "Hadits",
+      "updatedAt": "2025-11-18T17:35:09.946Z"
+    },
+    "5FRzrGyNLPb2mXyzudFDD44TaYO2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:16.940Z",
+      "currentClasses": 0,
+      "email": "ustad14@pesantren.test",
+      "id": "5FRzrGyNLPb2mXyzudFDD44TaYO2",
+      "name": "Husain Zakir",
+      "phone": "08223274419",
+      "role": "ustad",
+      "specialization": "Nahwu & Sharaf",
+      "updatedAt": "2025-11-18T17:35:16.941Z"
+    },
+    "65AhwiclarVYw4P8v7buCTlAtpZ2": {
+      "createdAt": "2025-11-18T17:35:44.165Z",
+      "email": "orangtua8@pesantren.test",
+      "id": "65AhwiclarVYw4P8v7buCTlAtpZ2",
+      "name": "Safiyyah Nabil",
+      "phone": "08258497771",
+      "role": "orangtua",
+      "studentIds": [
+        "e8sC1lVvt7bjMID16PoegQyS08d2"
+      ],
+      "updatedAt": "2025-11-18T17:35:44.165Z"
+    },
+    "67qxgTNAXpZmyHUJNJsZBde7ixw1": {
+      "createdAt": "2025-11-18T17:36:30.417Z",
+      "email": "santri28@pesantren.test",
+      "entryYear": "2022",
+      "id": "67qxgTNAXpZmyHUJNJsZBde7ixw1",
+      "name": "Ismail Tahir",
+      "parentId": "9jwYpjnBtNaxvyYUauLIGrFoize2",
+      "phone": "08961374497",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:30.417Z"
+    },
+    "6MAi04x1oPSztrWaqpYJsYCigjp1": {
+      "createdAt": "2025-11-18T17:35:34.832Z",
+      "email": "santri4@pesantren.test",
+      "entryYear": "2023",
+      "id": "6MAi04x1oPSztrWaqpYJsYCigjp1",
+      "name": "Hafshah Malik",
+      "parentId": "C70lMvQbGIhoHYbQ6xoGxWKPK3b2",
+      "phone": "08512780505",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:34.832Z"
+    },
+    "7rv6FB9lwUeZ3al7yVe9Q9YwwuS2": {
+      "createdAt": "2025-11-18T17:36:02.849Z",
+      "email": "orangtua16@pesantren.test",
+      "id": "7rv6FB9lwUeZ3al7yVe9Q9YwwuS2",
+      "name": "Umar Fadil",
+      "phone": "08403182908",
+      "role": "orangtua",
+      "studentIds": [
+        "CuYoL9KsoAaBtdSwhNjwZbnYcds1"
+      ],
+      "updatedAt": "2025-11-18T17:36:02.849Z"
+    },
+    "87dGJnxwZZTko3ln3Bsevl8jzgi2": {
+      "createdAt": "2025-11-18T17:35:30.429Z",
+      "email": "orangtua2@pesantren.test",
+      "id": "87dGJnxwZZTko3ln3Bsevl8jzgi2",
+      "name": "Hamzah Faris",
+      "phone": "08616420388",
+      "role": "orangtua",
+      "studentIds": [
+        "Swf6meB9PJQuQy755LY44XGa3K42"
+      ],
+      "updatedAt": "2025-11-18T17:35:30.429Z"
+    },
+    "8Xgqai07qSMtJlHLuYIp8Nl4scU2": {
+      "createdAt": "2025-11-18T17:35:51.426Z",
+      "email": "santri11@pesantren.test",
+      "entryYear": "2022",
+      "id": "8Xgqai07qSMtJlHLuYIp8Nl4scU2",
+      "name": "Khadijah Hadi",
+      "parentId": "cB1Kh8aWr4cpvUacJ7E5zwv8eF12",
+      "phone": "08484361804",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:35:51.426Z"
+    },
+    "8lTFame4eBQIPDHq8sTesZJ3L6k2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:07.175Z",
+      "currentClasses": 1,
+      "email": "ustad7@pesantren.test",
+      "id": "8lTFame4eBQIPDHq8sTesZJ3L6k2",
+      "name": "Muhammad Tahir",
+      "phone": "08750882674",
+      "role": "ustad",
+      "specialization": "Tafsir",
+      "updatedAt": "2025-11-18T17:35:07.175Z"
+    },
+    "96BqIkTlIsM8dpE9cOy3JP8PTG33": {
+      "createdAt": "2025-11-18T17:36:39.437Z",
+      "email": "santri32@pesantren.test",
+      "entryYear": "2023",
+      "id": "96BqIkTlIsM8dpE9cOy3JP8PTG33",
+      "name": "Aminah Latif",
+      "parentId": "oPQcYSzZFNYSUWPHJ5c18GoP7kt1",
+      "phone": "08971132181",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:39.437Z"
+    },
+    "9jwYpjnBtNaxvyYUauLIGrFoize2": {
+      "createdAt": "2025-11-18T17:36:30.465Z",
+      "email": "orangtua28@pesantren.test",
+      "id": "9jwYpjnBtNaxvyYUauLIGrFoize2",
+      "name": "Aminah Majid",
+      "phone": "08937225880",
+      "role": "orangtua",
+      "studentIds": [
+        "67qxgTNAXpZmyHUJNJsZBde7ixw1"
+      ],
+      "updatedAt": "2025-11-18T17:36:30.465Z"
+    },
+    "9tKQMcGGduSFeCGphZfQdjN3RjF3": {
+      "createdAt": "2025-11-18T17:36:21.265Z",
+      "email": "santri24@pesantren.test",
+      "entryYear": "2023",
+      "id": "9tKQMcGGduSFeCGphZfQdjN3RjF3",
+      "name": "Abdul Malik",
+      "parentId": "PAgKK14rZYOmC0JUKwDTHuY69yv2",
+      "phone": "08295654628",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:21.266Z"
+    },
+    "BVlxvy0MVyWqUNM5pkrWn0VHtiz1": {
+      "createdAt": "2025-11-18T17:36:58.951Z",
+      "email": "santri40@pesantren.test",
+      "entryYear": "2022",
+      "id": "BVlxvy0MVyWqUNM5pkrWn0VHtiz1",
+      "name": "Bilal Rahim",
+      "parentId": "JhRvFzXPl8RX5fWxutHkTHZqK7g2",
+      "phone": "08221139279",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:58.951Z"
+    },
+    "C05Ns8nJRnYBnRTxJYC7FULT5IG2": {
+      "createdAt": "2025-11-18T17:36:18.813Z",
+      "email": "santri23@pesantren.test",
+      "entryYear": "2022",
+      "id": "C05Ns8nJRnYBnRTxJYC7FULT5IG2",
+      "name": "Abdullah Idris",
+      "parentId": "gl3QS5H3UuVVNQUrJyij8hRqY4j1",
+      "phone": "08435408509",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:18.814Z"
+    },
+    "C356oOkN9CVpGXjSaYOEoRacYs03": {
+      "createdAt": "2025-11-18T17:36:53.977Z",
+      "email": "orangtua38@pesantren.test",
+      "id": "C356oOkN9CVpGXjSaYOEoRacYs03",
+      "name": "Hafshah Salim",
+      "phone": "08411745339",
+      "role": "orangtua",
+      "studentIds": [
+        "tkOjEsZl13SqO3psDB2bEAutvL12"
+      ],
+      "updatedAt": "2025-11-18T17:36:53.977Z"
+    },
+    "C70lMvQbGIhoHYbQ6xoGxWKPK3b2": {
+      "createdAt": "2025-11-18T17:35:34.884Z",
+      "email": "orangtua4@pesantren.test",
+      "id": "C70lMvQbGIhoHYbQ6xoGxWKPK3b2",
+      "name": "Ibrahim Tahir",
+      "phone": "08363532528",
+      "role": "orangtua",
+      "studentIds": [
+        "6MAi04x1oPSztrWaqpYJsYCigjp1"
+      ],
+      "updatedAt": "2025-11-18T17:35:34.884Z"
+    },
+    "CGMUP11iXTVLCs7qe8FSgXKtXIo1": {
+      "createdAt": "2025-11-18T17:36:56.702Z",
+      "email": "orangtua39@pesantren.test",
+      "id": "CGMUP11iXTVLCs7qe8FSgXKtXIo1",
+      "name": "Abdul Majid",
+      "phone": "08308616609",
+      "role": "orangtua",
+      "studentIds": [
+        "T3vEDgUJUmPxJR8tV7FGLfRA52y1"
+      ],
+      "updatedAt": "2025-11-18T17:36:56.702Z"
+    },
+    "CuYoL9KsoAaBtdSwhNjwZbnYcds1": {
+      "createdAt": "2025-11-18T17:36:02.800Z",
+      "email": "santri16@pesantren.test",
+      "entryYear": "2025",
+      "id": "CuYoL9KsoAaBtdSwhNjwZbnYcds1",
+      "name": "Fatimah Munir",
+      "parentId": "7rv6FB9lwUeZ3al7yVe9Q9YwwuS2",
+      "phone": "08749462797",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:02.800Z"
+    },
+    "E5Ri4rW9BaTDRwAUErQBA1bQQqR2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:01.301Z",
+      "currentClasses": 1,
+      "email": "ustad3@pesantren.test",
+      "id": "E5Ri4rW9BaTDRwAUErQBA1bQQqR2",
+      "name": "Siti Ghani",
+      "phone": "08700630360",
+      "role": "ustad",
+      "specialization": "Sejarah Islam",
+      "updatedAt": "2025-11-18T17:35:01.301Z"
+    },
+    "FQjUkYDXyZbKtF2sy1SVDsG7X8v2": {
+      "createdAt": "2025-11-18T17:35:37.463Z",
+      "email": "santri5@pesantren.test",
+      "entryYear": "2025",
+      "id": "FQjUkYDXyZbKtF2sy1SVDsG7X8v2",
+      "name": "Zainab Munir",
+      "parentId": "zaYs5qWx8va3euZHGnIyhON76Kw1",
+      "phone": "08676535415",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:35:37.463Z"
+    },
+    "G5DjaL3ZtsbskUp3nFI46MfngIl2": {
+      "createdAt": "2025-11-18T17:36:23.491Z",
+      "email": "santri25@pesantren.test",
+      "entryYear": "2023",
+      "id": "G5DjaL3ZtsbskUp3nFI46MfngIl2",
+      "name": "Salman Ghani",
+      "parentId": "KSqybZZHULT5TwXNqSCcaZiBNvq2",
+      "phone": "08736471417",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:23.491Z"
+    },
+    "GRwL1FJ7WwYCAG5tWmMWo49E68R2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:22.388Z",
+      "currentClasses": 0,
+      "email": "ustad18@pesantren.test",
+      "id": "GRwL1FJ7WwYCAG5tWmMWo49E68R2",
+      "name": "Ali Nasir",
+      "phone": "08332220975",
+      "role": "ustad",
+      "specialization": "Bahasa Arab",
+      "updatedAt": "2025-11-18T17:35:22.388Z"
+    },
+    "H3C12U6xMqeT81hlPddDnEFzhED2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:14.194Z",
+      "currentClasses": 1,
+      "email": "ustad12@pesantren.test",
+      "id": "H3C12U6xMqeT81hlPddDnEFzhED2",
+      "name": "Fatimah Tahir",
+      "phone": "08632087522",
+      "role": "ustad",
+      "specialization": "Ilmu Tajwid",
+      "updatedAt": "2025-11-18T17:35:14.194Z"
+    },
+    "ICEcUMZmVlPgXbnk7sw8FI9bh0F3": {
+      "createdAt": "2025-11-18T17:35:58.409Z",
+      "email": "orangtua14@pesantren.test",
+      "id": "ICEcUMZmVlPgXbnk7sw8FI9bh0F3",
+      "name": "Aminah Hadi",
+      "phone": "08462152129",
+      "role": "orangtua",
+      "studentIds": [
+        "cBz0PuMNFqeZppRnZAc4CPiayO13"
+      ],
+      "updatedAt": "2025-11-18T17:35:58.409Z"
+    },
+    "IVJIcy3KcjPvaYxeQ9r4rUFqr642": {
+      "createdAt": "2025-11-18T17:35:28.004Z",
+      "email": "santri1@pesantren.test",
+      "entryYear": "2022",
+      "id": "IVJIcy3KcjPvaYxeQ9r4rUFqr642",
+      "name": "Umar Rashid",
+      "parentId": "JRZ2uRI850UF3AF0JKcMihcGwSj1",
+      "phone": "08227320829",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:28.004Z"
+    },
+    "JRZ2uRI850UF3AF0JKcMihcGwSj1": {
+      "createdAt": "2025-11-18T17:35:28.052Z",
+      "email": "orangtua1@pesantren.test",
+      "id": "JRZ2uRI850UF3AF0JKcMihcGwSj1",
+      "name": "Siti Jabir",
+      "phone": "08122145306",
+      "role": "orangtua",
+      "studentIds": [
+        "IVJIcy3KcjPvaYxeQ9r4rUFqr642"
+      ],
+      "updatedAt": "2025-11-18T17:35:28.052Z"
+    },
+    "JhRvFzXPl8RX5fWxutHkTHZqK7g2": {
+      "createdAt": "2025-11-18T17:36:59.000Z",
+      "email": "orangtua40@pesantren.test",
+      "id": "JhRvFzXPl8RX5fWxutHkTHZqK7g2",
+      "name": "Sumayyah Tahir",
+      "phone": "08783710328",
+      "role": "orangtua",
+      "studentIds": [
+        "BVlxvy0MVyWqUNM5pkrWn0VHtiz1"
+      ],
+      "updatedAt": "2025-11-18T17:36:59.000Z"
+    },
+    "K1SNqbGgLoR9voJ1Ty9uJl8Oam93": {
+      "createdAt": "2025-11-18T17:35:32.610Z",
+      "email": "santri3@pesantren.test",
+      "entryYear": "2023",
+      "id": "K1SNqbGgLoR9voJ1Ty9uJl8Oam93",
+      "name": "Zahra Aziz",
+      "parentId": "Wtr55uFrZsPNRhNBhOcY2ebUUYE3",
+      "phone": "08576642944",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:35:32.610Z"
+    },
+    "KSYmVET0G1SPn2UuTo7rKdimMbp1": {
+      "createdAt": "2025-11-18T17:36:27.891Z",
+      "email": "orangtua27@pesantren.test",
+      "id": "KSYmVET0G1SPn2UuTo7rKdimMbp1",
+      "name": "Ummu Habib",
+      "phone": "08731586023",
+      "role": "orangtua",
+      "studentIds": [
+        "saptH8WuopYs7OfhOb6kzlD7lu63"
+      ],
+      "updatedAt": "2025-11-18T17:36:27.891Z"
+    },
+    "KSqybZZHULT5TwXNqSCcaZiBNvq2": {
+      "createdAt": "2025-11-18T17:36:23.539Z",
+      "email": "orangtua25@pesantren.test",
+      "id": "KSqybZZHULT5TwXNqSCcaZiBNvq2",
+      "name": "Ummu Rahman",
+      "phone": "08214609489",
+      "role": "orangtua",
+      "studentIds": [
+        "G5DjaL3ZtsbskUp3nFI46MfngIl2"
+      ],
+      "updatedAt": "2025-11-18T17:36:23.539Z"
+    },
+    "MCO9mOWVkXeAIrKAcIALG7CC0Jm2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:18.275Z",
+      "currentClasses": 3,
+      "email": "ustad15@pesantren.test",
+      "id": "MCO9mOWVkXeAIrKAcIALG7CC0Jm2",
+      "name": "Abdullah Rahman",
+      "phone": "08828988131",
+      "role": "ustad",
+      "specialization": "Tahfidz Al-Quran",
+      "updatedAt": "2025-11-18T17:35:18.275Z"
+    },
+    "MqaD6ufgdSPzq5dyfTXh6c5KYm52": {
+      "createdAt": "2025-11-18T17:36:44.678Z",
+      "email": "orangtua34@pesantren.test",
+      "id": "MqaD6ufgdSPzq5dyfTXh6c5KYm52",
+      "name": "Yusuf Latif",
+      "phone": "08282101722",
+      "role": "orangtua",
+      "studentIds": [
+        "p89ZkyE5qNgX6wK1XXiwSoeSRqS2"
+      ],
+      "updatedAt": "2025-11-18T17:36:44.678Z"
+    },
+    "O7Rbk1W8d0WDsiucwYQQVHMF3Os1": {
+      "createdAt": "2025-11-18T17:36:07.316Z",
+      "email": "orangtua18@pesantren.test",
+      "id": "O7Rbk1W8d0WDsiucwYQQVHMF3Os1",
+      "name": "Maryam Ghani",
+      "phone": "08417184365",
+      "role": "orangtua",
+      "studentIds": [
+        "gffbOjXiWoWF2vTeUnTyvhmTJy22"
+      ],
+      "updatedAt": "2025-11-18T17:36:07.316Z"
+    },
+    "OLwvrgnyuGPEjP6lKFoTUVfigmh2": {
+      "createdAt": "2025-11-18T17:36:25.666Z",
+      "email": "orangtua26@pesantren.test",
+      "id": "OLwvrgnyuGPEjP6lKFoTUVfigmh2",
+      "name": "Ali Kafi",
+      "phone": "08947089260",
+      "role": "orangtua",
+      "studentIds": [
+        "Vn9uWjtJiLXLRkcZajAjzgZq4Hz1"
+      ],
+      "updatedAt": "2025-11-18T17:36:25.666Z"
+    },
+    "OdfU9PU1QiWRl3ejk5YLJ7R4KsD3": {
+      "createdAt": "2025-11-18T17:35:49.017Z",
+      "email": "orangtua10@pesantren.test",
+      "id": "OdfU9PU1QiWRl3ejk5YLJ7R4KsD3",
+      "name": "Khalid Majid",
+      "phone": "08934124027",
+      "role": "orangtua",
+      "studentIds": [
+        "f1keDsV6ZrOcGnnNL0RQp4AmfBo1"
+      ],
+      "updatedAt": "2025-11-18T17:35:49.017Z"
+    },
+    "P5RidW8NerSlpvGS8kJ0PBMwsIz1": {
+      "createdAt": "2025-11-18T17:36:49.557Z",
+      "email": "orangtua36@pesantren.test",
+      "id": "P5RidW8NerSlpvGS8kJ0PBMwsIz1",
+      "name": "Sumayyah Faris",
+      "phone": "08145688831",
+      "role": "orangtua",
+      "studentIds": [
+        "m7Mj6KFbXMflUcT379JxKn0gB993"
+      ],
+      "updatedAt": "2025-11-18T17:36:49.557Z"
+    },
+    "PAgKK14rZYOmC0JUKwDTHuY69yv2": {
+      "createdAt": "2025-11-18T17:36:21.314Z",
+      "email": "orangtua24@pesantren.test",
+      "id": "PAgKK14rZYOmC0JUKwDTHuY69yv2",
+      "name": "Ali Habib",
+      "phone": "08426203003",
+      "role": "orangtua",
+      "studentIds": [
+        "9tKQMcGGduSFeCGphZfQdjN3RjF3"
+      ],
+      "updatedAt": "2025-11-18T17:36:21.314Z"
+    },
+    "PE1Bg4oklLVMdqXZXPZbSActJpy2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:11.297Z",
+      "currentClasses": 4,
+      "email": "ustad10@pesantren.test",
+      "id": "PE1Bg4oklLVMdqXZXPZbSActJpy2",
+      "name": "Muhammad Rahim",
+      "phone": "08589156803",
+      "role": "ustad",
+      "specialization": "Fiqih",
+      "updatedAt": "2025-11-18T17:35:11.297Z"
+    },
+    "PHew5B9adChxvBUbJr7G9cQC6MJ2": {
+      "createdAt": "2025-11-18T17:36:37.381Z",
+      "email": "santri31@pesantren.test",
+      "entryYear": "2022",
+      "id": "PHew5B9adChxvBUbJr7G9cQC6MJ2",
+      "name": "Hasan Faris",
+      "parentId": "kKkNrPUOekcLRaOikVRzEP43cj33",
+      "phone": "08167931662",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:37.381Z"
+    },
+    "PTRuo1IYGWgeGzmKtSyNVsZUgS62": {
+      "createdAt": "2025-11-18T17:36:12.076Z",
+      "email": "orangtua20@pesantren.test",
+      "id": "PTRuo1IYGWgeGzmKtSyNVsZUgS62",
+      "name": "Abdullah Amir",
+      "phone": "08666013050",
+      "role": "orangtua",
+      "studentIds": [
+        "tKHcQTWPuaS8y42RgJ4Qhs9x3Vd2"
+      ],
+      "updatedAt": "2025-11-18T17:36:12.076Z"
+    },
+    "PZF8lnl1aUNGTO7IZDQEUrWJ6yt1": {
+      "createdAt": "2025-11-18T17:36:09.631Z",
+      "email": "orangtua19@pesantren.test",
+      "id": "PZF8lnl1aUNGTO7IZDQEUrWJ6yt1",
+      "name": "Abdullah Nabil",
+      "phone": "08440820200",
+      "role": "orangtua",
+      "studentIds": [
+        "xipET6mS1oXl7XICgJvkOEvABZg1"
+      ],
+      "updatedAt": "2025-11-18T17:36:09.631Z"
+    },
+    "Q1sEUmZKwEQsIZN64EKvxfEnkfB2": {
+      "createdAt": "2025-11-18T17:36:14.300Z",
+      "email": "santri21@pesantren.test",
+      "entryYear": "2024",
+      "id": "Q1sEUmZKwEQsIZN64EKvxfEnkfB2",
+      "name": "Khalid Kafi",
+      "parentId": "ZNIwjpr77sQ5ZWXmpA4u6RFaTpH3",
+      "phone": "08231496871",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:14.300Z"
+    },
+    "R9fZHZaruRUkn9rqNmwLObXuXu43": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:21.039Z",
+      "currentClasses": 1,
+      "email": "ustad17@pesantren.test",
+      "id": "R9fZHZaruRUkn9rqNmwLObXuXu43",
+      "name": "Khalid Amir",
+      "phone": "08535481350",
+      "role": "ustad",
+      "specialization": "Fiqih",
+      "updatedAt": "2025-11-18T17:35:21.039Z"
+    },
+    "RHV8lz2egdU50p7M06OlVNOIstx2": {
+      "createdAt": "2025-11-19T14:37:19.809Z",
+      "email": "mmsyahridho@gmail.com",
+      "name": "mm syahridho",
+      "role": "orangtua",
+      "students": [
+        {
+          "gender": "P",
+          "name": "widodo",
+          "nis": "123123",
+          "tahunDaftar": "2024",
+          "tanggalLahir": "2025-11-29",
+          "tempatLahir": "2028"
+        }
+      ]
+    },
+    "SFv897zmnUgM8q1QrgyMVkd7Glw2": {
+      "createdAt": "2025-11-18T17:36:16.489Z",
+      "email": "santri22@pesantren.test",
+      "entryYear": "2025",
+      "id": "SFv897zmnUgM8q1QrgyMVkd7Glw2",
+      "name": "Siti Lutfi",
+      "parentId": "iHMgaaZVcJWSrIpeXxRroewnMII2",
+      "phone": "08924491335",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:16.489Z"
+    },
+    "Swf6meB9PJQuQy755LY44XGa3K42": {
+      "createdAt": "2025-11-18T17:35:30.381Z",
+      "email": "santri2@pesantren.test",
+      "entryYear": "2024",
+      "id": "Swf6meB9PJQuQy755LY44XGa3K42",
+      "name": "Safiyyah Faris",
+      "parentId": "87dGJnxwZZTko3ln3Bsevl8jzgi2",
+      "phone": "08874436139",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:30.381Z"
+    },
+    "T3vEDgUJUmPxJR8tV7FGLfRA52y1": {
+      "createdAt": "2025-11-18T17:36:56.654Z",
+      "email": "santri39@pesantren.test",
+      "entryYear": "2024",
+      "id": "T3vEDgUJUmPxJR8tV7FGLfRA52y1",
+      "name": "Abdullah Kamil",
+      "parentId": "CGMUP11iXTVLCs7qe8FSgXKtXIo1",
+      "phone": "08482081985",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:56.654Z"
+    },
+    "TJ44XcH7yhVx5nD3OHU26Zgv30y1": {
+      "createdAt": "2025-11-18T15:21:56.161Z",
+      "email": "ope@gmail.com",
+      "name": "ope",
+      "phone": "123123123",
+      "role": "ustad"
+    },
+    "UVhi9mgX8naarpXlI3LK1XR8CnZ2": {
+      "createdAt": "2025-11-18T17:36:42.394Z",
+      "email": "orangtua33@pesantren.test",
+      "id": "UVhi9mgX8naarpXlI3LK1XR8CnZ2",
+      "name": "Asma Tahir",
+      "phone": "08274962560",
+      "role": "orangtua",
+      "studentIds": [
+        "Wq2Mm3QLmMb4yegbMPWHfDodaci2"
+      ],
+      "updatedAt": "2025-11-18T17:36:42.394Z"
+    },
+    "VMUFlEdhFBZMlbodVGzmd7phDU42": {
+      "createdAt": "2025-11-16T19:17:07.277Z",
+      "email": "parent@app.com",
+      "name": "Orang Tua Sinta",
+      "role": "orangtua"
+    },
+    "VWK8FOsO6xMuH8T4uhaWRfI6mcR2": {
+      "createdAt": "2025-11-18T17:36:33.032Z",
+      "email": "orangtua29@pesantren.test",
+      "id": "VWK8FOsO6xMuH8T4uhaWRfI6mcR2",
+      "name": "Hafsah Malik",
+      "phone": "08448176696",
+      "role": "orangtua",
+      "studentIds": [
+        "fYx0sJ9M6ehNhR5NaqmWi2GWPzx1"
+      ],
+      "updatedAt": "2025-11-18T17:36:33.032Z"
+    },
+    "Vn9uWjtJiLXLRkcZajAjzgZq4Hz1": {
+      "createdAt": "2025-11-18T17:36:25.619Z",
+      "email": "santri26@pesantren.test",
+      "entryYear": "2022",
+      "id": "Vn9uWjtJiLXLRkcZajAjzgZq4Hz1",
+      "name": "Ibrahim Majid",
+      "parentId": "OLwvrgnyuGPEjP6lKFoTUVfigmh2",
+      "phone": "08249848358",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:25.619Z"
+    },
+    "W1JhgIagJkZxc1GyWFWUXtCNaOB2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:02.651Z",
+      "currentClasses": 2,
+      "email": "ustad4@pesantren.test",
+      "id": "W1JhgIagJkZxc1GyWFWUXtCNaOB2",
+      "name": "Safiyyah Nabil",
+      "phone": "08895174437",
+      "role": "ustad",
+      "specialization": "Ilmu Tajwid",
+      "updatedAt": "2025-11-18T17:35:02.651Z"
+    },
+    "Wq2Mm3QLmMb4yegbMPWHfDodaci2": {
+      "createdAt": "2025-11-18T17:36:42.346Z",
+      "email": "santri33@pesantren.test",
+      "entryYear": "2024",
+      "id": "Wq2Mm3QLmMb4yegbMPWHfDodaci2",
+      "name": "Ali Munir",
+      "parentId": "UVhi9mgX8naarpXlI3LK1XR8CnZ2",
+      "phone": "08723942215",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:42.346Z"
+    },
+    "Wtr55uFrZsPNRhNBhOcY2ebUUYE3": {
+      "createdAt": "2025-11-18T17:35:32.658Z",
+      "email": "orangtua3@pesantren.test",
+      "id": "Wtr55uFrZsPNRhNBhOcY2ebUUYE3",
+      "name": "Abdullah Hakim",
+      "phone": "08432713889",
+      "role": "orangtua",
+      "studentIds": [
+        "K1SNqbGgLoR9voJ1Ty9uJl8Oam93"
+      ],
+      "updatedAt": "2025-11-18T17:35:32.658Z"
+    },
+    "YsnCYZdy4yTWz0YB1SNOUhzX0om1": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:24.034Z",
+      "currentClasses": 2,
+      "email": "ustad19@pesantren.test",
+      "id": "YsnCYZdy4yTWz0YB1SNOUhzX0om1",
+      "name": "Muhammad Tahir",
+      "phone": "08586105113",
+      "role": "ustad",
+      "specialization": "Sejarah Islam",
+      "updatedAt": "2025-11-18T17:35:24.034Z"
+    },
+    "YuaRVZazegNYevtO5y7Wi9xcy082": {
+      "createdAt": "2025-11-18T17:35:46.422Z",
+      "email": "orangtua9@pesantren.test",
+      "id": "YuaRVZazegNYevtO5y7Wi9xcy082",
+      "name": "Hasan Fadil",
+      "phone": "08344452223",
+      "role": "orangtua",
+      "studentIds": [
+        "itJqJZJtDBhksFV5g12lS99pytK2"
+      ],
+      "updatedAt": "2025-11-18T17:35:46.422Z"
+    },
+    "ZNIwjpr77sQ5ZWXmpA4u6RFaTpH3": {
+      "createdAt": "2025-11-18T17:36:14.348Z",
+      "email": "orangtua21@pesantren.test",
+      "id": "ZNIwjpr77sQ5ZWXmpA4u6RFaTpH3",
+      "name": "Khalid Rahman",
+      "phone": "08330050970",
+      "role": "orangtua",
+      "studentIds": [
+        "Q1sEUmZKwEQsIZN64EKvxfEnkfB2"
+      ],
+      "updatedAt": "2025-11-18T17:36:14.348Z"
+    },
+    "Zc1GYNpbXsVzHbQaLppeS6MDd8V2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:34:59.652Z",
+      "currentClasses": 2,
+      "email": "ustad2@pesantren.test",
+      "id": "Zc1GYNpbXsVzHbQaLppeS6MDd8V2",
+      "name": "Ruqayyah Idris",
+      "phone": "08887788138",
+      "role": "ustad",
+      "specialization": "Bahasa Arab",
+      "updatedAt": "2025-11-18T17:34:59.652Z"
+    },
+    "aIsqmglxSQREcX9Xvr6w7Ctnh9u2": {
+      "createdAt": "2025-11-18T17:36:00.703Z",
+      "email": "orangtua15@pesantren.test",
+      "id": "aIsqmglxSQREcX9Xvr6w7Ctnh9u2",
+      "name": "Asma Lutfi",
+      "phone": "08839908821",
+      "role": "orangtua",
+      "studentIds": [
+        "g11KTyN5gUPskGLPLTJEjRSx5Na2"
+      ],
+      "updatedAt": "2025-11-18T17:36:00.704Z"
+    },
+    "bC76m3VJsDepRBGMOt6L9IeGcyh2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:12.739Z",
+      "currentClasses": 3,
+      "email": "ustad11@pesantren.test",
+      "id": "bC76m3VJsDepRBGMOt6L9IeGcyh2",
+      "name": "Siti Nabil",
+      "phone": "08616792889",
+      "role": "ustad",
+      "specialization": "Bahasa Arab",
+      "updatedAt": "2025-11-18T17:35:12.739Z"
+    },
+    "bOGVQETLxseYxxlpK1YhuSxOri72": {
+      "createdAt": "2025-11-18T17:36:47.014Z",
+      "email": "santri35@pesantren.test",
+      "entryYear": "2022",
+      "id": "bOGVQETLxseYxxlpK1YhuSxOri72",
+      "name": "Hamzah Tahir",
+      "parentId": "etAByBJLefMALHloyIkL02pKjf53",
+      "phone": "08584201832",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:47.014Z"
+    },
+    "bRpP0LIVquPr6VgNUKkbRkyj3j62": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:25.390Z",
+      "currentClasses": 0,
+      "email": "ustad20@pesantren.test",
+      "id": "bRpP0LIVquPr6VgNUKkbRkyj3j62",
+      "name": "Ahmad Habib",
+      "phone": "08892198602",
+      "role": "ustad",
+      "specialization": "Bahasa Arab",
+      "updatedAt": "2025-11-18T17:35:25.390Z"
+    },
+    "bYhlTuHeq0Q8PC0X13WGCLkHfml1": {
+      "createdAt": "2025-11-15T17:22:59.440Z",
+      "email": "zxc@gmail.com",
+      "name": "zxc",
+      "phone": "123123123",
+      "role": "admin",
+      "santri": {
+        "-Oe7XeSrtve3YVXTSmm9": {
+          "createdAt": "2025-11-15T17:22:59.450Z",
+          "gender": "L",
+          "name": "zxc",
+          "nis": "123123",
+          "tahunDaftar": "2025",
+          "tanggalLahir": "2025-11-17",
+          "tempatLahir": "zxc"
+        }
+      }
+    },
+    "buTJ4EzBSZNz6PRepx5QAUS44Oo2": {
+      "createdAt": "2025-11-16T18:21:13.638Z",
+      "email": "qwe@gmail.com",
+      "name": "qwe",
+      "role": "orangtua",
+      "students": [
+        {
+          "gender": "L",
+          "name": "qwe",
+          "nis": "123",
+          "tahunDaftar": "123",
+          "tanggalLahir": "2025-11-20",
+          "tempatLahir": "qwe"
+        }
+      ]
+    },
+    "cB1Kh8aWr4cpvUacJ7E5zwv8eF12": {
+      "createdAt": "2025-11-18T17:35:51.475Z",
+      "email": "orangtua11@pesantren.test",
+      "id": "cB1Kh8aWr4cpvUacJ7E5zwv8eF12",
+      "name": "Zainab Hadi",
+      "phone": "08611663992",
+      "role": "orangtua",
+      "studentIds": [
+        "8Xgqai07qSMtJlHLuYIp8Nl4scU2"
+      ],
+      "updatedAt": "2025-11-18T17:35:51.475Z"
+    },
+    "cBz0PuMNFqeZppRnZAc4CPiayO13": {
+      "createdAt": "2025-11-18T17:35:58.360Z",
+      "email": "santri14@pesantren.test",
+      "entryYear": "2023",
+      "id": "cBz0PuMNFqeZppRnZAc4CPiayO13",
+      "name": "Khadijah Habib",
+      "parentId": "ICEcUMZmVlPgXbnk7sw8FI9bh0F3",
+      "phone": "08832928356",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:35:58.360Z"
+    },
+    "co3onkiLABVULxt8hrZ0ZTlwvIR2": {
+      "createdAt": "2025-11-18T17:36:35.160Z",
+      "email": "orangtua30@pesantren.test",
+      "id": "co3onkiLABVULxt8hrZ0ZTlwvIR2",
+      "name": "Ibrahim Malik",
+      "phone": "08583539134",
+      "role": "orangtua",
+      "studentIds": [
+        "w2Mtg2wERQZAISt83XJE9DgLef72"
+      ],
+      "updatedAt": "2025-11-18T17:36:35.160Z"
+    },
+    "e8sC1lVvt7bjMID16PoegQyS08d2": {
+      "createdAt": "2025-11-18T17:35:44.117Z",
+      "email": "santri8@pesantren.test",
+      "entryYear": "2024",
+      "id": "e8sC1lVvt7bjMID16PoegQyS08d2",
+      "name": "Ibrahim Zakir",
+      "parentId": "65AhwiclarVYw4P8v7buCTlAtpZ2",
+      "phone": "08565967500",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:35:44.117Z"
+    },
+    "eZ73EiQZteanQy8kdCjPLMALyga2": {
+      "createdAt": "2025-11-18T17:36:51.795Z",
+      "email": "santri37@pesantren.test",
+      "entryYear": "2024",
+      "id": "eZ73EiQZteanQy8kdCjPLMALyga2",
+      "name": "Ali Tahir",
+      "parentId": "hNRDAoYvVJapgUUC336C8llRQZu1",
+      "phone": "08690835300",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:51.795Z"
+    },
+    "etAByBJLefMALHloyIkL02pKjf53": {
+      "createdAt": "2025-11-18T17:36:47.061Z",
+      "email": "orangtua35@pesantren.test",
+      "id": "etAByBJLefMALHloyIkL02pKjf53",
+      "name": "Zainab Salim",
+      "phone": "08156576052",
+      "role": "orangtua",
+      "studentIds": [
+        "bOGVQETLxseYxxlpK1YhuSxOri72"
+      ],
+      "updatedAt": "2025-11-18T17:36:47.061Z"
+    },
+    "f1keDsV6ZrOcGnnNL0RQp4AmfBo1": {
+      "createdAt": "2025-11-18T17:35:48.965Z",
+      "email": "santri10@pesantren.test",
+      "entryYear": "2025",
+      "id": "f1keDsV6ZrOcGnnNL0RQp4AmfBo1",
+      "name": "Salman Bashir",
+      "parentId": "OdfU9PU1QiWRl3ejk5YLJ7R4KsD3",
+      "phone": "08740257397",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:48.966Z"
+    },
+    "f5S2gyPjltbsRX1XzTK8Gk8bZWH3": {
+      "createdAt": "2025-11-18T17:35:41.975Z",
+      "email": "santri7@pesantren.test",
+      "entryYear": "2022",
+      "id": "f5S2gyPjltbsRX1XzTK8Gk8bZWH3",
+      "name": "Ruqayyah Bashir",
+      "parentId": "mDt8Vf1dPicH7aczO29hZwbAqYa2",
+      "phone": "08620118731",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:41.975Z"
+    },
+    "fYx0sJ9M6ehNhR5NaqmWi2GWPzx1": {
+      "createdAt": "2025-11-18T17:36:32.984Z",
+      "email": "santri29@pesantren.test",
+      "entryYear": "2022",
+      "id": "fYx0sJ9M6ehNhR5NaqmWi2GWPzx1",
+      "name": "Hasan Qasim",
+      "parentId": "VWK8FOsO6xMuH8T4uhaWRfI6mcR2",
+      "phone": "08204523255",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:32.984Z"
+    },
+    "g11KTyN5gUPskGLPLTJEjRSx5Na2": {
+      "createdAt": "2025-11-18T17:36:00.645Z",
+      "email": "santri15@pesantren.test",
+      "entryYear": "2025",
+      "id": "g11KTyN5gUPskGLPLTJEjRSx5Na2",
+      "name": "Umar Salim",
+      "parentId": "aIsqmglxSQREcX9Xvr6w7Ctnh9u2",
+      "phone": "08670449752",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:00.645Z"
+    },
+    "gffbOjXiWoWF2vTeUnTyvhmTJy22": {
+      "createdAt": "2025-11-18T17:36:07.267Z",
+      "email": "santri18@pesantren.test",
+      "entryYear": "2022",
+      "id": "gffbOjXiWoWF2vTeUnTyvhmTJy22",
+      "name": "Ismail Amir",
+      "parentId": "O7Rbk1W8d0WDsiucwYQQVHMF3Os1",
+      "phone": "08487937432",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:07.267Z"
+    },
+    "gl3QS5H3UuVVNQUrJyij8hRqY4j1": {
+      "createdAt": "2025-11-18T17:36:18.863Z",
+      "email": "orangtua23@pesantren.test",
+      "id": "gl3QS5H3UuVVNQUrJyij8hRqY4j1",
+      "name": "Khadijah Hakim",
+      "phone": "08503969400",
+      "role": "orangtua",
+      "studentIds": [
+        "C05Ns8nJRnYBnRTxJYC7FULT5IG2"
+      ],
+      "updatedAt": "2025-11-18T17:36:18.863Z"
+    },
+    "hNRDAoYvVJapgUUC336C8llRQZu1": {
+      "createdAt": "2025-11-18T17:36:51.845Z",
+      "email": "orangtua37@pesantren.test",
+      "id": "hNRDAoYvVJapgUUC336C8llRQZu1",
+      "name": "Fatimah Nabil",
+      "phone": "08594002843",
+      "role": "orangtua",
+      "studentIds": [
+        "eZ73EiQZteanQy8kdCjPLMALyga2"
+      ],
+      "updatedAt": "2025-11-18T17:36:51.845Z"
+    },
+    "hzKJTU9InZSxvZwkhyk0XqoqdMr1": {
+      "createdAt": "2025-11-18T17:36:05.017Z",
+      "email": "santri17@pesantren.test",
+      "entryYear": "2025",
+      "id": "hzKJTU9InZSxvZwkhyk0XqoqdMr1",
+      "name": "Maryam Amir",
+      "parentId": "3VZDUxdKAEa7XzYvTndM2XblRqv1",
+      "phone": "08312706800",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:05.017Z"
+    },
+    "iHMgaaZVcJWSrIpeXxRroewnMII2": {
+      "createdAt": "2025-11-18T17:36:16.538Z",
+      "email": "orangtua22@pesantren.test",
+      "id": "iHMgaaZVcJWSrIpeXxRroewnMII2",
+      "name": "Ruqayyah Lutfi",
+      "phone": "08478266638",
+      "role": "orangtua",
+      "studentIds": [
+        "SFv897zmnUgM8q1QrgyMVkd7Glw2"
+      ],
+      "updatedAt": "2025-11-18T17:36:16.538Z"
+    },
+    "itJqJZJtDBhksFV5g12lS99pytK2": {
+      "createdAt": "2025-11-18T17:35:46.374Z",
+      "email": "santri9@pesantren.test",
+      "entryYear": "2024",
+      "id": "itJqJZJtDBhksFV5g12lS99pytK2",
+      "name": "Muhammad Nasir",
+      "parentId": "YuaRVZazegNYevtO5y7Wi9xcy082",
+      "phone": "08471273752",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:35:46.374Z"
+    },
+    "jnHa0A5qfGZRXR9Drj4neD77t7t1": {
+      "createdAt": "2025-11-18T17:35:53.547Z",
+      "email": "santri12@pesantren.test",
+      "entryYear": "2023",
+      "id": "jnHa0A5qfGZRXR9Drj4neD77t7t1",
+      "name": "Husain Hadi",
+      "parentId": "y114Jxyl6KZJECa9XLqDWtfGZvo1",
+      "phone": "08865082198",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:53.547Z"
+    },
+    "k6f5vL3tkLg91Yw1eMpmz7hMuyt1": {
+      "createdAt": "2025-11-16T19:17:04.935Z",
+      "email": "admin@app.com",
+      "name": "Admin Utama",
+      "role": "admin"
+    },
+    "k9NhbGk8v5OaS1XUtYT3kqEuboe2": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:19.704Z",
+      "currentClasses": 2,
+      "email": "ustad16@pesantren.test",
+      "id": "k9NhbGk8v5OaS1XUtYT3kqEuboe2",
+      "name": "Maryam Rashid",
+      "phone": "08722303133",
+      "role": "ustad",
+      "specialization": "Sejarah Islam",
+      "updatedAt": "2025-11-18T17:35:19.704Z"
+    },
+    "kKkNrPUOekcLRaOikVRzEP43cj33": {
+      "createdAt": "2025-11-18T17:36:37.429Z",
+      "email": "orangtua31@pesantren.test",
+      "id": "kKkNrPUOekcLRaOikVRzEP43cj33",
+      "name": "Umar Karim",
+      "phone": "08298111258",
+      "role": "orangtua",
+      "studentIds": [
+        "PHew5B9adChxvBUbJr7G9cQC6MJ2"
+      ],
+      "updatedAt": "2025-11-18T17:36:37.429Z"
+    },
+    "kay4E7rAWeRHvnoF8P55Vrnqbvp1": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:15.516Z",
+      "currentClasses": 0,
+      "email": "ustad13@pesantren.test",
+      "id": "kay4E7rAWeRHvnoF8P55Vrnqbvp1",
+      "name": "Abdul Idris",
+      "phone": "08525136902",
+      "role": "ustad",
+      "specialization": "Sejarah Islam",
+      "updatedAt": "2025-11-18T17:35:15.516Z"
+    },
+    "lhdeTNqeZFYZdb6Kx88VjZHroLm2": {
+      "createdAt": "2025-11-16T11:44:32.267Z",
+      "email": "syahridhosyahputra@gmail.com",
+      "name": "syahridho",
+      "phone": "123123123",
+      "role": "ustad",
+      "santri": {
+        "-OeBTmCVh5DjV7sRqwl9": {
+          "createdAt": "2025-11-16T11:44:32.269Z",
+          "gender": "L",
+          "name": "ujang",
+          "nis": "12123",
+          "tahunDaftar": "2025",
+          "tanggalLahir": "2025-11-18",
+          "tempatLahir": "pku"
+        }
+      }
+    },
+    "m7Mj6KFbXMflUcT379JxKn0gB993": {
+      "createdAt": "2025-11-18T17:36:49.508Z",
+      "email": "santri36@pesantren.test",
+      "entryYear": "2023",
+      "id": "m7Mj6KFbXMflUcT379JxKn0gB993",
+      "name": "Aisyah Lutfi",
+      "parentId": "P5RidW8NerSlpvGS8kJ0PBMwsIz1",
+      "phone": "08420606979",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:49.508Z"
+    },
+    "mDt8Vf1dPicH7aczO29hZwbAqYa2": {
+      "createdAt": "2025-11-18T17:35:42.025Z",
+      "email": "orangtua7@pesantren.test",
+      "id": "mDt8Vf1dPicH7aczO29hZwbAqYa2",
+      "name": "Hasan Habib",
+      "phone": "08504854527",
+      "role": "orangtua",
+      "studentIds": [
+        "f5S2gyPjltbsRX1XzTK8Gk8bZWH3"
+      ],
+      "updatedAt": "2025-11-18T17:35:42.025Z"
+    },
+    "oPQcYSzZFNYSUWPHJ5c18GoP7kt1": {
+      "createdAt": "2025-11-18T17:36:39.486Z",
+      "email": "orangtua32@pesantren.test",
+      "id": "oPQcYSzZFNYSUWPHJ5c18GoP7kt1",
+      "name": "Hasan Malik",
+      "phone": "08711655516",
+      "role": "orangtua",
+      "studentIds": [
+        "96BqIkTlIsM8dpE9cOy3JP8PTG33"
+      ],
+      "updatedAt": "2025-11-18T17:36:39.486Z"
+    },
+    "osBVoJwUIJdndPbt7VjEqNarR4D3": {
+      "createdAt": "2025-11-18T17:35:39.646Z",
+      "email": "orangtua6@pesantren.test",
+      "id": "osBVoJwUIJdndPbt7VjEqNarR4D3",
+      "name": "Ibrahim Ghani",
+      "phone": "08326832177",
+      "role": "orangtua",
+      "studentIds": [
+        "x7fT65BPqddIDdCuVsHohWd8RpP2"
+      ],
+      "updatedAt": "2025-11-18T17:35:39.646Z"
+    },
+    "p89ZkyE5qNgX6wK1XXiwSoeSRqS2": {
+      "createdAt": "2025-11-18T17:36:44.627Z",
+      "email": "santri34@pesantren.test",
+      "entryYear": "2024",
+      "id": "p89ZkyE5qNgX6wK1XXiwSoeSRqS2",
+      "name": "Salman Salim",
+      "parentId": "MqaD6ufgdSPzq5dyfTXh6c5KYm52",
+      "phone": "08680910213",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:44.627Z"
+    },
+    "qdIXv5IrPefJLo9CV7nedHYJy7y1": {
+      "createdAt": "2025-11-14T13:32:04.752Z",
+      "email": "admin@gmail.com",
+      "name": "admin"
+    },
+    "sMPtPC4GaFa8LXsA5mehGv1UeCH2": {
+      "createdAt": "2025-11-16T19:17:06.291Z",
+      "email": "ustad@app.com",
+      "name": "Ustad Budi",
+      "role": "ustad"
+    },
+    "saptH8WuopYs7OfhOb6kzlD7lu63": {
+      "createdAt": "2025-11-18T17:36:27.783Z",
+      "email": "santri27@pesantren.test",
+      "entryYear": "2025",
+      "id": "saptH8WuopYs7OfhOb6kzlD7lu63",
+      "name": "Fatimah Jabir",
+      "parentId": "KSYmVET0G1SPn2UuTo7rKdimMbp1",
+      "phone": "08229331312",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:27.783Z"
+    },
+    "tKHcQTWPuaS8y42RgJ4Qhs9x3Vd2": {
+      "createdAt": "2025-11-18T17:36:12.027Z",
+      "email": "santri20@pesantren.test",
+      "entryYear": "2024",
+      "id": "tKHcQTWPuaS8y42RgJ4Qhs9x3Vd2",
+      "name": "Ali Nabil",
+      "parentId": "PTRuo1IYGWgeGzmKtSyNVsZUgS62",
+      "phone": "08239935784",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:12.027Z"
+    },
+    "tkOjEsZl13SqO3psDB2bEAutvL12": {
+      "createdAt": "2025-11-18T17:36:53.927Z",
+      "email": "santri38@pesantren.test",
+      "entryYear": "2025",
+      "id": "tkOjEsZl13SqO3psDB2bEAutvL12",
+      "name": "Zainab Nasir",
+      "parentId": "C356oOkN9CVpGXjSaYOEoRacYs03",
+      "phone": "08627662251",
+      "role": "santri",
+      "status": "inactive",
+      "updatedAt": "2025-11-18T17:36:53.927Z"
+    },
+    "tmU2HHwVX9Wnk1RZB3XAYdgug052": {
+      "createdAt": "2025-11-18T17:35:55.821Z",
+      "email": "orangtua13@pesantren.test",
+      "id": "tmU2HHwVX9Wnk1RZB3XAYdgug052",
+      "name": "Khadijah Bashir",
+      "phone": "08351753274",
+      "role": "orangtua",
+      "studentIds": [
+        "25GvEba5V0fNhjq6pBjEMThZhUp1"
+      ],
+      "updatedAt": "2025-11-18T17:35:55.821Z"
+    },
+    "w2Mtg2wERQZAISt83XJE9DgLef72": {
+      "createdAt": "2025-11-18T17:36:35.108Z",
+      "email": "santri30@pesantren.test",
+      "entryYear": "2024",
+      "id": "w2Mtg2wERQZAISt83XJE9DgLef72",
+      "name": "Hamzah Munir",
+      "parentId": "co3onkiLABVULxt8hrZ0ZTlwvIR2",
+      "phone": "08412940674",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:35.108Z"
+    },
+    "x7fT65BPqddIDdCuVsHohWd8RpP2": {
+      "createdAt": "2025-11-18T17:35:39.598Z",
+      "email": "santri6@pesantren.test",
+      "entryYear": "2023",
+      "id": "x7fT65BPqddIDdCuVsHohWd8RpP2",
+      "name": "Yusuf Amir",
+      "parentId": "osBVoJwUIJdndPbt7VjEqNarR4D3",
+      "phone": "08806049693",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:35:39.598Z"
+    },
+    "xipET6mS1oXl7XICgJvkOEvABZg1": {
+      "createdAt": "2025-11-18T17:36:09.582Z",
+      "email": "santri19@pesantren.test",
+      "entryYear": "2023",
+      "id": "xipET6mS1oXl7XICgJvkOEvABZg1",
+      "name": "Zahra Rashid",
+      "parentId": "PZF8lnl1aUNGTO7IZDQEUrWJ6yt1",
+      "phone": "08780684301",
+      "role": "santri",
+      "status": "active",
+      "updatedAt": "2025-11-18T17:36:09.582Z"
+    },
+    "y114Jxyl6KZJECa9XLqDWtfGZvo1": {
+      "createdAt": "2025-11-18T17:35:53.596Z",
+      "email": "orangtua12@pesantren.test",
+      "id": "y114Jxyl6KZJECa9XLqDWtfGZvo1",
+      "name": "Khalid Amir",
+      "phone": "08103576205",
+      "role": "orangtua",
+      "studentIds": [
+        "jnHa0A5qfGZRXR9Drj4neD77t7t1"
+      ],
+      "updatedAt": "2025-11-18T17:35:53.596Z"
+    },
+    "zV07YAhpgAeThrV0LZtfzgje6Pq1": {
+      "available": true,
+      "createdAt": "2025-11-18T17:34:57.653Z",
+      "currentClasses": 3,
+      "email": "ustad1@pesantren.test",
+      "id": "zV07YAhpgAeThrV0LZtfzgje6Pq1",
+      "name": "Hafsah Munir",
+      "phone": "08263011889",
+      "role": "ustad",
+      "specialization": "Sejarah Islam",
+      "updatedAt": "2025-11-18T17:34:57.653Z"
+    },
+    "zaYs5qWx8va3euZHGnIyhON76Kw1": {
+      "createdAt": "2025-11-18T17:35:37.511Z",
+      "email": "orangtua5@pesantren.test",
+      "id": "zaYs5qWx8va3euZHGnIyhON76Kw1",
+      "name": "Sumayyah Rahman",
+      "phone": "08645794970",
+      "role": "orangtua",
+      "studentIds": [
+        "FQjUkYDXyZbKtF2sy1SVDsG7X8v2"
+      ],
+      "updatedAt": "2025-11-18T17:35:37.511Z"
+    },
+    "zdWXFyaN5QMmQ113XRNqgMLRPXn1": {
+      "available": true,
+      "createdAt": "2025-11-18T17:35:05.741Z",
+      "currentClasses": 3,
+      "email": "ustad6@pesantren.test",
+      "id": "zdWXFyaN5QMmQ113XRNqgMLRPXn1",
+      "name": "Siti Tahir",
+      "phone": "08898857307",
+      "role": "ustad",
+      "specialization": "Bahasa Arab",
+      "updatedAt": "2025-11-18T17:35:05.741Z"
+    }
+  }
+}

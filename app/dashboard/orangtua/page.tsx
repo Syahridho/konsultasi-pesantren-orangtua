@@ -4,74 +4,53 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { auth } from "@/lib/firebase";
-import { db } from "@/lib/firestore";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-} from "firebase/firestore";
+import { ref, get } from "firebase/database";
+import { database } from "@/lib/firebase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, BookOpen, TrendingUp, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import AddOrangtuaModal from "@/components/dashboard/orangtua/add-orangtua-modal";
+import { 
+  Users,
+  Search,
+  Mail,
+  Phone,
+  Eye,
+  UserCircle,
+  UserPlus
+} from "lucide-react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Type definitions
-interface User {
-  uid: string;
+interface OrangTua {
+  id: string;
   name: string;
   email: string;
+  phone?: string;
   role: string;
-  santriId?: string[];
-}
-
-interface Santri {
-  id: string;
-  name: string;
-  nis?: string;
-  kelas?: string;
-}
-
-interface Laporan {
-  id: string;
-  kategori: "hafalan" | "akademik" | "perilaku";
-  tanggal: string;
-  isi: {
-    // For hafalan
-    surat?: string;
-    ayat?: string;
-    predikat?: string;
-    // For akademik
-    mapel?: string;
-    nilai?: number;
-    // For perilaku
-    catatan?: string;
-  };
+  studentIds?: string[];
+  students?: any[];
+  santri?: any;
+  createdAt?: string;
 }
 
 export default function OrangtuaDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-  const [santri, setSantri] = useState<Santri | null>(null);
-  const [laporan, setLaporan] = useState<Laporan[]>([]);
-  const [activeTab, setActiveTab] = useState<
-    "hafalan" | "akademik" | "perilaku"
-  >("hafalan");
+  const [orangTuaList, setOrangTuaList] = useState<OrangTua[]>([]);
+  const [filteredList, setFilteredList] = useState<OrangTua[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -81,7 +60,8 @@ export default function OrangtuaDashboard() {
       return;
     }
 
-    if (session.user.role !== "orangtua") {
+    // Allow admin and ustad to access
+    if (session.user.role !== "admin" && session.user.role !== "ustad") {
       toast.error("Anda tidak memiliki akses ke halaman ini");
       router.push("/dashboard");
       return;
@@ -90,56 +70,66 @@ export default function OrangtuaDashboard() {
     fetchData();
   }, [session, status, router]);
 
+  useEffect(() => {
+    const filtered = orangTuaList.filter(
+      (orangtua) =>
+        orangtua.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        orangtua.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        orangtua.phone?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredList(filtered);
+  }, [orangTuaList, searchTerm]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
 
-      // Get current user from Firebase Auth
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        toast.error("User tidak terautentikasi");
-        return;
-      }
+      // Get all users from Realtime Database
+      const usersRef = ref(database, "users");
+      const usersSnapshot = await get(usersRef);
 
-      // Get user data from Firestore
-      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-      if (!userDoc.exists()) {
-        toast.error("Data user tidak ditemukan");
-        return;
-      }
-
-      const userData = userDoc.data() as User;
-      setUser(userData);
-
-      // Get first santri ID
-      if (!userData.santriId || userData.santriId.length === 0) {
-        toast.error("Anda belum terhubung dengan santri");
+      if (!usersSnapshot.exists()) {
+        toast.info("Belum ada data orang tua");
         setLoading(false);
         return;
       }
 
-      const santriId = userData.santriId[0];
+      const allUsers = usersSnapshot.val();
+      const orangtuaData: OrangTua[] = [];
 
-      // Get santri data
-      const santriDoc = await getDoc(doc(db, "santri", santriId));
-      if (santriDoc.exists()) {
-        setSantri({ id: santriDoc.id, ...santriDoc.data() } as Santri);
-      }
+      // Filter users with role orangtua
+      Object.keys(allUsers).forEach((userId) => {
+        const user = allUsers[userId];
+        if (user.role === "orangtua") {
+          // Count santri
+          let santriCount = 0;
+          if (user.studentIds && Array.isArray(user.studentIds)) {
+            santriCount = user.studentIds.length;
+          } else if (user.students && Array.isArray(user.students)) {
+            santriCount = user.students.length;
+          } else if (user.santri && typeof user.santri === "object") {
+            santriCount = Object.keys(user.santri).length;
+          }
 
-      // Get laporan data for this santri
-      const laporanQuery = query(
-        collection(db, "laporan"),
-        where("santriId", "==", santriId),
-        orderBy("tanggal", "desc")
-      );
-      const laporanSnapshot = await getDocs(laporanQuery);
-
-      const laporanData: Laporan[] = [];
-      laporanSnapshot.forEach((doc) => {
-        laporanData.push({ id: doc.id, ...doc.data() } as Laporan);
+          orangtuaData.push({
+            id: userId,
+            name: user.name || "Tidak ada nama",
+            email: user.email || "Tidak ada email",
+            phone: user.phone || "-",
+            role: user.role,
+            studentIds: user.studentIds,
+            students: user.students,
+            santri: user.santri,
+            createdAt: user.createdAt,
+          });
+        }
       });
 
-      setLaporan(laporanData);
+      // Sort by name
+      orangtuaData.sort((a, b) => a.name.localeCompare(b.name));
+
+      setOrangTuaList(orangtuaData);
+      console.log(`[ORANGTUA PAGE] Loaded ${orangtuaData.length} orang tua`);
     } catch (error: any) {
       console.error("Error fetching data:", error);
       toast.error("Terjadi kesalahan saat memuat data");
@@ -148,39 +138,18 @@ export default function OrangtuaDashboard() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const getPredikatColor = (predikat: string) => {
-    switch (predikat?.toLowerCase()) {
-      case "mumtaz":
-        return "bg-green-500 text-white";
-      case "jayyid jiddan":
-        return "bg-blue-500 text-white";
-      case "jayyid":
-        return "bg-yellow-500 text-white";
-      case "mengulang":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
+  const getSantriCount = (orangtua: OrangTua) => {
+    if (orangtua.studentIds && Array.isArray(orangtua.studentIds)) {
+      return orangtua.studentIds.length;
     }
+    if (orangtua.students && Array.isArray(orangtua.students)) {
+      return orangtua.students.length;
+    }
+    if (orangtua.santri && typeof orangtua.santri === "object") {
+      return Object.keys(orangtua.santri).length;
+    }
+    return 0;
   };
-
-  // Filter laporan by category
-  const hafalanLaporan = laporan.filter((l) => l.kategori === "hafalan");
-  const akademikLaporan = laporan.filter((l) => l.kategori === "akademik");
-  const perilakuLaporan = laporan.filter((l) => l.kategori === "perilaku");
-
-  // Prepare data for chart
-  const chartData = akademikLaporan.map((item) => ({
-    name: item.isi.mapel || "",
-    nilai: item.isi.nilai || 0,
-  }));
 
   if (loading) {
     return (
@@ -192,24 +161,18 @@ export default function OrangtuaDashboard() {
           </div>
         </div>
 
-        <div className="flex space-x-1 mb-6">
-          <Skeleton className="h-10 w-24" />
-          <Skeleton className="h-10 w-24" />
-          <Skeleton className="h-10 w-24" />
-        </div>
-
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-40" />
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="p-4 border rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
-                      <Skeleton className="h-5 w-32" />
-                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-5 w-48" />
+                      <Skeleton className="h-4 w-32" />
                     </div>
                     <Skeleton className="h-6 w-20 rounded-full" />
                   </div>
@@ -222,223 +185,150 @@ export default function OrangtuaDashboard() {
     );
   }
 
-  if (!user || !santri) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-muted-foreground">
-            {user
-              ? "Anda belum terhubung dengan santri"
-              : "Data tidak tersedia"}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Dashboard Orang Tua
-          </h1>
-          <p className="text-muted-foreground">
-            Monitoring perkembangan{" "}
-            <span className="font-medium text-foreground">{santri.name}</span>
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              Data Orang Tua
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Kelola semua data orang tua santri
+            </p>
+          </div>
+
+          <Button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="w-full sm:w-auto"
+          >
+            <UserPlus className="w-4 h-4 mr-2" />
+            Tambah Orang Tua
+          </Button>
         </div>
+
+        {/* Stats */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{orangTuaList.length}</p>
+                <p className="text-xs text-muted-foreground">Total Orang Tua</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-1 mb-6 bg-muted p-1 rounded-lg w-fit">
-        <button
-          onClick={() => setActiveTab("hafalan")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === "hafalan"
-              ? "bg-background shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            Hafalan
+      {/* Search */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Daftar Orang Tua
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-2 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Cari berdasarkan nama, email, atau telepon..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
           </div>
-        </button>
-        <button
-          onClick={() => setActiveTab("akademik")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === "akademik"
-              ? "bg-background shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Akademik
-          </div>
-        </button>
-        <button
-          onClick={() => setActiveTab("perilaku")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === "perilaku"
-              ? "bg-background shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Perilaku
-          </div>
-        </button>
-      </div>
 
-      {/* Tab Content */}
-      {activeTab === "hafalan" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              Progress Hafalan
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {hafalanLaporan.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  Belum ada laporan hafalan
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {hafalanLaporan.map((item) => (
-                  <div key={item.id} className="p-4 border rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1">
-                        <p className="font-semibold">
-                          {item.isi.surat} Ayat {item.isi.ayat}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(item.tanggal)}
-                        </p>
-                      </div>
-                      <Badge
-                        className={getPredikatColor(item.isi.predikat || "")}
-                      >
-                        {item.isi.predikat}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+          {filteredList.length === 0 ? (
+            <div className="text-center py-12">
+              <UserCircle className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
+              <p className="text-muted-foreground">
+                {searchTerm
+                  ? "Tidak ada orang tua yang cocok dengan pencarian"
+                  : "Belum ada data orang tua"}
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-md border overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[250px]">Nama</TableHead>
+                    <TableHead className="w-[200px]">Email</TableHead>
+                    <TableHead className="w-[150px]">Telepon</TableHead>
+                    <TableHead className="text-center w-[100px]">Jumlah Santri</TableHead>
+                    <TableHead className="w-[150px]">Terdaftar Sejak</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredList.map((orangtua) => (
+                    <TableRow key={orangtua.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <UserCircle className="w-5 h-5 text-primary" />
+                          </div>
+                          {orangtua.name}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                          <span className="truncate">{orangtua.email}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                          {orangtua.phone || "-"}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="secondary" className="font-medium">
+                          {getSantriCount(orangtua)} Santri
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {orangtua.createdAt
+                          ? new Date(orangtua.createdAt).toLocaleDateString(
+                              "id-ID",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )
+                          : "-"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
 
-      {activeTab === "akademik" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Nilai Akademik
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {akademikLaporan.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  Belum ada laporan akademik
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {/* Chart */}
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis domain={[0, 100]} />
-                      <Tooltip />
-                      <Bar dataKey="nilai" fill="#8884d8" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+          {/* Summary */}
+          {filteredList.length > 0 && (
+            <div className="mt-4 text-sm text-muted-foreground">
+              Menampilkan {filteredList.length} dari {orangTuaList.length} orang tua
+              {searchTerm && ` untuk pencarian "${searchTerm}"`}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-                {/* Table */}
-                <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-muted">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-sm font-medium">
-                          Mata Pelajaran
-                        </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium">
-                          Nilai
-                        </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium">
-                          Tanggal
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {akademikLaporan.map((item) => (
-                        <tr key={item.id} className="border-t">
-                          <td className="px-4 py-2">{item.isi.mapel}</td>
-                          <td className="px-4 py-2 font-medium">
-                            {item.isi.nilai}
-                          </td>
-                          <td className="px-4 py-2 text-muted-foreground">
-                            {formatDate(item.tanggal)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {activeTab === "perilaku" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Catatan Perilaku
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {perilakuLaporan.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  Belum ada catatan perilaku
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {perilakuLaporan.map((item) => (
-                  <div key={item.id} className="p-4 border rounded-lg">
-                    <div className="flex gap-3">
-                      <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                      <div className="space-y-1">
-                        <p className="text-sm">{item.isi.catatan}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(item.tanggal)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      {/* Add Orangtua Modal */}
+      <AddOrangtuaModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={fetchData}
+      />
     </div>
   );
 }

@@ -8,7 +8,23 @@ export default withAuth(
 
     // Redirect logged-in users away from auth pages
     if (token && (pathname === "/login" || pathname === "/register")) {
+      // Redirect orangtua to /home, others to /dashboard
+      if (token.role === "orangtua") {
+        return NextResponse.redirect(new URL("/home", req.url));
+      }
       return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    // Redirect orangtua from /dashboard to /home
+    if (token && token.role === "orangtua" && pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(new URL("/home", req.url));
+    }
+
+    // Protect /dashboard/admin/* routes - admin only
+    if (token && pathname.startsWith("/dashboard/admin")) {
+      if (token.role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
     }
 
     return NextResponse.next();
@@ -32,8 +48,8 @@ export default withAuth(
           return true;
         }
 
-        // Dashboard and chat routes require authentication
-        if (pathname.startsWith("/dashboard") || pathname.startsWith("/chat")) {
+        // Dashboard, home, and chat routes require authentication
+        if (pathname.startsWith("/dashboard") || pathname.startsWith("/chat") || pathname.startsWith("/home")) {
           return !!token;
         }
 

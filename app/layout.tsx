@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionProviderWrapper from "@/components/providers/session-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { MetadataProvider } from "@/components/providers/metadata-provider";
+import { Toaster } from "sonner";
+import { generateMetadata as generateSiteMetadata } from "@/lib/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,10 +17,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Konsultasi App",
-  description: "Aplikasi Konsultasi dengan Role-Based Access Control",
-};
+// Generate metadata - will use default settings initially
+// Settings from Firebase will be applied on client side for dynamic updates
+export const metadata: Metadata = generateSiteMetadata();
 
 export default function RootLayout({
   children,
@@ -28,7 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProviderWrapper>{children}</SessionProviderWrapper>
+        <SessionProviderWrapper>
+          <ThemeProvider>
+            <MetadataProvider />
+            {children}
+            <Toaster position="top-right" richColors />
+          </ThemeProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
