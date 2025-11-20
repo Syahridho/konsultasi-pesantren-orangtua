@@ -11,7 +11,7 @@ declare module "axios" {
 
 // Create an instance of axios with default configuration
 const api = axios.create({
-  baseURL: process.env.NEXTAUTH_URL || "http://localhost:3000",
+  baseURL: process.env.NEXTAUTH_URL,
   headers: {
     "Content-Type": "application/json",
   },
