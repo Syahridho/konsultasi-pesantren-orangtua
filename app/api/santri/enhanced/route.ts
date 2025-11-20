@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { ref, get, set, update, remove, push } from "firebase/database";
 import { database } from "@/lib/firebase";
 import { z } from "zod";
+import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 
 // Validation schemas
 const createSantriSchema = z.object({
@@ -83,12 +84,33 @@ async function getAllParents() {
 
 // GET: Fetch all santri with enhanced data structure (NEW FORMAT + backward compatibility)
 export async function GET(request: NextRequest) {
+  // Add CORS headers
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+
+  // Handle preflight requests
+  if (request.method === "OPTIONS") {
+    return new NextResponse(null, { status: 200, headers: corsHeaders });
+  }
+
+  // Handle preflight requests
+  const preflightResponse = handleCorsPreflight(request);
+  if (preflightResponse) {
+    return preflightResponse;
+  }
+
   try {
     const session = await getServerSession(authOptions);
 
     if (!session) {
       console.log("[ENHANCED SANTRI API] No session found");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
     console.log("[ENHANCED SANTRI API] Session found:", {
@@ -106,7 +128,10 @@ export async function GET(request: NextRequest) {
         "[ENHANCED SANTRI API] User not found in database:",
         session.user.id
       );
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404, headers: corsHeaders }
+      );
     }
 
     const userData = snapshot.val();
@@ -121,7 +146,10 @@ export async function GET(request: NextRequest) {
 
     if (!usersSnapshot.exists()) {
       console.log("[ENHANCED SANTRI API] No users found in database");
-      return NextResponse.json({ santriList: [], parents: [] });
+      return NextResponse.json(
+        { santriList: [], parents: [] },
+        { headers: corsHeaders }
+      );
     }
 
     const allUsers = usersSnapshot.val();
@@ -138,14 +166,14 @@ export async function GET(request: NextRequest) {
     // Role-based data access
     if (userData.role === "admin" || userData.role === "ustad") {
       // Admin and Ustad can see all students
-      
+
       // PRIORITY 1: NEW FORMAT - users with role="santri"
       Object.keys(allUsers).forEach((userId) => {
         const user = allUsers[userId];
 
         if (user.role === "santri") {
           newFormatCount++;
-          
+
           // Get parent info
           let parentData = null;
           if (user.parentId && allUsers[user.parentId]) {
@@ -177,10 +205,10 @@ export async function GET(request: NextRequest) {
 
         if (user.role === "orangtua") {
           const students = normalizeStudentData(user, userId);
-          
+
           students.forEach((student) => {
             oldFormatCount++;
-            
+
             santriList.push({
               id: student.id,
               name: student.name,
@@ -200,17 +228,16 @@ export async function GET(request: NextRequest) {
           });
         }
       });
-      
     } else if (userData.role === "orangtua") {
       // Orangtua can only see their own students
-      
+
       // NEW FORMAT: Check studentIds array
       if (userData.studentIds && Array.isArray(userData.studentIds)) {
         userData.studentIds.forEach((studentId: string) => {
           if (allUsers[studentId] && allUsers[studentId].role === "santri") {
             const student = allUsers[studentId];
             newFormatCount++;
-            
+
             santriList.push({
               id: studentId,
               name: student.name,
@@ -230,12 +257,12 @@ export async function GET(request: NextRequest) {
           }
         });
       }
-      
+
       // OLD FORMAT: Check embedded students/santri
       const students = normalizeStudentData(userData, session.user.id);
       students.forEach((student) => {
         oldFormatCount++;
-        
+
         santriList.push({
           id: student.id,
           name: student.name,
@@ -259,23 +286,26 @@ export async function GET(request: NextRequest) {
       `[ENHANCED SANTRI API] Summary: Found ${totalSantriCount} total santri (${newFormatCount} new format, ${oldFormatCount} old format)`
     );
 
-    return NextResponse.json({
-      santriList,
-      parents,
-      debug: {
-        totalUsers: Object.keys(allUsers).length,
-        totalSantriCount,
-        newFormatCount,
-        oldFormatCount,
-        returnedSantriCount: santriList.length,
-        currentUserRole: userData.role,
+    return NextResponse.json(
+      {
+        santriList,
+        parents,
+        debug: {
+          totalUsers: Object.keys(allUsers).length,
+          totalSantriCount,
+          newFormatCount,
+          oldFormatCount,
+          returnedSantriCount: santriList.length,
+          currentUserRole: userData.role,
+        },
       },
-    });
+      { headers: corsHeaders }
+    );
   } catch (error) {
     console.error("[ENHANCED SANTRI API] Error fetching santri data:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
@@ -361,7 +391,7 @@ export async function POST(request: NextRequest) {
     // Update parent's studentIds array
     const currentStudentIds = parentData.studentIds || [];
     const updatedStudentIds = [...currentStudentIds, santriId];
-    
+
     await update(parentRef, {
       studentIds: updatedStudentIds,
       updatedAt: new Date().toISOString(),
@@ -439,16 +469,22 @@ export async function PUT(request: NextRequest) {
 
     if (santriUserSnapshot.exists()) {
       const santriData = santriUserSnapshot.val();
-      
+
       // Verify this santri belongs to current parent
       if (santriData.role === "santri" && santriData.parentId === orangTuaId) {
         const updateData = {
           ...(validatedData.name && { name: validatedData.name }),
           ...(validatedData.nis && { nis: validatedData.nis }),
           ...(validatedData.gender && { gender: validatedData.gender }),
-          ...(validatedData.tempatLahir && { tempatLahir: validatedData.tempatLahir }),
-          ...(validatedData.tanggalLahir && { tanggalLahir: validatedData.tanggalLahir }),
-          ...(validatedData.tahunDaftar && { entryYear: validatedData.tahunDaftar }),
+          ...(validatedData.tempatLahir && {
+            tempatLahir: validatedData.tempatLahir,
+          }),
+          ...(validatedData.tanggalLahir && {
+            tanggalLahir: validatedData.tanggalLahir,
+          }),
+          ...(validatedData.tahunDaftar && {
+            entryYear: validatedData.tahunDaftar,
+          }),
           updatedAt: new Date().toISOString(),
           updatedBy: session.user.id,
           updatedByName: currentUserName,
@@ -465,7 +501,10 @@ export async function PUT(request: NextRequest) {
     }
 
     // Fallback to OLD FORMAT: embedded santri data
-    const santriEmbeddedRef = ref(database, `users/${orangTuaId}/santri/${santriId}`);
+    const santriEmbeddedRef = ref(
+      database,
+      `users/${orangTuaId}/santri/${santriId}`
+    );
     const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
     if (santriEmbeddedSnapshot.exists()) {
@@ -531,7 +570,7 @@ export async function DELETE(request: NextRequest) {
 
     if (santriUserSnapshot.exists()) {
       const santriData = santriUserSnapshot.val();
-      
+
       // Verify this santri belongs to current parent
       if (santriData.role === "santri" && santriData.parentId === orangTuaId) {
         // Delete santri user
@@ -540,19 +579,24 @@ export async function DELETE(request: NextRequest) {
         // Remove from parent's studentIds
         const parentRef = ref(database, `users/${orangTuaId}`);
         const parentSnapshot = await get(parentRef);
-        
+
         if (parentSnapshot.exists()) {
           const parentData = parentSnapshot.val();
           const currentStudentIds = parentData.studentIds || [];
-          const updatedStudentIds = currentStudentIds.filter((id: string) => id !== santriId);
-          
+          const updatedStudentIds = currentStudentIds.filter(
+            (id: string) => id !== santriId
+          );
+
           await update(parentRef, {
             studentIds: updatedStudentIds,
             updatedAt: new Date().toISOString(),
           });
         }
 
-        console.log("[ENHANCED SANTRI API] Successfully deleted santri:", santriId);
+        console.log(
+          "[ENHANCED SANTRI API] Successfully deleted santri:",
+          santriId
+        );
 
         return NextResponse.json({
           message: "Santri berhasil dihapus",
@@ -562,14 +606,20 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Fallback to OLD FORMAT: embedded santri data
-    const santriEmbeddedRef = ref(database, `users/${orangTuaId}/santri/${santriId}`);
+    const santriEmbeddedRef = ref(
+      database,
+      `users/${orangTuaId}/santri/${santriId}`
+    );
     const santriEmbeddedSnapshot = await get(santriEmbeddedRef);
 
     if (santriEmbeddedSnapshot.exists()) {
       // Delete santri
       await remove(santriEmbeddedRef);
 
-      console.log("[ENHANCED SANTRI API] Successfully deleted santri (old format):", santriId);
+      console.log(
+        "[ENHANCED SANTRI API] Successfully deleted santri (old format):",
+        santriId
+      );
 
       return NextResponse.json({
         message: "Santri berhasil dihapus",

@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ref, get } from "firebase/database";
 import { database } from "@/lib/firebase";
+import { addCorsHeaders, handleCorsPreflight } from "@/lib/cors";
 
 // GET: Fetch students with filters for class enrollment
 export async function GET(request: NextRequest) {
+  // Handle CORS preflight
+  const preflight = handleCorsPreflight(request);
+  if (preflight) return preflight;
   try {
     const session = await getServerSession(authOptions);
 
@@ -96,7 +100,7 @@ export async function GET(request: NextRequest) {
       ...new Set(students.map((s) => s.entryYear).filter(Boolean)),
     ].sort();
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       students: paginatedStudents,
       total,
       pagination: {
@@ -112,11 +116,15 @@ export async function GET(request: NextRequest) {
         availableStatuses: ["active", "inactive", "graduated"],
       },
     });
+
+    return addCorsHeaders(response);
   } catch (error) {
     console.error("[SANTRI API] Error fetching students:", error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
+    return addCorsHeaders(response);
   }
 }

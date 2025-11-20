@@ -234,15 +234,52 @@ export default function SantriPage() {
         }
       } else {
         console.error("[SANTRI PAGE] API error response:", response.data);
-        toast.error("Gagal memuat data santri: " + response.data.error);
+
+        // Handle specific error types
+        let errorMessage = "Gagal memuat data santri";
+
+        if (response.data?.error) {
+          errorMessage = response.data.error;
+        } else if (response.status >= 400 && response.status < 500) {
+          errorMessage =
+            "Terjadi kesalahan klien. Silakan periksa kembali permintaan Anda.";
+        } else if (response.status >= 500) {
+          errorMessage =
+            "Server sedang mengalami masalah. Silakan coba lagi nanti.";
+        }
+
+        toast.error(
+          errorMessage +
+            (response.data?.error ? `: ${response.data.error}` : "")
+        );
       }
     } catch (error: any) {
       console.error("[SANTRI PAGE] Error fetching santri:", error);
       console.error("[SANTRI PAGE] Error response:", error.response?.data);
-      toast.error(
-        "Terjadi kesalahan saat memuat data santri: " +
-          (error.response?.data?.error || error.message)
-      );
+
+      // Handle specific error types
+      let errorMessage = "Terjadi kesalahan saat memuat data santri";
+
+      if (
+        error.code === "ERR_NETWORK" ||
+        error.code === "ERR_BLOCKED_BY_CLIENT"
+      ) {
+        errorMessage =
+          "Terjadi masalah koneksi jaringan. Silakan periksa koneksi internet atau nonaktifkan ad blocker.";
+      } else if (error.code === "ECONNREFUSED") {
+        errorMessage =
+          "Server tidak dapat dihubungi. Silakan coba beberapa saat lagi.";
+      } else if (error.response?.status === 429) {
+        errorMessage =
+          "Terlalu banyak permintaan. Silakan coba lagi beberapa saat.";
+      } else if (error.response?.status >= 500) {
+        errorMessage =
+          "Server sedang mengalami masalah. Silakan coba lagi nanti.";
+      } else if (error.message) {
+        errorMessage = `Terjadi kesalahan: ${error.message}`;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

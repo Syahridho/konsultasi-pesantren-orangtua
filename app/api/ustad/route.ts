@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ref, get } from "firebase/database";
 import { database } from "@/lib/firebase";
+import { addCorsHeaders, handleCorsPreflight } from "@/lib/cors";
 
 // GET: Fetch teachers with optional filters
 export async function GET(request: NextRequest) {
+  // Handle CORS preflight
+  const preflight = handleCorsPreflight(request);
+  if (preflight) return preflight;
   try {
     const session = await getServerSession(authOptions);
 
@@ -108,15 +112,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       teachers,
       total: teachers.length,
     });
+
+    return addCorsHeaders(response);
   } catch (error) {
     console.error("[USTAD API] Error fetching teachers:", error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
+    return addCorsHeaders(response);
   }
 }

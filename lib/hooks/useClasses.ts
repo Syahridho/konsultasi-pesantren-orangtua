@@ -100,9 +100,29 @@ export const useClasses = (filters?: {
       }
     } catch (err: any) {
       console.error("Error fetching classes:", err);
-      setError(
-        err.response?.data?.error || "Terjadi kesalahan saat memuat data kelas"
-      );
+
+      // Handle specific error types
+      let errorMessage = "Terjadi kesalahan saat memuat data kelas";
+
+      if (err.code === "ERR_NETWORK" || err.code === "ERR_BLOCKED_BY_CLIENT") {
+        errorMessage =
+          "Terjadi masalah koneksi jaringan. Silakan periksa koneksi internet atau nonaktifkan ad blocker.";
+      } else if (err.code === "ECONNREFUSED") {
+        errorMessage =
+          "Server tidak dapat dihubungi. Silakan coba beberapa saat lagi.";
+      } else if (err.response?.status === 429) {
+        errorMessage =
+          "Terlalu banyak permintaan. Silakan coba lagi beberapa saat.";
+      } else if (err.response?.status >= 500) {
+        errorMessage =
+          "Server sedang mengalami masalah. Silakan coba lagi nanti.";
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = `Terjadi kesalahan: ${err.message}`;
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -124,8 +144,28 @@ export const useClasses = (filters?: {
       }
     } catch (err: any) {
       console.error("Error creating class:", err);
-      const errorMessage =
-        err.response?.data?.error || "Terjadi kesalahan saat membuat kelas";
+
+      // Handle specific error types
+      let errorMessage = "Terjadi kesalahan saat membuat kelas";
+
+      if (err.code === "ERR_NETWORK" || err.code === "ERR_BLOCKED_BY_CLIENT") {
+        errorMessage =
+          "Terjadi masalah koneksi jaringan. Silakan periksa koneksi internet atau nonaktifkan ad blocker.";
+      } else if (err.code === "ECONNREFUSED") {
+        errorMessage =
+          "Server tidak dapat dihubungi. Silakan coba beberapa saat lagi.";
+      } else if (err.response?.status === 429) {
+        errorMessage =
+          "Terlalu banyak permintaan. Silakan coba lagi beberapa saat.";
+      } else if (err.response?.status >= 500) {
+        errorMessage =
+          "Server sedang mengalami masalah. Silakan coba lagi nanti.";
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = `Terjadi kesalahan: ${err.message}`;
+      }
+
       setError(errorMessage);
 
       // Handle specific error cases
@@ -159,8 +199,28 @@ export const useClasses = (filters?: {
       }
     } catch (err: any) {
       console.error("Error updating class:", err);
-      const errorMessage =
-        err.response?.data?.error || "Terjadi kesalahan saat memperbarui kelas";
+
+      // Handle specific error types
+      let errorMessage = "Terjadi kesalahan saat memperbarui kelas";
+
+      if (err.code === "ERR_NETWORK" || err.code === "ERR_BLOCKED_BY_CLIENT") {
+        errorMessage =
+          "Terjadi masalah koneksi jaringan. Silakan periksa koneksi internet atau nonaktifkan ad blocker.";
+      } else if (err.code === "ECONNREFUSED") {
+        errorMessage =
+          "Server tidak dapat dihubungi. Silakan coba beberapa saat lagi.";
+      } else if (err.response?.status === 429) {
+        errorMessage =
+          "Terlalu banyak permintaan. Silakan coba lagi beberapa saat.";
+      } else if (err.response?.status >= 500) {
+        errorMessage =
+          "Server sedang mengalami masalah. Silakan coba lagi nanti.";
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = `Terjadi kesalahan: ${err.message}`;
+      }
+
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -180,9 +240,29 @@ export const useClasses = (filters?: {
       }
     } catch (err: any) {
       console.error("Error deleting class:", err);
-      setError(
-        err.response?.data?.error || "Terjadi kesalahan saat menghapus kelas"
-      );
+
+      // Handle specific error types
+      let errorMessage = "Terjadi kesalahan saat menghapus kelas";
+
+      if (err.code === "ERR_NETWORK" || err.code === "ERR_BLOCKED_BY_CLIENT") {
+        errorMessage =
+          "Terjadi masalah koneksi jaringan. Silakan periksa koneksi internet atau nonaktifkan ad blocker.";
+      } else if (err.code === "ECONNREFUSED") {
+        errorMessage =
+          "Server tidak dapat dihubungi. Silakan coba beberapa saat lagi.";
+      } else if (err.response?.status === 429) {
+        errorMessage =
+          "Terlalu banyak permintaan. Silakan coba lagi beberapa saat.";
+      } else if (err.response?.status >= 500) {
+        errorMessage =
+          "Server sedang mengalami masalah. Silakan coba lagi nanti.";
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = `Terjadi kesalahan: ${err.message}`;
+      }
+
+      setError(errorMessage);
       return false;
     }
   };

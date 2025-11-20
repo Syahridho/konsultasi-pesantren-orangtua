@@ -5,8 +5,12 @@ import { ref, get, set, push } from "firebase/database";
 import { database } from "@/lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { addCorsHeaders, handleCorsPreflight } from "@/lib/cors";
 
 export async function GET(request: NextRequest) {
+  // Handle CORS preflight
+  const preflight = handleCorsPreflight(request);
+  if (preflight) return preflight;
   try {
     const session = await getServerSession(authOptions);
 
@@ -32,7 +36,7 @@ export async function GET(request: NextRequest) {
         ...santri[santriId],
       }));
 
-      return NextResponse.json({
+      const response = NextResponse.json({
         user: {
           id: session.user.id,
           name: userData.name,
@@ -43,6 +47,8 @@ export async function GET(request: NextRequest) {
         },
         santri: santriList,
       });
+
+      return addCorsHeaders(response);
     } else {
       // If user is admin or ustad, return all orangtua data
       const usersRef = ref(database, "users");
@@ -68,7 +74,7 @@ export async function GET(request: NextRequest) {
           };
         });
 
-      return NextResponse.json({
+      const response = NextResponse.json({
         user: {
           id: session.user.id,
           name: userData.name,
@@ -78,18 +84,25 @@ export async function GET(request: NextRequest) {
         },
         orangtuaList,
       });
+
+      return addCorsHeaders(response);
     }
   } catch (error) {
     console.error("Error fetching orangtua data:", error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
+    return addCorsHeaders(response);
   }
 }
 
 // POST create new orangtua
 export async function POST(request: NextRequest) {
+  // Handle CORS preflight
+  const preflight = handleCorsPreflight(request);
+  if (preflight) return preflight;
   try {
     const session = await getServerSession(authOptions);
 
@@ -183,34 +196,42 @@ export async function POST(request: NextRequest) {
 
     await set(userRef, userData);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: "Orang tua created successfully",
       orangtua: {
         id: user.uid,
         ...userData,
       },
     });
+
+    return addCorsHeaders(response);
   } catch (error: any) {
     console.error("Error creating orangtua:", error);
 
     // Handle Firebase auth errors
     if (error.code === "auth/email-already-in-use") {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: "Email already in use" },
         { status: 400 }
       );
+
+      return addCorsHeaders(response);
     }
 
     if (error.code === "auth/weak-password") {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: "Password is too weak" },
         { status: 400 }
       );
+
+      return addCorsHeaders(response);
     }
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
+    return addCorsHeaders(response);
   }
 }

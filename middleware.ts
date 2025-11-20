@@ -1,74 +1,40 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default withAuth(
-  function middleware(req) {
-    const token = req.nextauth.token;
-    const pathname = req.nextUrl.pathname;
+// CORS configuration
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400", // 24 hours
+};
 
-    // Redirect logged-in users away from auth pages
-    if (token && (pathname === "/login" || pathname === "/register")) {
-      // Redirect orangtua to /home, others to /dashboard
-      if (token.role === "orangtua") {
-        return NextResponse.redirect(new URL("/home", req.url));
-      }
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Handle preflight requests for API routes
+  if (pathname.startsWith("/api/")) {
+    if (request.method === "OPTIONS") {
+      return new NextResponse(null, {
+        status: 200,
+        headers: corsHeaders,
+      });
     }
-
-    // Redirect orangtua from /dashboard to /home
-    if (token && token.role === "orangtua" && pathname.startsWith("/dashboard")) {
-      return NextResponse.redirect(new URL("/home", req.url));
-    }
-
-    // Protect /dashboard/admin/* routes - admin only
-    if (token && pathname.startsWith("/dashboard/admin")) {
-      if (token.role !== "admin") {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-      }
-    }
-
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const pathname = req.nextUrl.pathname;
-
-        // Public routes that don't require authentication
-        const publicRoutes = [
-          "/",
-          "/login",
-          "/register",
-          "/forgot-password",
-          "/reset-password",
-        ];
-
-        // If it's a public route, allow access
-        if (publicRoutes.some((route) => pathname.startsWith(route))) {
-          return true;
-        }
-
-        // Dashboard, home, and chat routes require authentication
-        if (pathname.startsWith("/dashboard") || pathname.startsWith("/chat") || pathname.startsWith("/home")) {
-          return !!token;
-        }
-
-        // Default to allowing access for other routes
-        return true;
-      },
-    },
   }
-);
+
+  // Continue to the route
+  const response = NextResponse.next();
+
+  // Add CORS headers to API responses
+  if (pathname.startsWith("/api/")) {
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+  }
+
+  return response;
+}
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/api/:path*", "/((?!_next/static|_next/image|favicon.ico).*)"],
 };

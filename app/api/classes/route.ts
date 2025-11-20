@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { ref, get, set, update, remove, push } from "firebase/database";
 import { database } from "@/lib/firebase";
 import { z } from "zod";
+import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 
 // Validation schemas
 const createClassSchema = z.object({
@@ -181,6 +182,24 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
   console.log("[CLASSES API] GET request started");
 
+  // Add CORS headers
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+
+  // Handle preflight requests
+  if (request.method === "OPTIONS") {
+    return new NextResponse(null, { status: 200, headers: corsHeaders });
+  }
+
+  // Handle preflight requests
+  const preflightResponse = handleCorsPreflight(request);
+  if (preflightResponse) {
+    return preflightResponse;
+  }
+
   try {
     const sessionStartTime = Date.now();
     const session = await getServerSession(authOptions);
@@ -189,7 +208,10 @@ export async function GET(request: NextRequest) {
     );
 
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -210,7 +232,10 @@ export async function GET(request: NextRequest) {
     );
 
     if (!userSnapshot.exists()) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404, headers: corsHeaders }
+      );
     }
 
     const userData = userSnapshot.val();
@@ -219,7 +244,10 @@ export async function GET(request: NextRequest) {
     // Admin can access all classes
     // Ustad can only access their own classes
     if (userData.role !== "admin" && userData.role !== "ustad") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
     // Get classes from Firebase
@@ -236,7 +264,10 @@ export async function GET(request: NextRequest) {
           Date.now() - startTime
         }ms (no classes found)`
       );
-      return NextResponse.json({ classes: [], total: 0 });
+      return NextResponse.json(
+        { classes: [], total: 0 },
+        { headers: corsHeaders }
+      );
     }
 
     const classes = classesSnapshot.val();
@@ -287,13 +318,16 @@ export async function GET(request: NextRequest) {
       } classes (page ${page} of ${Math.ceil(classList.length / limit)})`
     );
 
-    return NextResponse.json({
-      classes: paginatedClasses,
-      total: classList.length,
-      page,
-      limit,
-      totalPages: Math.ceil(classList.length / limit),
-    });
+    return NextResponse.json(
+      {
+        classes: paginatedClasses,
+        total: classList.length,
+        page,
+        limit,
+        totalPages: Math.ceil(classList.length / limit),
+      },
+      { headers: corsHeaders }
+    );
   } catch (error) {
     console.error("[CLASSES API] Error fetching classes:", error);
     console.log(
@@ -301,7 +335,7 @@ export async function GET(request: NextRequest) {
     );
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
