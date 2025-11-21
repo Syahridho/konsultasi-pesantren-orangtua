@@ -197,7 +197,7 @@ export function StudentEnrollmentStep({
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -246,52 +246,50 @@ export function StudentEnrollmentStep({
             </Select>
 
             {/* Bulk Actions */}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSelectAllVisible}
-                disabled={
-                  loading || students.length === 0 || allVisibleSelected
-                }
-                className="whitespace-nowrap"
-              >
-                {isSelectingAll ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : allVisibleSelected ? (
-                  <CheckSquare className="h-4 w-4 mr-2" />
-                ) : (
-                  <Square className="h-4 w-4 mr-2" />
-                )}
-                Pilih Semua Terlihat
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSelectAllFiltered}
-                disabled={loading || allFilteredSelected}
-                className="whitespace-nowrap"
-              >
-                {allFilteredSelected ? (
-                  <CheckSquare className="h-4 w-4 mr-2" />
-                ) : (
-                  <Square className="h-4 w-4 mr-2" />
-                )}
-                Pilih Semua ({total})
-              </Button>
-
-              {selectedStudentIds.length > 0 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDeselectAll}
-                  className="whitespace-nowrap"
-                >
-                  Hapus Pilihan
-                </Button>
+          </div>
+          <div className="flex gap-2 mb-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSelectAllVisible}
+              disabled={loading || students.length === 0 || allVisibleSelected}
+              className="whitespace-nowrap"
+            >
+              {isSelectingAll ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : allVisibleSelected ? (
+                <CheckSquare className="h-4 w-4 mr-2" />
+              ) : (
+                <Square className="h-4 w-4 mr-2" />
               )}
-            </div>
+              Pilih Semua Terlihat
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSelectAllFiltered}
+              disabled={loading || allFilteredSelected}
+              className="whitespace-nowrap"
+            >
+              {allFilteredSelected ? (
+                <CheckSquare className="h-4 w-4 mr-2" />
+              ) : (
+                <Square className="h-4 w-4 mr-2" />
+              )}
+              Pilih Semua ({total})
+            </Button>
+
+            {selectedStudentIds.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDeselectAll}
+                className="whitespace-nowrap"
+              >
+                Hapus Pilihan
+              </Button>
+            )}
           </div>
 
           {/* Selection Summary */}
