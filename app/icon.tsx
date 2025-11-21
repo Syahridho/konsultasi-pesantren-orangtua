@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export function generateIcon() {
+export default function generateIcon() {
   return new ImageResponse(
     (
       <div
