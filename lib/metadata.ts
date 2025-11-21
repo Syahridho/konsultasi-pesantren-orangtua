@@ -24,12 +24,15 @@ export interface SiteSettings {
 const defaultSettings: SiteSettings = {
   siteName: "PesantrenConnect",
   siteTagline: "Platform Komunikasi Pesantren Modern",
-  siteDescription: "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri dengan sistem yang aman dan terpercaya.",
-  metaKeywords: "pesantren, santri, hafalan quran, akademik, komunikasi pesantren, aplikasi pesantren",
+  siteDescription:
+    "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri dengan sistem yang aman dan terpercaya.",
+  metaKeywords:
+    "pesantren, santri, hafalan quran, akademik, komunikasi pesantren, aplikasi pesantren",
   metaAuthor: "PesantrenConnect",
   canonicalUrl: "",
   ogTitle: "PesantrenConnect - Platform Komunikasi Pesantren Modern",
-  ogDescription: "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri",
+  ogDescription:
+    "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri",
   ogImage: "",
   twitterCard: "summary_large_image",
   twitterSite: "@pesantrenconnect",
@@ -92,7 +95,9 @@ export function generateMetadata(settings?: Partial<SiteSettings>): Metadata {
       },
     },
     icons: {
-      icon: "/favicon.ico",
+      icon: "/icon",
+      shortcut: "/favicon.ico",
+      apple: "/apple-icon.png",
     },
   };
 }
