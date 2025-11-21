@@ -38,7 +38,7 @@ export default function AccessControlExample() {
             </p>
             <p>
               <strong>Role:</strong>{" "}
-              <span className="font-bold text-blue-600">{userRole}</span>
+              <span className="font-bold text-green-600">{userRole}</span>
             </p>
           </div>
         </CardContent>
@@ -90,8 +90,8 @@ export default function AccessControlExample() {
 
           {/* Orang Tua */}
           {userRole === "orangtua" && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
-              <h3 className="font-semibold text-blue-800 mb-2">
+            <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+              <h3 className="font-semibold text-green-800 mb-2">
                 Akses Orang Tua
               </h3>
               <div className="space-y-2">

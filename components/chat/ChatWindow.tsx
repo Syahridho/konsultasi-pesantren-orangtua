@@ -116,18 +116,18 @@ export default function ChatWindow({
         // Get chat info directly from Firebase Realtime Database
         const { ref, get } = await import("firebase/database");
         const { database } = await import("@/lib/firebase");
-        
+
         const chatRef = ref(database, `chats/${chatId}`);
         const snapshot = await get(chatRef);
-        
+
         if (snapshot.exists()) {
           const chatData = snapshot.val();
           // Determine other participant based on current user
-          const otherParticipantName = 
+          const otherParticipantName =
             chatData.participant1Id === currentUserId
               ? chatData.participant2Name
               : chatData.participant1Name;
-          
+
           setOtherParticipantName(otherParticipantName);
         } else {
           // Fallback: try to get from messages
@@ -303,7 +303,7 @@ export default function ChatWindow({
                         <div
                           className={`max-w-[70%] xs:max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg px-3 py-2 rounded-lg message-bubble chat-message ${
                             isOwnMessage
-                              ? "bg-blue-600 text-white"
+                              ? "bg-green-600 text-white"
                               : "bg-white text-gray-900 border"
                           }`}
                         >
@@ -320,7 +320,7 @@ export default function ChatWindow({
                               <p
                                 className={`text-xs ${
                                   isOwnMessage
-                                    ? "text-blue-100"
+                                    ? "text-green-100"
                                     : "text-gray-500"
                                 }`}
                               >

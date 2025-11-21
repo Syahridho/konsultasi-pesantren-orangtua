@@ -178,7 +178,7 @@ export default function ReportsDashboard() {
       case "open":
         return "bg-red-100 text-red-800";
       case "in_progress":
-        return "bg-blue-100 text-blue-800";
+        return "bg-green-100 text-green-800";
       case "resolved":
         return "bg-green-100 text-green-800";
       case "closed":
@@ -193,7 +193,7 @@ export default function ReportsDashboard() {
       case "excellent":
         return "bg-green-100 text-green-800";
       case "good":
-        return "bg-blue-100 text-blue-800";
+        return "bg-green-100 text-green-800";
       case "fair":
         return "bg-yellow-100 text-yellow-800";
       case "poor":

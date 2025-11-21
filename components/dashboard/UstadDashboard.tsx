@@ -50,15 +50,15 @@ export default function UstadDashboard() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch("/api/dashboard/stats");
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch dashboard stats");
       }
 
       const data = await response.json();
-      
+
       if (data.role === "ustad") {
         setStats(data.stats);
       } else {
@@ -110,7 +110,9 @@ export default function UstadDashboard() {
         </div>
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
-            <CardTitle className="text-red-700">Error Loading Dashboard</CardTitle>
+            <CardTitle className="text-red-700">
+              Error Loading Dashboard
+            </CardTitle>
             <CardDescription className="text-red-600">
               {error || "Failed to load dashboard data"}
             </CardDescription>
@@ -143,9 +145,7 @@ export default function UstadDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalClasses}</div>
-            <p className="text-xs text-muted-foreground">
-              Total kelas aktif
-            </p>
+            <p className="text-xs text-muted-foreground">Total kelas aktif</p>
           </CardContent>
         </Card>
 
@@ -156,9 +156,7 @@ export default function UstadDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalStudents}</div>
-            <p className="text-xs text-muted-foreground">
-              Santri yang diampu
-            </p>
+            <p className="text-xs text-muted-foreground">Santri yang diampu</p>
           </CardContent>
         </Card>
 
@@ -193,7 +191,9 @@ export default function UstadDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Laporan Hafalan</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Laporan Hafalan
+            </CardTitle>
             <BookOpen className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
@@ -208,22 +208,24 @@ export default function UstadDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Laporan Akademik</CardTitle>
-            <FileText className="h-4 w-4 text-blue-500" />
+            <CardTitle className="text-sm font-medium">
+              Laporan Akademik
+            </CardTitle>
+            <FileText className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
               {stats.laporanByCategory.akademik}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Total laporan nilai
-            </p>
+            <p className="text-xs text-muted-foreground">Total laporan nilai</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Laporan Perilaku</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Laporan Perilaku
+            </CardTitle>
             <Users className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
@@ -242,9 +244,7 @@ export default function UstadDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Aksi Cepat</CardTitle>
-            <CardDescription>
-              Tindakan yang sering dilakukan
-            </CardDescription>
+            <CardDescription>Tindakan yang sering dilakukan</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Link href="/dashboard/ustad/lapor">
@@ -271,7 +271,9 @@ export default function UstadDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Aktivitas Minggu Ini</CardTitle>
-            <CardDescription>Ringkasan kegiatan 7 hari terakhir</CardDescription>
+            <CardDescription>
+              Ringkasan kegiatan 7 hari terakhir
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

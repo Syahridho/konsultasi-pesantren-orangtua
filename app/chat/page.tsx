@@ -148,7 +148,7 @@ function ChatPageContent() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading chat...</p>
         </div>
       </div>
@@ -168,7 +168,7 @@ function ChatPageContent() {
             </p>
             <button
               onClick={() => router.push("/login")}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+              className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
             >
               Go to Login
             </button>
@@ -255,7 +255,7 @@ export default function ChatPage() {
       fallback={
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading chat...</p>
           </div>
         </div>

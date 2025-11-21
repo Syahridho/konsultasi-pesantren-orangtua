@@ -30,7 +30,7 @@ export function BarChart({ title, data, height = 300 }: BarChartProps) {
                 <div className="text-sm text-gray-600 mb-1">{item.name}</div>
                 <div className="w-full bg-gray-200 rounded-full h-4">
                   <div
-                    className="bg-blue-500 h-4 rounded-full flex items-center justify-end pr-2"
+                    className="bg-green-500 h-4 rounded-full flex items-center justify-end pr-2"
                     style={{
                       width: `${(item.value / maxValue) * 100}%`,
                       backgroundColor: item.color || "#3B82F6",
@@ -176,7 +176,7 @@ export function LineChart({ title, data, height = 300 }: LineChartProps) {
                 <div className="text-sm text-gray-600 mb-1">{item.label}</div>
                 <div className="relative h-2 bg-gray-200 rounded">
                   <div
-                    className="absolute top-0 left-0 h-2 bg-blue-500 rounded"
+                    className="absolute top-0 left-0 h-2 bg-green-500 rounded"
                     style={{
                       width: `${((item.value - minValue) / range) * 100}%`,
                     }}
@@ -213,7 +213,7 @@ export function StatsCard({
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center">
-          {icon && <div className="p-2 bg-blue-100 rounded-lg">{icon}</div>}
+          {icon && <div className="p-2 bg-green-100 rounded-lg">{icon}</div>}
           <div className="ml-4 flex-1">
             <p className="text-sm font-medium text-gray-600">{title}</p>
             <div className="flex items-baseline">

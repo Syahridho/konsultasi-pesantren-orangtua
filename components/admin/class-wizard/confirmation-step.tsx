@@ -85,27 +85,27 @@ export function ConfirmationStep({
         <CardContent>
           <div className="space-y-6">
             {/* Class Information Summary */}
-            <div className="bg-blue-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-blue-900 mb-4">
+            <div className="bg-green-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-green-900 mb-4">
                 Informasi Kelas
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-blue-700">Nama Kelas</p>
-                  <p className="font-medium text-blue-900">{classData.name}</p>
+                  <p className="text-sm text-green-700">Nama Kelas</p>
+                  <p className="font-medium text-green-900">{classData.name}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-blue-700">Tahun Akademik</p>
-                  <p className="font-medium text-blue-900">
+                  <p className="text-sm text-green-700">Tahun Akademik</p>
+                  <p className="font-medium text-green-900">
                     {classData.academicYear}
                   </p>
                 </div>
               </div>
 
               <div className="mt-4">
-                <p className="text-sm text-blue-700">Jadwal</p>
-                <p className="font-medium text-blue-900">
+                <p className="text-sm text-green-700">Jadwal</p>
+                <p className="font-medium text-green-900">
                   {formatScheduleDisplay(classData.schedule)}
                 </p>
               </div>

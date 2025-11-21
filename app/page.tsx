@@ -360,7 +360,7 @@ export default function HomePage() {
                 <span className="font-bold text-xl">{settings.siteName}</span>
               </div>
               <p className="text-gray-400 text-sm">
-                © 2024 {settings.siteName}. All rights reserved.
+                © 2025 {settings.siteName}. All rights reserved.
               </p>
             </div>
 

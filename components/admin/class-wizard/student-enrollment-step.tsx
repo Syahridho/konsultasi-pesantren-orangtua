@@ -114,17 +114,20 @@ export function StudentEnrollmentStep({
   }, []);
 
   // Handle header checkbox toggle
-  const handleHeaderCheckboxToggle = useCallback((checked: boolean) => {
-    if (checked) {
-      handleSelectAllVisible();
-    } else {
-      const visibleStudentIds = students.map((s) => s.id);
-      onSelectionChange(
-        selectedStudentIds.filter((id) => !visibleStudentIds.includes(id))
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [students, selectedStudentIds, handleSelectAllVisible]);
+  const handleHeaderCheckboxToggle = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        handleSelectAllVisible();
+      } else {
+        const visibleStudentIds = students.map((s) => s.id);
+        onSelectionChange(
+          selectedStudentIds.filter((id) => !visibleStudentIds.includes(id))
+        );
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [students, selectedStudentIds, handleSelectAllVisible]
+  );
 
   // Handle filter changes
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -152,7 +155,7 @@ export function StudentEnrollmentStep({
       case "inactive":
         return "bg-gray-100 text-gray-800";
       case "graduated":
-        return "bg-blue-100 text-blue-800";
+        return "bg-green-100 text-green-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -293,8 +296,8 @@ export function StudentEnrollmentStep({
 
           {/* Selection Summary */}
           {selectedStudentIds.length > 0 && (
-            <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm font-medium text-blue-800">
+            <div className="mb-4 p-3 bg-green-50 rounded-lg">
+              <p className="text-sm font-medium text-green-800">
                 {selectedStudentIds.length} santri dipilih untuk kelas ini
               </p>
             </div>

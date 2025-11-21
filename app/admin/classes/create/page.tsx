@@ -101,8 +101,8 @@ export default function CreateClassPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-full">
-                  <Plus className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-green-100 rounded-full">
+                  <Plus className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">

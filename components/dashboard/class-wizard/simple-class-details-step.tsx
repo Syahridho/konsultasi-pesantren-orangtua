@@ -65,7 +65,7 @@ export default function SimpleClassDetailsStep({
   useEffect(() => {
     if (!isInitialMount.current) {
       onDataChange(formData);
-      
+
       // Validate and notify
       const isValid = classDetailsSchema.safeParse(formData).success;
       onValidationChange(isValid);
@@ -119,7 +119,7 @@ export default function SimpleClassDetailsStep({
   const selectedTeacher = teachers.find((t) => t.id === formData.ustadId);
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (field.includes(".")) {
         const [parent, child] = field.split(".");
         return {
@@ -142,8 +142,8 @@ export default function SimpleClassDetailsStep({
     const currentDays = formData.schedule.days || [];
     const updatedDays = checked
       ? [...currentDays, day]
-      : currentDays.filter(d => d !== day);
-    
+      : currentDays.filter((d) => d !== day);
+
     handleInputChange("schedule.days", updatedDays);
   };
 
@@ -181,7 +181,9 @@ export default function SimpleClassDetailsStep({
                 </label>
                 <Select
                   value={formData.academicYear}
-                  onValueChange={(value) => handleInputChange("academicYear", value)}
+                  onValueChange={(value) =>
+                    handleInputChange("academicYear", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Pilih tahun akademik" />
@@ -254,25 +256,25 @@ export default function SimpleClassDetailsStep({
 
               {/* Selected Teacher Info */}
               {selectedTeacher && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <div className="mt-4 p-4 bg-green-50 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Users className="h-5 w-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <Users className="h-5 w-5 text-green-600" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-blue-900">
+                      <h4 className="font-medium text-green-900">
                         {selectedTeacher.name}
                       </h4>
-                      <p className="text-sm text-blue-700">
+                      <p className="text-sm text-green-700">
                         {selectedTeacher.email}
                       </p>
                       {selectedTeacher.specialization && (
-                        <p className="text-sm text-blue-600">
+                        <p className="text-sm text-green-600">
                           Spesialisasi: {selectedTeacher.specialization}
                         </p>
                       )}
                       {selectedTeacher.phone && (
-                        <p className="text-sm text-blue-600">
+                        <p className="text-sm text-green-600">
                           Telepon: {selectedTeacher.phone}
                         </p>
                       )}
@@ -280,7 +282,7 @@ export default function SimpleClassDetailsStep({
                         <div className="mt-2">
                           <Badge
                             variant="outline"
-                            className="bg-blue-100 text-blue-800 border-blue-200"
+                            className="bg-green-100 text-green-800 border-green-200"
                           >
                             {selectedTeacher.currentClasses} kelas aktif
                           </Badge>
@@ -312,10 +314,17 @@ export default function SimpleClassDetailsStep({
                         <div key={day} className="flex items-center space-x-2">
                           <Checkbox
                             id={`day-${day}`}
-                            checked={formData.schedule.days?.includes(day) || false}
-                            onCheckedChange={(checked: boolean) => handleDayToggle(day, checked)}
+                            checked={
+                              formData.schedule.days?.includes(day) || false
+                            }
+                            onCheckedChange={(checked: boolean) =>
+                              handleDayToggle(day, checked)
+                            }
                           />
-                          <label htmlFor={`day-${day}`} className="text-sm font-normal cursor-pointer">
+                          <label
+                            htmlFor={`day-${day}`}
+                            className="text-sm font-normal cursor-pointer"
+                          >
                             {day}
                           </label>
                         </div>
@@ -331,7 +340,9 @@ export default function SimpleClassDetailsStep({
                       </label>
                       <Select
                         value={formData.schedule.startTime}
-                        onValueChange={(value) => handleInputChange("schedule.startTime", value)}
+                        onValueChange={(value) =>
+                          handleInputChange("schedule.startTime", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih waktu mulai" />
@@ -352,7 +363,9 @@ export default function SimpleClassDetailsStep({
                       </label>
                       <Select
                         value={formData.schedule.endTime}
-                        onValueChange={(value) => handleInputChange("schedule.endTime", value)}
+                        onValueChange={(value) =>
+                          handleInputChange("schedule.endTime", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih waktu selesai" />
@@ -372,7 +385,9 @@ export default function SimpleClassDetailsStep({
                   {isCheckingSchedule && (
                     <Alert>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <AlertDescription>Memeriksa konflik jadwal...</AlertDescription>
+                      <AlertDescription>
+                        Memeriksa konflik jadwal...
+                      </AlertDescription>
                     </Alert>
                   )}
 
@@ -380,7 +395,8 @@ export default function SimpleClassDetailsStep({
                     <Alert variant="destructive">
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        Jadwal bertentangan dengan kelas "{scheduleConflict.className}
+                        Jadwal bertentangan dengan kelas "
+                        {scheduleConflict.className}
                         ". Silakan pilih waktu atau hari yang berbeda.
                       </AlertDescription>
                     </Alert>
@@ -397,7 +413,7 @@ export default function SimpleClassDetailsStep({
                           {formData.schedule.endTime}
                         </p>
                       </div>
-                  )}
+                    )}
                 </div>
               </CardContent>
             </Card>

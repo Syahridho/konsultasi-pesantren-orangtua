@@ -525,7 +525,7 @@ function ReportCard({ report }: { report: Report }) {
                     </Badge>
                   )}
                   {report.isi.predikat === "good" && (
-                    <Badge className="bg-blue-100 text-blue-700">
+                    <Badge className="bg-green-100 text-green-700">
                       <TrendingUp className="w-3 h-3 mr-1" />
                       Baik
                     </Badge>
@@ -552,7 +552,7 @@ function ReportCard({ report }: { report: Report }) {
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-2xl font-bold text-blue-600">
+                  <span className="text-2xl font-bold text-green-600">
                     {report.isi.nilai}
                   </span>
                   <span className="text-gray-600">/ 100</span>

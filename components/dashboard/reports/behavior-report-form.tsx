@@ -146,7 +146,7 @@ export default function BehaviorReportForm({
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "academic":
-        return "bg-blue-100 text-blue-800";
+        return "bg-green-100 text-green-800";
       case "behavior":
         return "bg-purple-100 text-purple-800";
       case "discipline":
@@ -450,11 +450,11 @@ export default function BehaviorReportForm({
 
           {/* Selected Student Info */}
           {formData.studentId && (
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">
+            <div className="p-4 bg-green-50 rounded-lg">
+              <h4 className="font-medium text-green-900 mb-2">
                 Informasi Santri Terpilih
               </h4>
-              <p className="text-blue-700">
+              <p className="text-green-700">
                 <span className="font-medium">Nama:</span>{" "}
                 {getStudentName(formData.studentId)}
               </p>

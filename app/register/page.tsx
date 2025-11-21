@@ -350,12 +350,12 @@ export default function RegisterPage() {
           <div className="flex items-center justify-center space-x-2 mt-4">
             <div
               className={`h-2 w-8 rounded-full ${
-                currentStep >= 1 ? "bg-blue-600" : "bg-gray-300"
+                currentStep >= 1 ? "bg-green-600" : "bg-gray-300"
               }`}
             />
             <div
               className={`h-2 w-8 rounded-full ${
-                currentStep >= 2 ? "bg-blue-600" : "bg-gray-300"
+                currentStep >= 2 ? "bg-green-600" : "bg-gray-300"
               }`}
             />
           </div>
@@ -364,7 +364,7 @@ export default function RegisterPage() {
           {currentStep === 1 ? renderStep1() : renderStep2()}
           <div className="mt-4 text-center text-sm">
             Sudah punya akun?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline">
+            <Link href="/login" className="text-green-600 hover:underline">
               Login di sini
             </Link>
           </div>

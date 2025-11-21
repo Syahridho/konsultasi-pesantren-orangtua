@@ -31,7 +31,7 @@ export function ProgressIndicator({
       <div className="relative">
         <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200">
           <div
-            className="h-full bg-blue-600 transition-all duration-300 ease-in-out"
+            className="h-full bg-green-600 transition-all duration-300 ease-in-out"
             style={{
               width: `${(currentStep / (steps.length - 1)) * 100}%`,
             }}
@@ -58,12 +58,12 @@ export function ProgressIndicator({
                   className={cn(
                     "relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200",
                     {
-                      "bg-blue-600 border-blue-600": isActive,
+                      "bg-green-600 border-green-600": isActive,
                       "bg-green-600 border-green-600": isCompleted,
                       "bg-red-600 border-red-600": isError,
                       "bg-white border-gray-300":
                         !isActive && !isCompleted && !isError,
-                      "hover:border-blue-400": isClickable,
+                      "hover:border-green-400": isClickable,
                     }
                   )}
                 >
@@ -91,11 +91,11 @@ export function ProgressIndicator({
                 <div className="mt-2 text-center max-w-[120px]">
                   <p
                     className={cn("text-sm font-medium truncate", {
-                      "text-blue-600": isActive,
+                      "text-green-600": isActive,
                       "text-green-600": isCompleted,
                       "text-red-600": isError,
                       "text-gray-500": !isActive && !isCompleted && !isError,
-                      "group-hover:text-blue-500": isClickable,
+                      "group-hover:text-green-500": isClickable,
                     })}
                   >
                     {step.title}
@@ -104,7 +104,7 @@ export function ProgressIndicator({
                   {step.description && (
                     <p
                       className={cn("text-xs mt-1 truncate", {
-                        "text-blue-500": isActive,
+                        "text-green-500": isActive,
                         "text-green-500": isCompleted,
                         "text-red-500": isError,
                         "text-gray-400": !isActive && !isCompleted && !isError,

@@ -107,7 +107,7 @@ export function ApiErrorExample() {
         )}
 
         {!error && !loading && (
-          <div className="p-4 bg-blue-50 rounded text-sm">
+          <div className="p-4 bg-green-50 rounded text-sm">
             Klik tombol di atas untuk mensimulasikan API call (50% kemungkinan
             error)
           </div>

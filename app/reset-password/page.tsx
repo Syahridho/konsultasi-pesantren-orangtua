@@ -132,7 +132,7 @@ function ResetPasswordForm() {
             </div>
           )}
           <div className="mt-4 text-center text-sm">
-            <Link href="/login" className="text-blue-600 hover:underline">
+            <Link href="/login" className="text-green-600 hover:underline">
               Kembali ke Login
             </Link>
           </div>

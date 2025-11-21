@@ -99,7 +99,9 @@ export default function LaporanOrangtuaPage() {
 
     // Filter by kategori
     if (filterKategori !== "all") {
-      filtered = filtered.filter((report) => report.kategori === filterKategori);
+      filtered = filtered.filter(
+        (report) => report.kategori === filterKategori
+      );
     }
 
     // Filter by santri
@@ -280,10 +282,12 @@ export default function LaporanOrangtuaPage() {
   const getKategoriBadge = (kategori: string) => {
     const colors = {
       hafalan: "bg-green-100 text-green-800",
-      akademik: "bg-blue-100 text-blue-800",
+      akademik: "bg-green-100 text-green-800",
       perilaku: "bg-orange-100 text-orange-800",
     };
-    return colors[kategori as keyof typeof colors] || "bg-gray-100 text-gray-800";
+    return (
+      colors[kategori as keyof typeof colors] || "bg-gray-100 text-gray-800"
+    );
   };
 
   const formatDate = (dateString: string) => {
@@ -343,7 +347,8 @@ export default function LaporanOrangtuaPage() {
                 <div>
                   <p className="text-sm text-muted-foreground">Ayat</p>
                   <p className="font-medium">
-                    {selectedReport.isi.ayatStart} - {selectedReport.isi.ayatEnd}
+                    {selectedReport.isi.ayatStart} -{" "}
+                    {selectedReport.isi.ayatEnd}
                   </p>
                 </div>
                 <div>
@@ -370,7 +375,9 @@ export default function LaporanOrangtuaPage() {
             {selectedReport.kategori === "akademik" && (
               <>
                 <div>
-                  <p className="text-sm text-muted-foreground">Mata Pelajaran</p>
+                  <p className="text-sm text-muted-foreground">
+                    Mata Pelajaran
+                  </p>
                   <p className="font-medium">{selectedReport.isi.subject}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -387,8 +394,12 @@ export default function LaporanOrangtuaPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Tahun Ajaran</p>
-                    <p className="font-medium">{selectedReport.isi.academicYear}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Tahun Ajaran
+                    </p>
+                    <p className="font-medium">
+                      {selectedReport.isi.academicYear}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Semester</p>
@@ -443,8 +454,12 @@ export default function LaporanOrangtuaPage() {
 
   const getStats = () => {
     const hafalanCount = reports.filter((r) => r.kategori === "hafalan").length;
-    const akademikCount = reports.filter((r) => r.kategori === "akademik").length;
-    const perilakuCount = reports.filter((r) => r.kategori === "perilaku").length;
+    const akademikCount = reports.filter(
+      (r) => r.kategori === "akademik"
+    ).length;
+    const perilakuCount = reports.filter(
+      (r) => r.kategori === "perilaku"
+    ).length;
 
     return { hafalanCount, akademikCount, perilakuCount };
   };
@@ -495,12 +510,14 @@ export default function LaporanOrangtuaPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-green-600" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.akademikCount}</p>
-                <p className="text-xs text-muted-foreground">Laporan Akademik</p>
+                <p className="text-xs text-muted-foreground">
+                  Laporan Akademik
+                </p>
               </div>
             </div>
           </CardContent>
@@ -514,7 +531,9 @@ export default function LaporanOrangtuaPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.perilakuCount}</p>
-                <p className="text-xs text-muted-foreground">Laporan Perilaku</p>
+                <p className="text-xs text-muted-foreground">
+                  Laporan Perilaku
+                </p>
               </div>
             </div>
           </CardContent>
@@ -572,7 +591,9 @@ export default function LaporanOrangtuaPage() {
             <div className="text-center py-12">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
               <p className="text-muted-foreground">
-                {searchTerm || filterKategori !== "all" || filterSantri !== "all"
+                {searchTerm ||
+                filterKategori !== "all" ||
+                filterSantri !== "all"
                   ? "Tidak ada laporan yang cocok dengan filter"
                   : "Belum ada laporan"}
               </p>
@@ -638,10 +659,7 @@ export default function LaporanOrangtuaPage() {
           </DialogHeader>
           {renderReportDetail()}
           <div className="flex justify-end space-x-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowDetailModal(false)}
-            >
+            <Button variant="outline" onClick={() => setShowDetailModal(false)}>
               Tutup
             </Button>
           </div>

@@ -1,6 +1,7 @@
 # DOKUMENTASI: RESPONSIVE DESIGN & TEMA HIJAU CUSTOM
 
 ## Tanggal: 2025-11-19
+
 ## Status: ✅ COMPLETED
 
 ---
@@ -8,6 +9,7 @@
 ## Ringkasan Perubahan
 
 Telah dilakukan perbaikan lengkap untuk:
+
 1. ✅ **Perbaiki akses `/dashboard/orangtua`** - Admin & ustad sekarang bisa akses
 2. ✅ **Responsive design** - Dashboard responsive untuk mobile, tablet, desktop
 3. ✅ **Tema hijau custom** - Warna primary emerald green seperti landing page
@@ -18,6 +20,7 @@ Telah dilakukan perbaikan lengkap untuk:
 ## 1. Perbaikan Akses /dashboard/orangtua
 
 ### Problem:
+
 - Admin tidak bisa akses `/dashboard/orangtua`
 - Page menggunakan Firestore, tapi sistem pakai Realtime Database
 - Logic hanya allow role "orangtua"
@@ -25,6 +28,7 @@ Telah dilakukan perbaikan lengkap untuk:
 ### Solution:
 
 **Before:**
+
 ```typescript
 if (session.user.role !== "orangtua") {
   toast.error("Anda tidak memiliki akses ke halaman ini");
@@ -34,6 +38,7 @@ if (session.user.role !== "orangtua") {
 ```
 
 **After:**
+
 ```typescript
 // Allow admin and ustad to access
 if (session.user.role !== "admin" && session.user.role !== "ustad") {
@@ -44,6 +49,7 @@ if (session.user.role !== "admin" && session.user.role !== "ustad") {
 ```
 
 ### Changes:
+
 - ✅ Replace Firestore imports dengan Realtime Database
 - ✅ Update logic untuk fetch data dari `users` node
 - ✅ Filter users dengan `role === "orangtua"`
@@ -52,6 +58,7 @@ if (session.user.role !== "admin" && session.user.role !== "ustad") {
 - ✅ Support semua format santri (studentIds, students, santri)
 
 ### New Features:
+
 - 🔍 Search by nama, email, telepon
 - 📊 Statistics card (total orang tua)
 - 📋 Table dengan informasi lengkap
@@ -63,15 +70,18 @@ if (session.user.role !== "admin" && session.user.role !== "ustad") {
 ## 2. Responsive Design
 
 ### Desktop (lg+)
+
 - Sidebar fixed width 256px (w-64)
 - Full navigation menu visible
 - No mobile header
 
 ### Tablet (md)
+
 - Same as desktop
 - Content adjusts with responsive padding
 
 ### Mobile (< lg)
+
 - ✅ **Hamburger menu** - Mobile navigation via Sheet component
 - ✅ **Fixed top header** - 64px height dengan logo & menu button
 - ✅ **Slide-out sidebar** - Sheet dari kiri dengan full menu
@@ -81,6 +91,7 @@ if (session.user.role !== "admin" && session.user.role !== "ustad") {
 ### Implementation:
 
 #### Sidebar Component:
+
 ```tsx
 // Mobile Menu Button
 <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b shadow-sm">
@@ -106,15 +117,15 @@ if (session.user.role !== "admin" && session.user.role !== "ustad") {
 ```
 
 #### Dashboard Layout:
+
 ```tsx
 <main className="flex-1 overflow-y-auto lg:mt-0 mt-16">
-  <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-    {children}
-  </div>
+  <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">{children}</div>
 </main>
 ```
 
 ### Responsive Breakpoints:
+
 - **sm**: 640px (Small tablets portrait)
 - **md**: 768px (Tablets)
 - **lg**: 1024px (Laptops/Desktops) - Sidebar muncul
@@ -129,62 +140,65 @@ if (session.user.role !== "admin" && session.user.role !== "ustad") {
 Menggunakan **Oklahoma City Color (oklch)** untuk konsistensi warna modern:
 
 #### Light Mode:
+
 ```css
 :root {
   /* Emerald Green Primary - Like Landing Page */
-  --primary: oklch(0.557 0.153 166.5);           /* emerald-600 */
-  --primary-foreground: oklch(1 0 0);            /* white */
-  
+  --primary: oklch(0.557 0.153 166.5); /* emerald-600 */
+  --primary-foreground: oklch(1 0 0); /* white */
+
   /* Emerald Accent */
-  --accent: oklch(0.962 0.036 165.23);           /* emerald-50 */
+  --accent: oklch(0.962 0.036 165.23); /* emerald-50 */
   --accent-foreground: oklch(0.391 0.146 171.72); /* emerald-700 */
-  
+
   /* Ring color (focus states) */
-  --ring: oklch(0.557 0.153 166.5);              /* match primary */
-  
+  --ring: oklch(0.557 0.153 166.5); /* match primary */
+
   /* Charts - Emerald tones */
-  --chart-1: oklch(0.557 0.153 166.5);           /* emerald-600 */
-  --chart-2: oklch(0.669 0.146 162.48);          /* emerald-400 */
-  --chart-3: oklch(0.763 0.117 166.02);          /* emerald-300 */
-  --chart-4: oklch(0.463 0.139 170.16);          /* emerald-700 */
-  --chart-5: oklch(0.391 0.146 171.72);          /* emerald-800 */
-  
+  --chart-1: oklch(0.557 0.153 166.5); /* emerald-600 */
+  --chart-2: oklch(0.669 0.146 162.48); /* emerald-400 */
+  --chart-3: oklch(0.763 0.117 166.02); /* emerald-300 */
+  --chart-4: oklch(0.463 0.139 170.16); /* emerald-700 */
+  --chart-5: oklch(0.391 0.146 171.72); /* emerald-800 */
+
   /* Sidebar - Emerald theme */
-  --sidebar-primary: oklch(0.557 0.153 166.5);   /* emerald-600 */
-  --sidebar-accent: oklch(0.962 0.036 165.23);   /* emerald-50 */
+  --sidebar-primary: oklch(0.557 0.153 166.5); /* emerald-600 */
+  --sidebar-accent: oklch(0.962 0.036 165.23); /* emerald-50 */
 }
 ```
 
 #### Dark Mode:
+
 ```css
 .dark {
   /* Lighter emerald for dark mode visibility */
-  --primary: oklch(0.669 0.146 162.48);          /* emerald-400 */
-  --primary-foreground: oklch(0.145 0 0);        /* dark */
-  
+  --primary: oklch(0.669 0.146 162.48); /* emerald-400 */
+  --primary-foreground: oklch(0.145 0 0); /* dark */
+
   /* Dark mode charts */
-  --chart-1: oklch(0.557 0.153 166.5);           /* emerald-600 */
-  --chart-2: oklch(0.669 0.146 162.48);          /* emerald-400 */
-  --chart-3: oklch(0.763 0.117 166.02);          /* emerald-300 */
-  
+  --chart-1: oklch(0.557 0.153 166.5); /* emerald-600 */
+  --chart-2: oklch(0.669 0.146 162.48); /* emerald-400 */
+  --chart-3: oklch(0.763 0.117 166.02); /* emerald-300 */
+
   /* Dark Sidebar */
-  --sidebar-primary: oklch(0.669 0.146 162.48);  /* emerald-400 */
+  --sidebar-primary: oklch(0.669 0.146 162.48); /* emerald-400 */
 }
 ```
 
 ### Color Palette Reference:
 
-| Color | Light Mode | Dark Mode | Usage |
-|-------|-----------|-----------|-------|
-| Primary | emerald-600 | emerald-400 | Buttons, links, active states |
-| Accent | emerald-50 | dark bg | Hover states, highlights |
-| Foreground | emerald-700 | emerald-50 | Text on accent backgrounds |
-| Ring | emerald-600 | emerald-400 | Focus outlines |
-| Charts | emerald palette | same | Data visualization |
+| Color      | Light Mode      | Dark Mode   | Usage                         |
+| ---------- | --------------- | ----------- | ----------------------------- |
+| Primary    | emerald-600     | emerald-400 | Buttons, links, active states |
+| Accent     | emerald-50      | dark bg     | Hover states, highlights      |
+| Foreground | emerald-700     | emerald-50  | Text on accent backgrounds    |
+| Ring       | emerald-600     | emerald-400 | Focus outlines                |
+| Charts     | emerald palette | same        | Data visualization            |
 
 ### Usage Examples:
 
 #### Buttons:
+
 ```tsx
 // Primary button (hijau emerald)
 <Button>Save</Button>
@@ -196,6 +210,7 @@ Menggunakan **Oklahoma City Color (oklch)** untuk konsistensi warna modern:
 ```
 
 #### Cards & Badges:
+
 ```tsx
 // Primary badge
 <Badge className="bg-primary">Active</Badge>
@@ -207,6 +222,7 @@ Menggunakan **Oklahoma City Color (oklch)** untuk konsistensi warna modern:
 ```
 
 #### Focus States:
+
 ```tsx
 // Input with emerald focus ring
 <Input className="focus:ring-primary" />
@@ -217,7 +233,9 @@ Menggunakan **Oklahoma City Color (oklch)** untuk konsistensi warna modern:
 ## 4. File Changes
 
 ### 1. `/app/globals.css`
+
 **Changes:**
+
 - ✅ Updated `:root` color variables ke emerald green
 - ✅ Updated `.dark` mode colors
 - ✅ Changed primary from `oklch(0.205 0 0)` (gray) ke `oklch(0.557 0.153 166.5)` (emerald-600)
@@ -230,17 +248,20 @@ Menggunakan **Oklahoma City Color (oklch)** untuk konsistensi warna modern:
 ---
 
 ### 2. `/components/Sidebar.tsx`
+
 **Changes:**
+
 - ✅ Added `useState` untuk mobile menu state
 - ✅ Added `Sheet` component import
 - ✅ Created reusable `SidebarContent` component
 - ✅ Added mobile header with hamburger menu
-- ✅ Updated colors dari `bg-blue-600` ke `bg-primary`
+- ✅ Updated colors dari `bg-green-600` ke `bg-primary`
 - ✅ Updated active state colors
 - ✅ Added `onClick` handler untuk close mobile menu
 - ✅ Added responsive classes (`hidden lg:flex`, `lg:hidden`)
 
 **Structure:**
+
 ```tsx
 return (
   <>
@@ -256,7 +277,9 @@ return (
 ---
 
 ### 3. `/app/dashboard/layout.tsx`
+
 **Changes:**
+
 - ✅ Changed background dari `bg-gray-100` ke `bg-gray-50`
 - ✅ Added responsive margin top `lg:mt-0 mt-16`
 - ✅ Updated padding `p-4 sm:p-6 lg:p-8`
@@ -267,7 +290,9 @@ return (
 ---
 
 ### 4. `/app/dashboard/orangtua/page.tsx` (COMPLETE REWRITE)
+
 **Changes:**
+
 - ❌ **Removed:** Firestore imports dan logic
 - ❌ **Removed:** Laporan system (hafalan, akademik, perilaku)
 - ❌ **Removed:** Recharts components
@@ -283,6 +308,7 @@ return (
 - ✅ **Added:** Responsive design
 
 **New Interface:**
+
 ```typescript
 interface OrangTua {
   id: string;
@@ -298,7 +324,9 @@ interface OrangTua {
 ```
 
 **New Features:**
+
 1. **Data Table:**
+
    - Nama (with icon)
    - Email (with mail icon)
    - Telepon (with phone icon)
@@ -306,10 +334,12 @@ interface OrangTua {
    - Terdaftar Sejak (date)
 
 2. **Search Bar:**
+
    - Search by nama, email, telepon
    - Real-time filtering
 
 3. **Statistics:**
+
    - Total orang tua count
 
 4. **Responsive:**
@@ -326,6 +356,7 @@ interface OrangTua {
 ### Desktop Testing (>= 1024px)
 
 #### Sidebar
+
 - [x] Sidebar fixed di sebelah kiri (w-64)
 - [x] Logo hijau emerald muncul
 - [x] Menu items dengan icon dan label
@@ -335,6 +366,7 @@ interface OrangTua {
 - [x] Warna avatar badge hijau emerald
 
 #### Content
+
 - [x] Content di sebelah kanan sidebar
 - [x] Padding responsive (p-8)
 - [x] Max-width 7xl centered
@@ -344,6 +376,7 @@ interface OrangTua {
 ### Mobile Testing (< 1024px)
 
 #### Header
+
 - [x] Fixed header muncul di top
 - [x] Logo hijau emerald (smaller)
 - [x] Hamburger menu button visible
@@ -351,6 +384,7 @@ interface OrangTua {
 - [x] Border bottom & shadow
 
 #### Sidebar
+
 - [x] Desktop sidebar hidden
 - [x] Click hamburger → sidebar slide dari kiri
 - [x] Width 256px (w-64)
@@ -360,6 +394,7 @@ interface OrangTua {
 - [x] Click outside → sidebar close
 
 #### Content
+
 - [x] Margin top 64px (mt-16) untuk avoid header
 - [x] Padding responsive (p-4)
 - [x] Content tidak tertutup header
@@ -369,6 +404,7 @@ interface OrangTua {
 ### Theme Testing
 
 #### Primary Colors
+
 - [x] Buttons hijau emerald
 - [x] Active menu hijau emerald
 - [x] Badges hijau emerald
@@ -376,11 +412,13 @@ interface OrangTua {
 - [x] Focus rings hijau emerald
 
 #### Hover States
+
 - [x] Button hover darker
 - [x] Menu hover emerald-50 background
 - [x] Link hover emerald darker
 
 #### Dark Mode (if supported)
+
 - [ ] Primary lighter (emerald-400)
 - [ ] Contrast cukup untuk readability
 - [ ] Charts colors adjusted
@@ -390,11 +428,13 @@ interface OrangTua {
 ### Page: /dashboard/orangtua
 
 #### Access Control
+
 - [x] Admin dapat akses ✅
 - [x] Ustad dapat akses ✅
 - [x] Orangtua tidak dapat akses ❌
 
 #### Data Display
+
 - [x] List semua orang tua
 - [x] Nama dengan icon
 - [x] Email dengan icon
@@ -403,6 +443,7 @@ interface OrangTua {
 - [x] Tanggal terdaftar formatted
 
 #### Search
+
 - [x] Search bar muncul
 - [x] Search by nama works
 - [x] Search by email works
@@ -411,11 +452,13 @@ interface OrangTua {
 - [x] "No results" message when empty
 
 #### Statistics
+
 - [x] Total count card muncul
 - [x] Icon hijau emerald
 - [x] Count accurate
 
 #### Responsive
+
 - [x] Table scrollable di mobile
 - [x] Stats card responsive
 - [x] Search bar full width di mobile
@@ -440,7 +483,7 @@ xl:   1280px /* Large desktops */
 // Hide on mobile, show on desktop
 <div className="hidden lg:block">Desktop Only</div>
 
-// Show on mobile, hide on desktop  
+// Show on mobile, hide on desktop
 <div className="lg:hidden">Mobile Only</div>
 
 // Responsive padding
@@ -466,23 +509,23 @@ xl:   1280px /* Large desktops */
 
 ```tsx
 // Background
-className="bg-primary"
+className = "bg-primary";
 
 // Text
-className="text-primary"
+className = "text-primary";
 
 // Border
-className="border-primary"
+className = "border-primary";
 
 // Ring (focus)
-className="focus:ring-primary"
+className = "focus:ring-primary";
 
 // Hover
-className="hover:bg-primary"
+className = "hover:bg-primary";
 
 // Opacity
-className="bg-primary/90"  // 90% opacity
-className="bg-primary/10"  // 10% opacity (subtle)
+className = "bg-primary/90"; // 90% opacity
+className = "bg-primary/10"; // 10% opacity (subtle)
 ```
 
 ### CSS Variables:
@@ -506,10 +549,10 @@ To change primary color in future, edit `/app/globals.css`:
 ```css
 :root {
   /* Change these values */
-  --primary: oklch(0.557 0.153 166.5);  /* emerald-600 */
-  
+  --primary: oklch(0.557 0.153 166.5); /* emerald-600 */
+
   /* Examples of other colors: */
-  /* Blue: oklch(0.506 0.168 243.83) - blue-600 */
+  /* green: oklch(0.506 0.168 243.83) - green-600 */
   /* Purple: oklch(0.548 0.207 293.39) - purple-600 */
   /* Red: oklch(0.577 0.245 27.325) - red-600 */
   /* Orange: oklch(0.686 0.189 60.63) - orange-500 */
@@ -521,9 +564,11 @@ To change primary color in future, edit `/app/globals.css`:
 ## Migration Notes
 
 ### Breaking Changes:
+
 **NONE!** ✅
 
 Semua perubahan backward compatible:
+
 - ✅ Warna lama otomatis replaced dengan CSS variables
 - ✅ Components existing tetap berfungsi
 - ✅ Layout existing tidak terpengaruh
@@ -532,18 +577,20 @@ Semua perubahan backward compatible:
 ### Optional Migrations:
 
 #### Update hardcoded colors:
+
 ```tsx
 // OLD (still works but not theme-aware)
-<Button className="bg-blue-600">Click</Button>
+<Button className="bg-green-600">Click</Button>
 
 // NEW (theme-aware)
 <Button className="bg-primary">Click</Button>
 ```
 
 #### Update focus states:
+
 ```tsx
 // OLD
-<Input className="focus:ring-blue-500" />
+<Input className="focus:ring-green-500" />
 
 // NEW
 <Input className="focus:ring-primary" />
@@ -554,17 +601,20 @@ Semua perubahan backward compatible:
 ## Performance Impact
 
 ### Before:
+
 - Sidebar always rendered (full width on mobile)
 - No code splitting for mobile menu
 - Fixed layout
 
 ### After:
+
 - ✅ Sidebar conditionally rendered (desktop vs mobile)
 - ✅ Sheet component lazy loaded on mobile
 - ✅ Better mobile performance (less DOM elements)
 - ✅ Smoother animations
 
 ### Bundle Size:
+
 - Added Sheet component: ~2KB gzipped
 - No other dependencies added
 - CSS changes: negligible impact
@@ -574,6 +624,7 @@ Semua perubahan backward compatible:
 ## Browser Support
 
 ### Tested On:
+
 - ✅ Chrome/Edge (Chromium) 90+
 - ✅ Firefox 88+
 - ✅ Safari 14+
@@ -581,6 +632,7 @@ Semua perubahan backward compatible:
 - ✅ Mobile Safari (iOS)
 
 ### CSS Features Used:
+
 - ✅ oklch colors (fallback to rgb via PostCSS)
 - ✅ Flexbox
 - ✅ CSS Grid
@@ -592,24 +644,32 @@ Semua perubahan backward compatible:
 ## Troubleshooting
 
 ### Issue: Mobile menu tidak muncul
+
 **Solution:**
+
 - Check Sheet component imported correctly
 - Check `lg:hidden` class pada mobile header
 - Verify z-index (should be z-40)
 
 ### Issue: Warna tidak berubah
+
 **Solution:**
+
 - Hard refresh browser (Ctrl+Shift+R)
 - Check CSS file compiled
 - Verify Tailwind config
 
 ### Issue: Sidebar overlap content di mobile
+
 **Solution:**
+
 - Verify `mt-16` pada main content
 - Check fixed header height (h-16 = 64px)
 
 ### Issue: Admin tidak bisa akses /dashboard/orangtua
+
 **Solution:**
+
 - Clear cookies/cache
 - Re-login
 - Check session.user.role
@@ -619,21 +679,25 @@ Semua perubahan backward compatible:
 ## Future Enhancements
 
 ### Phase 1: Additional Pages
+
 - Make `/dashboard/ustad` responsive
 - Make `/dashboard/kelas` responsive
 - Update all modals untuk mobile
 
 ### Phase 2: Theme Switcher
-- Add theme selector (emerald, blue, purple)
+
+- Add theme selector (emerald, green, purple)
 - Save preference to localStorage
 - Dynamic CSS variable updates
 
 ### Phase 3: Accessibility
+
 - Add keyboard navigation untuk mobile menu
 - Improve focus management
 - Add screen reader labels
 
 ### Phase 4: PWA Support
+
 - Add manifest.json
 - Add service worker
 - Make fully offline-capable
@@ -645,6 +709,7 @@ Semua perubahan backward compatible:
 ✅ **All objectives completed!**
 
 **Summary:**
+
 1. ✅ `/dashboard/orangtua` accessible for admin & ustad
 2. ✅ Dashboard fully responsive (mobile, tablet, desktop)
 3. ✅ Emerald green theme like landing page
@@ -654,12 +719,14 @@ Semua perubahan backward compatible:
 7. ✅ Modern UI with consistent colors
 
 **Files Changed:**
+
 - `app/globals.css` - Theme colors
 - `components/Sidebar.tsx` - Responsive sidebar
 - `app/dashboard/layout.tsx` - Responsive layout
 - `app/dashboard/orangtua/page.tsx` - Complete rewrite
 
 **Lines of Code:**
+
 - Added: ~420 lines
 - Modified: ~65 lines
 - Removed: ~250 lines (old orangtua page)

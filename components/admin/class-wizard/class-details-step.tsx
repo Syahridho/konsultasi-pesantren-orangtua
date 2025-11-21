@@ -260,25 +260,25 @@ export function ClassDetailsStep({
 
           {/* Selected Teacher Info */}
           {selectedTeacher && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <div className="mt-4 p-4 bg-green-50 rounded-lg">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Users className="h-5 w-5 text-blue-600" />
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <Users className="h-5 w-5 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-blue-900">
+                  <h4 className="font-medium text-green-900">
                     {selectedTeacher.name}
                   </h4>
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm text-green-700">
                     {selectedTeacher.email}
                   </p>
                   {selectedTeacher.specialization && (
-                    <p className="text-sm text-blue-600">
+                    <p className="text-sm text-green-600">
                       Spesialisasi: {selectedTeacher.specialization}
                     </p>
                   )}
                   {selectedTeacher.phone && (
-                    <p className="text-sm text-blue-600">
+                    <p className="text-sm text-green-600">
                       Telepon: {selectedTeacher.phone}
                     </p>
                   )}
@@ -286,7 +286,7 @@ export function ClassDetailsStep({
                     <div className="mt-2">
                       <Badge
                         variant="outline"
-                        className="bg-blue-100 text-blue-800 border-blue-200"
+                        className="bg-green-100 text-green-800 border-green-200"
                       >
                         {selectedTeacher.currentClasses} kelas aktif
                       </Badge>

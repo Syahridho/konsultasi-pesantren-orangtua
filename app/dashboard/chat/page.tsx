@@ -26,7 +26,11 @@ export default function DashboardChatPage() {
     }
 
     // Check if user has permission (admin or ustad)
-    if (session?.user?.role && session.user.role !== "admin" && session.user.role !== "ustad") {
+    if (
+      session?.user?.role &&
+      session.user.role !== "admin" &&
+      session.user.role !== "ustad"
+    ) {
       toast.error("Anda tidak memiliki akses ke fitur chat");
       router.push("/dashboard");
       return;
@@ -47,7 +51,7 @@ export default function DashboardChatPage() {
     if (typeof window !== "undefined") {
       // Set initial sidebar state based on screen size
       setSidebarOpen(window.innerWidth >= 768);
-      
+
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }
@@ -66,7 +70,7 @@ export default function DashboardChatPage() {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-200px)]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading chat...</p>
         </div>
       </div>
@@ -84,10 +88,7 @@ export default function DashboardChatPage() {
             <p className="text-gray-600 mb-4">
               Please log in to access the chat feature.
             </p>
-            <Button
-              onClick={() => router.push("/login")}
-              className="w-full"
-            >
+            <Button onClick={() => router.push("/login")} className="w-full">
               Go to Login
             </Button>
           </div>
@@ -97,7 +98,7 @@ export default function DashboardChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-200px)] bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+    <div className="h-auto bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
       {/* Navigation Bar */}
       <div className="border-b bg-white px-4 py-3 flex items-center gap-3 shrink-0">
         <Link href="/dashboard">
@@ -111,7 +112,7 @@ export default function DashboardChatPage() {
         </div>
         <div className="w-24"></div>
       </div>
-      
+
       <div className="flex flex-1 relative overflow-hidden">
         {/* Mobile Sidebar Toggle */}
         <div className="md:hidden absolute top-4 left-4 z-20">

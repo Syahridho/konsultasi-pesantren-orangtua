@@ -171,7 +171,7 @@ export default function QuranReportForm({
       case "excellent":
         return "bg-green-100 text-green-800";
       case "good":
-        return "bg-blue-100 text-blue-800";
+        return "bg-green-100 text-green-800";
       case "fair":
         return "bg-yellow-100 text-yellow-800";
       case "poor":
@@ -374,11 +374,11 @@ export default function QuranReportForm({
 
           {/* Selected Student Info */}
           {formData.studentId && (
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">
+            <div className="p-4 bg-green-50 rounded-lg">
+              <h4 className="font-medium text-green-900 mb-2">
                 Informasi Santri Terpilih
               </h4>
-              <p className="text-blue-700">
+              <p className="text-green-700">
                 <span className="font-medium">Nama:</span>{" "}
                 {getStudentName(formData.studentId)}
               </p>
