@@ -59,7 +59,7 @@ export function ProgressIndicator({
                     "relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200",
                     {
                       "bg-green-600 border-green-600": isActive,
-                      "bg-green-600 border-green-600": isCompleted,
+                      "bg-green-200 border-green-400": isCompleted,
                       "bg-red-600 border-red-600": isError,
                       "bg-white border-gray-300":
                         !isActive && !isCompleted && !isError,
@@ -92,7 +92,7 @@ export function ProgressIndicator({
                   <p
                     className={cn("text-sm font-medium truncate", {
                       "text-green-600": isActive,
-                      "text-green-600": isCompleted,
+                      "text-green-400": isCompleted,
                       "text-red-600": isError,
                       "text-gray-500": !isActive && !isCompleted && !isError,
                       "group-hover:text-green-500": isClickable,
@@ -105,7 +105,7 @@ export function ProgressIndicator({
                     <p
                       className={cn("text-xs mt-1 truncate", {
                         "text-green-500": isActive,
-                        "text-green-500": isCompleted,
+                        "text-green-400": isCompleted,
                         "text-red-500": isError,
                         "text-gray-400": !isActive && !isCompleted && !isError,
                       })}
