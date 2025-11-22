@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
@@ -62,7 +62,16 @@ function LoginForm() {
         // Use the specific error message from NextAuth
         setError(result.error);
       } else {
-        router.push("/dashboard");
+        // Get the session to check user role
+        const session = await getSession();
+        const userRole = session?.user?.role;
+
+        // Redirect based on user role
+        if (userRole === "orangtua") {
+          router.push("/home");
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch (error: any) {
