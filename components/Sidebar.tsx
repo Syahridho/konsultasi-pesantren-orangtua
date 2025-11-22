@@ -53,7 +53,7 @@ const menuItems = Object.freeze({
     Object.freeze({
       href: "/dashboard/kelas",
       label: "Data Kelas",
-      icon: Users,
+      icon: School,
     }),
     Object.freeze({
       href: "/dashboard/orangtua",
@@ -72,7 +72,7 @@ const menuItems = Object.freeze({
     }),
     Object.freeze({
       href: "/dashboard/admin/settings",
-      label: "Pengaturan Website",
+      label: "Pengaturan",
       icon: Settings,
     }),
   ]),

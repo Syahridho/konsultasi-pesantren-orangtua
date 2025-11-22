@@ -273,7 +273,7 @@ export default function KelasPage() {
             </div>
 
             <div>
-              <Label htmlFor="year-filter">Tahun Akademik</Label>
+              {/* <Label htmlFor="year-filter">Tahun Akademik</Label> */}
               <Select value={filterYear} onValueChange={setFilterYear}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih tahun" />
@@ -290,7 +290,7 @@ export default function KelasPage() {
             </div>
 
             <div>
-              <Label htmlFor="teacher-filter">Pengajar</Label>
+              {/* <Label htmlFor="teacher-filter">Pengajar</Label> */}
               <Select value={filterTeacher} onValueChange={setFilterTeacher}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih pengajar" />
