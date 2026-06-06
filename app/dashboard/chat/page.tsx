@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatWindow from "@/components/chat/ChatWindow";
@@ -16,7 +16,8 @@ export default function DashboardChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Mobile: 'list' shows sidebar, 'chat' shows chat window
+  const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
   useEffect(() => {
     // Redirect to login if not authenticated
@@ -37,33 +38,16 @@ export default function DashboardChatPage() {
     }
   }, [status, session, router]);
 
-  // Memoize resize handler
-  const handleResize = useCallback(() => {
-    const isDesktop = window.innerWidth >= 768;
-    if (!isDesktop && sidebarOpen) {
-      setSidebarOpen(false);
-    } else if (isDesktop && !sidebarOpen) {
-      setSidebarOpen(true);
-    }
-  }, [sidebarOpen]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Set initial sidebar state based on screen size
-      setSidebarOpen(window.innerWidth >= 768);
-
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
-  }, [handleResize]);
-
   // Memoize the chat selection handler
   const handleSelectChat = useCallback((chatId: string) => {
     setSelectedChatId(chatId);
-    // Close sidebar on mobile after selecting a chat
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      setSidebarOpen(false);
-    }
+    // On mobile: switch to chat window view
+    setMobileView("chat");
+  }, []);
+
+  // Back button handler: return to list on mobile
+  const handleBackToList = useCallback(() => {
+    setMobileView("list");
   }, []);
 
   if (status === "loading") {
@@ -98,43 +82,66 @@ export default function DashboardChatPage() {
   }
 
   return (
-    <div className="h-auto bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col
+      -m-4 sm:-m-6 lg:-m-8
+      h-[calc(100vh-4rem)] lg:h-screen">
       {/* Navigation Bar */}
       <div className="border-b bg-white px-4 py-3 flex items-center gap-3 shrink-0">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            Dashboard
-          </Button>
-        </Link>
+        {/* Mobile: back to list when in chat view; otherwise back to dashboard */}
+        <div className="md:hidden">
+          {mobileView === "chat" ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2"
+              onClick={handleBackToList}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Pesan
+            </Button>
+          ) : (
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Dashboard
+              </Button>
+            </Link>
+          )}
+        </div>
+
+        {/* Desktop back button */}
+        <div className="hidden md:block">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Dashboard
+            </Button>
+          </Link>
+        </div>
+
         <div className="flex-1 text-center">
-          <h1 className="text-lg font-semibold">Chat</h1>
+          <h1 className="text-lg font-semibold">
+            {mobileView === "chat" && selectedChatId ? "Percakapan" : "Chat"}
+          </h1>
         </div>
         <div className="w-24"></div>
       </div>
 
-      <div className="flex flex-1 relative overflow-hidden">
-        {/* Mobile Sidebar Toggle */}
-        <div className="md:hidden absolute top-4 left-4 z-20">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="bg-white shadow-md"
-          >
-            {sidebarOpen ? (
-              <X className="w-4 h-4" />
-            ) : (
-              <Menu className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-
+      {/* Mobile: single-panel view */}
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - List Chat */}
+        {/* Mobile: full screen list panel, hidden when in chat view */}
+        {/* Desktop: always visible fixed-width panel */}
         <div
-          className={`w-full md:w-80 lg:w-96 border-r absolute md:relative h-full z-10 bg-white transition-all duration-300 ease-in-out transform ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-          }`}
+          className={`
+            bg-white border-r flex flex-col
+            md:w-80 lg:w-96 md:flex-shrink-0 md:block
+            ${
+              mobileView === "list"
+                ? "w-full flex-1"
+                : "hidden"
+            }
+          `}
         >
           <ChatSidebar
             selectedChatId={selectedChatId}
@@ -146,21 +153,25 @@ export default function DashboardChatPage() {
         </div>
 
         {/* Chat Window */}
-        <div className="flex-1 w-full md:w-auto chat-window">
+        {/* Mobile: full screen, shown only when chat is selected */}
+        {/* Desktop: always visible flex-1 */}
+        <div
+          className={`
+            flex-1 flex flex-col overflow-hidden
+            md:flex
+            ${
+              mobileView === "chat"
+                ? "flex w-full"
+                : "hidden"
+            }
+          `}
+        >
           <ChatWindow
             chatId={selectedChatId}
             currentUserId={session.user.id || ""}
             currentUserName={session.user.name || ""}
           />
         </div>
-
-        {/* Mobile overlay */}
-        {sidebarOpen && (
-          <div
-            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-0"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
       </div>
     </div>
   );

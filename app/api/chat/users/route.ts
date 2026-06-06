@@ -34,12 +34,14 @@ export async function GET(request: NextRequest) {
       // Skip current user
       if (userId === currentUserId) return;
 
-      // If current user is ustad, show orangtua users
-      // If current user is orangtua, show ustad users
-      // Admin can chat with both ustad and orangtua
+      // Role-based visibility rules:
+      // - ustad   → can chat with orangtua
+      // - orangtua → can chat with ustad AND admin
+      // - admin   → can chat with ustad AND orangtua
       if (
         (currentUserRole === "ustad" && user.role === "orangtua") ||
-        (currentUserRole === "orangtua" && user.role === "ustad") ||
+        (currentUserRole === "orangtua" &&
+          (user.role === "ustad" || user.role === "admin")) ||
         (currentUserRole === "admin" &&
           (user.role === "ustad" || user.role === "orangtua"))
       ) {

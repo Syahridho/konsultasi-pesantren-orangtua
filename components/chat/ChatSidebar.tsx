@@ -364,7 +364,13 @@ export default function ChatSidebar({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
-            placeholder="Cari berdasarkan nama orang tua atau santri..."
+            placeholder={
+              currentUserRole === "orangtua"
+                ? "Cari percakapan..."
+                : currentUserRole === "ustad"
+                ? "Cari berdasarkan nama orang tua atau santri..."
+                : "Cari berdasarkan nama orang tua atau santri..."
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 pr-10 focus:ring-2 focus:ring-green-500"
@@ -485,10 +491,10 @@ export default function ChatSidebar({
                   return (
                     <Card
                       key={chat.id}
-                      className={`search-result-item p-3 cursor-pointer ${
+                      className={`search-result-item p-3 cursor-pointer border bg-white ${
                         selectedChatId === (existingChat?.id || chat.id)
                           ? "bg-green-50 border-green-200 shadow-sm"
-                          : "hover:bg-gray-50"
+                          : "hover:bg-gray-50 border-gray-200"
                       }`}
                       onClick={() => {
                         const chatIdToSelect = existingChat?.id || chat.id;

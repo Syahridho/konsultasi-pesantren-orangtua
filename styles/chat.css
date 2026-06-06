@@ -320,8 +320,6 @@
 
 /* Enhanced search results */
 .search-result-item {
-  background: var(--chat-bg-primary);
-  border: 1px solid var(--chat-border-primary);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 8px;
@@ -329,7 +327,6 @@
 }
 
 .search-result-item:hover {
-  background: var(--chat-bg-secondary);
   border-color: var(--chat-accent-green);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px var(--chat-shadow);

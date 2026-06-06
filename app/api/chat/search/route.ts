@@ -59,40 +59,86 @@ export async function GET(request: NextRequest) {
     const searchResults: any[] = [];
     const searchQuery = validatedQuery.toLowerCase();
 
-    // Helper function to check if user has matching student
-    const hasMatchingStudent = (user: any, query: string): boolean => {
+    // Helper function to check if user has matching student (all 3 data shapes)
+    const hasMatchingStudent = (
+      user: any,
+      query: string,
+      allUsersMap: any
+    ): boolean => {
+      // Shape 1: embedded students array with name fields
       if (user.students && Array.isArray(user.students)) {
-        return user.students.some(
-          (student: any) =>
-            student.name && student.name.toLowerCase().includes(query)
-        );
+        if (
+          user.students.some(
+            (s: any) => s.name && s.name.toLowerCase().includes(query)
+          )
+        )
+          return true;
       }
+
+      // Shape 2: embedded santri object map
       if (user.santri && typeof user.santri === "object") {
-        return Object.values(user.santri).some(
-          (student: any) =>
-            student.name && student.name.toLowerCase().includes(query)
-        );
+        if (
+          Object.values(user.santri).some(
+            (s: any) => s.name && s.name.toLowerCase().includes(query)
+          )
+        )
+          return true;
       }
+
+      // Shape 3: studentIds array — join to allUsers to resolve names
+      if (
+        user.studentIds &&
+        Array.isArray(user.studentIds) &&
+        allUsersMap
+      ) {
+        if (
+          user.studentIds.some((santriId: string) => {
+            const santri = allUsersMap[santriId];
+            return santri && santri.name && santri.name.toLowerCase().includes(query);
+          })
+        )
+          return true;
+      }
+
       return false;
     };
 
-    // Helper function to get student info for display
+    // Helper function to get matched student info for display
     const getStudentInfo = (
       user: any,
-      query: string
+      query: string,
+      allUsersMap: any
     ): { matched: boolean; students: any[] } => {
       const matchedStudents: any[] = [];
 
+      // Shape 1: embedded students array
       if (user.students && Array.isArray(user.students)) {
-        user.students.forEach((student: any) => {
-          if (student.name && student.name.toLowerCase().includes(query)) {
-            matchedStudents.push(student);
+        user.students.forEach((s: any) => {
+          if (s.name && s.name.toLowerCase().includes(query)) {
+            matchedStudents.push(s);
           }
         });
-      } else if (user.santri && typeof user.santri === "object") {
-        Object.values(user.santri).forEach((student: any) => {
-          if (student.name && student.name.toLowerCase().includes(query)) {
-            matchedStudents.push(student);
+      }
+
+      // Shape 2: embedded santri object map
+      if (user.santri && typeof user.santri === "object") {
+        Object.values(user.santri).forEach((s: any) => {
+          if (s.name && s.name.toLowerCase().includes(query)) {
+            matchedStudents.push(s);
+          }
+        });
+      }
+
+      // Shape 3: studentIds — join to allUsers
+      if (
+        user.studentIds &&
+        Array.isArray(user.studentIds) &&
+        allUsersMap
+      ) {
+        user.studentIds.forEach((santriId: string) => {
+          const santri = allUsersMap[santriId];
+          if (santri && santri.name && santri.name.toLowerCase().includes(query)) {
+            matchedStudents.push({ name: santri.name, id: santriId });
           }
         });
       }
@@ -118,34 +164,39 @@ export async function GET(request: NextRequest) {
           ? chat.participant2Id
           : chat.participant1Id;
 
-      const otherParticipant = allUsers[otherParticipantId];
+      const otherParticipant = allUsers ? allUsers[otherParticipantId] : null;
 
-      if (!otherParticipant) {
-        return;
-      }
+      // Fallback: use name stored in chat document if user not in users node
+      const otherParticipantNameFromChat =
+        chat.participant1Id === userId
+          ? chat.participant2Name
+          : chat.participant1Name;
 
-      // Check if other participant name matches
+      const effectiveName =
+        otherParticipant?.name ||
+        (otherParticipantNameFromChat !== "Unknownfix"
+          ? otherParticipantNameFromChat
+          : null) ||
+        "Unknown User";
+
+      const effectiveRole = otherParticipant?.role || null;
+
+      // Check if other participant name matches query
       const nameMatches =
-        otherParticipant.name &&
-        otherParticipant.name.toLowerCase().includes(searchQuery);
+        effectiveName && effectiveName.toLowerCase().includes(searchQuery);
 
-      // Check if other participant has matching students
-      const studentInfo = getStudentInfo(otherParticipant, searchQuery);
+      // Check if other participant has matching students (only relevant for orangtua)
+      const studentInfo = otherParticipant
+        ? getStudentInfo(otherParticipant, searchQuery, allUsers)
+        : { matched: false, students: [] };
       const studentMatches = studentInfo.matched;
 
       if (nameMatches || studentMatches) {
-        // Handle case where participant name is missing or "Unknownfix"
-        let displayName = otherParticipant.name;
-        if (!displayName || displayName === "Unknownfix") {
-          displayName = "Unknown User";
-        }
-
-        // Convert to secure-chat format with enhanced info
         searchResults.push({
           id: chatId,
           otherParticipantId,
-          otherParticipantName: displayName,
-          otherParticipantRole: otherParticipant.role,
+          otherParticipantName: effectiveName,
+          otherParticipantRole: effectiveRole,
           matchedStudents: studentInfo.students,
           lastMessage: chat.lastMessage || "",
           lastMessageTime: chat.lastMessageTime || chat.createdAt,
