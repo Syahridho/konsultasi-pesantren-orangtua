@@ -512,10 +512,7 @@ function ReportCard({ report }: { report: Report }) {
             {/* Hafalan Report */}
             {report.kategori === "hafalan" && (
               <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <BookOpen className="w-4 h-4 text-gray-500" />
-                  <p className="font-medium">Hafalan: {report.isi.surat}</p>
-                </div>
+                <p className="font-medium">Hafalan: {report.isi.surat}</p>
                 <p className="text-sm text-gray-600">Ayat {report.isi.ayat}</p>
                 <div className="flex items-center space-x-2 pt-2">
                   {report.isi.predikat === "excellent" && (
@@ -545,12 +542,9 @@ function ReportCard({ report }: { report: Report }) {
             {/* Academic Report */}
             {report.kategori === "akademik" && (
               <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <GraduationCap className="w-4 h-4 text-gray-500" />
-                  <p className="font-medium">
-                    Mata Pelajaran: {report.isi.mapel}
-                  </p>
-                </div>
+                <p className="font-medium">
+                  Mata Pelajaran: {report.isi.mapel}
+                </p>
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl font-bold text-green-600">
                     {report.isi.nilai}
@@ -563,10 +557,7 @@ function ReportCard({ report }: { report: Report }) {
             {/* Behavior Report */}
             {report.kategori === "perilaku" && (
               <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <AlertTriangle className="w-4 h-4 text-gray-500" />
-                  <p className="font-medium">{report.isi.jenis}</p>
-                </div>
+                <p className="font-medium">{report.isi.jenis}</p>
                 <p className="text-sm text-gray-700">{report.isi.catatan}</p>
               </div>
             )}

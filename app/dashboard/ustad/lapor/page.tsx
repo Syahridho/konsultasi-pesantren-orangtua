@@ -106,6 +106,10 @@ export default function LaporPage() {
       toast.error("Catatan harus diisi");
       return false;
     }
+    if (perilakuForm.catatan.trim().length < 10) {
+      toast.error("Catatan minimal 10 karakter");
+      return false;
+    }
     return true;
   };
 
@@ -738,10 +742,15 @@ export default function LaporPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="catatan">Catatan Kejadian</Label>
+                  <Label htmlFor="catatan">
+                    Catatan Kejadian{" "}
+                    <span className="text-muted-foreground text-xs font-normal">
+                      (minimal 10 karakter)
+                    </span>
+                  </Label>
                   <Textarea
                     id="catatan"
-                    placeholder="Jelaskan prestasi atau pelanggaran yang terjadi..."
+                    placeholder="Jelaskan prestasi atau pelanggaran yang terjadi secara detail..."
                     rows={4}
                     value={perilakuForm.catatan}
                     onChange={(e) =>
