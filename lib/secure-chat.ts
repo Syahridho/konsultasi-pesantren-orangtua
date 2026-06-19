@@ -49,6 +49,7 @@ export interface Chat {
   createdAt: string;
   lastMessageStatus?: string;
   matchedStudents?: any[];
+  allStudentNames?: string[];
 }
 
 export interface ChatUser {

@@ -42,6 +42,7 @@ export default function ChatSidebar({
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Chat[]>([]);
+  const [contactResults, setContactResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -190,6 +191,7 @@ export default function ChatSidebar({
   const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
+      setContactResults([]);
       setIsSearching(false);
       setSearchError(null);
       return;
@@ -207,14 +209,19 @@ export default function ChatSidebar({
       }
       const data = await response.json();
       setSearchResults(data.chats || []);
+      setContactResults(data.contacts || []);
 
-      if (data.chats && data.chats.length === 0) {
+      if (
+        (!data.chats || data.chats.length === 0) &&
+        (!data.contacts || data.contacts.length === 0)
+      ) {
         setSearchError(`Tidak ada hasil untuk "${query}"`);
       }
     } catch (error) {
       console.error("Error searching chats:", error);
       setSearchError("Gagal melakukan pencarian. Silakan coba lagi.");
       setSearchResults([]);
+      setContactResults([]);
     } finally {
       setIsSearching(false);
     }
@@ -452,7 +459,7 @@ export default function ChatSidebar({
             </div>
           ) : searchQuery ? (
             // Show search results
-            searchError ? (
+            searchError && searchResults.length === 0 && contactResults.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <Search className="w-12 h-12 text-gray-300 mb-2" />
                 <p className="text-sm text-gray-500 mb-2">{searchError}</p>
@@ -460,115 +467,183 @@ export default function ChatSidebar({
                   Coba dengan kata kunci yang berbeda
                 </p>
               </div>
-            ) : searchResults.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <Search className="w-12 h-12 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">
-                  Tidak ada hasil untuk "{searchQuery}"
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Pastikan ejaan benar atau coba kata kunci lain
-                </p>
-              </div>
             ) : (
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 px-3 py-2 bg-gray-50 rounded-t">
-                  {searchResults.length} hasil ditemukan untuk "{searchQuery}"
-                </p>
-                {searchResults.map((chat) => {
-                  const otherParticipant = getOtherParticipant(chat);
-                  const hasStudents =
-                    chat.matchedStudents &&
-                    Array.isArray(chat.matchedStudents) &&
-                    chat.matchedStudents.length > 0;
-
-                  // Check if this chat already exists in the user's chat list
-                  const existingChat = chats.find(
-                    (existingChat) =>
-                      existingChat.otherParticipantId === otherParticipant.id
-                  );
-
-                  return (
-                    <Card
-                      key={chat.id}
-                      className={`search-result-item p-3 cursor-pointer border bg-white ${
-                        selectedChatId === (existingChat?.id || chat.id)
-                          ? "bg-green-50 border-green-200 shadow-sm"
-                          : "hover:bg-gray-50 border-gray-200"
-                      }`}
-                      onClick={() => {
-                        const chatIdToSelect = existingChat?.id || chat.id;
-                        handleDebouncedClick(chatIdToSelect, () => {
-                          onSelectChat(chatIdToSelect);
-                        });
-                      }}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <Avatar className="w-10 h-10 flex-shrink-0">
-                          <AvatarFallback className="bg-gradient-to-br from-green-500 to-purple-600 text-white font-semibold">
-                            {otherParticipant.name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center space-x-2">
-                              <p className="text-sm font-semibold text-gray-900 truncate">
-                                {otherParticipant.name}
-                              </p>
-                              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
-                                {chat.otherParticipantRole || "orangtua"}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              {chat.lastMessageTime && (
-                                <span className="text-xs text-gray-500">
-                                  {formatTime(chat.lastMessageTime)}
-                                </span>
+                {/* Existing chats section */}
+                {searchResults.length > 0 && (
+                  <>
+                    <p className="text-xs text-gray-500 px-3 py-2 bg-gray-50 rounded-t">
+                      Percakapan ({searchResults.length})
+                    </p>
+                    {searchResults.map((chat) => {
+                      const otherParticipant = getOtherParticipant(chat);
+                      const hasStudents =
+                        chat.matchedStudents &&
+                        Array.isArray(chat.matchedStudents) &&
+                        chat.matchedStudents.length > 0;
+                      const existingChat = chats.find(
+                        (c) => c.otherParticipantId === otherParticipant.id
+                      );
+                      return (
+                        <Card
+                          key={chat.id}
+                          className={`search-result-item p-3 cursor-pointer border bg-white ${
+                            selectedChatId === (existingChat?.id || chat.id)
+                              ? "bg-green-50 border-green-200 shadow-sm"
+                              : "hover:bg-gray-50 border-gray-200"
+                          }`}
+                          onClick={() => {
+                            const chatIdToSelect = existingChat?.id || chat.id;
+                            handleDebouncedClick(chatIdToSelect, () => {
+                              onSelectChat(chatIdToSelect);
+                            });
+                          }}
+                        >
+                          <div className="flex items-start space-x-3">
+                            <Avatar className="w-10 h-10 flex-shrink-0">
+                              <AvatarFallback className="bg-gradient-to-br from-green-500 to-purple-600 text-white font-semibold">
+                                {otherParticipant.name.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center space-x-2">
+                                  <p className="text-sm font-semibold text-gray-900 truncate">
+                                    {otherParticipant.name}
+                                  </p>
+                                  {chat.otherParticipantRole && (
+                                    <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium capitalize">
+                                      {chat.otherParticipantRole}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  {chat.lastMessageTime && (
+                                    <span className="text-xs text-gray-500">
+                                      {formatTime(chat.lastMessageTime)}
+                                    </span>
+                                  )}
+                                  {chat.lastMessageStatus && (
+                                    <MessageStatusIndicator
+                                      status={
+                                        chat?.lastMessageStatus as
+                                          | "sent"
+                                          | "delivered"
+                                          | "read"
+                                      }
+                                      size="sm"
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                              {chat.lastMessage && (
+                                <p className="text-xs text-gray-600 truncate mb-1">
+                                  {chat.lastMessage}
+                                </p>
                               )}
-                              {chat.lastMessageStatus && (
-                                <MessageStatusIndicator
-                                  status={
-                                    chat?.lastMessageStatus as
-                                      | "sent"
-                                      | "delivered"
-                                      | "read"
-                                  }
-                                  size="sm"
-                                />
+                              {/* Show student names for orangtua */}
+                              {chat.otherParticipantRole === "orangtua" &&
+                                chat.allStudentNames &&
+                                chat.allStudentNames.length > 0 && (
+                                  <p className="text-xs text-gray-500 truncate mb-1">
+                                    Anak:{" "}
+                                    <span className="font-medium text-gray-700">
+                                      {chat.allStudentNames.join(", ")}
+                                    </span>{" "}
+                                    ({otherParticipant.name})
+                                  </p>
+                                )}
+                              {hasStudents && (
+                                <div className="mt-1 p-2 bg-green-50 rounded border border-green-200">
+                                  <p className="text-xs font-medium text-green-700 mb-1">
+                                    Murid yang cocok:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {chat.matchedStudents?.map(
+                                      (student: any, index: number) => (
+                                        <span
+                                          key={index}
+                                          className="text-xs px-2 py-1 bg-white text-green-600 rounded border border-green-300"
+                                        >
+                                          {student.name}
+                                        </span>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
                               )}
                             </div>
                           </div>
+                        </Card>
+                      );
+                    })}
+                  </>
+                )}
 
-                          {chat.lastMessage && (
-                            <p className="text-xs text-gray-600 truncate mb-2">
-                              {chat.lastMessage}
-                            </p>
-                          )}
-
-                          {hasStudents && (
-                            <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
-                              <p className="text-xs font-medium text-green-700 mb-1">
-                                Murid yang cocok:
+                {/* New contacts section */}
+                {contactResults.length > 0 && (
+                  <>
+                    <p className="text-xs text-gray-500 px-3 py-2 bg-gray-50 mt-2">
+                      Kontak baru ({contactResults.length})
+                    </p>
+                    {contactResults.map((contact) => (
+                      <Card
+                        key={contact.uid}
+                        className="p-3 cursor-pointer border bg-white hover:bg-gray-50 border-gray-200"
+                        onClick={() =>
+                          handleCreateNewChat({
+                            uid: contact.uid,
+                            name: contact.name,
+                            email: contact.email,
+                            role: contact.role,
+                          })
+                        }
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="w-10 h-10 flex-shrink-0">
+                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold">
+                              {contact.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <p className="text-sm font-semibold text-gray-900 truncate">
+                                {contact.name}
                               </p>
-                              <div className="flex flex-wrap gap-1">
-                                {chat.matchedStudents?.map(
-                                  (student: any, index: number) => (
-                                    <span
-                                      key={index}
-                                      className="text-xs px-2 py-1 bg-white text-green-600 rounded border border-green-300"
-                                    >
-                                      {student.name}
-                                    </span>
-                                  )
-                                )}
-                              </div>
+                              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium capitalize">
+                                {contact.role}
+                              </span>
                             </div>
-                          )}
+                            {contact.role === "orangtua" &&
+                            contact.studentNames &&
+                            contact.studentNames.length > 0 ? (
+                              <p className="text-xs text-gray-500 mt-0.5 truncate">
+                                Anak:{" "}
+                                <span className="font-medium text-gray-700">
+                                  {contact.studentNames.join(", ")}
+                                </span>{" "}
+                                ({contact.name})
+                              </p>
+                            ) : (
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                Klik untuk memulai percakapan
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </Card>
-                  );
-                })}
+                      </Card>
+                    ))}
+                  </>
+                )}
+
+                {searchResults.length === 0 && contactResults.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <Search className="w-12 h-12 text-gray-300 mb-2" />
+                    <p className="text-sm text-gray-500">
+                      Tidak ada hasil untuk "{searchQuery}"
+                    </p>
+                  </div>
+                )}
               </div>
             )
           ) : loading ? (
