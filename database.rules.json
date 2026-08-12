@@ -32,6 +32,21 @@
     
     "classes": {
       ".indexOn": ["ustadId", "academicYear"]
+    },
+    
+    "saldo": {
+      "$santriId": {
+        ".read": "auth != null",
+        ".write": "root.child('users').child(auth.uid).child('role').val() === 'petugas' || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    
+    "mutasi_saldo": {
+      "$santriId": {
+        ".read": "auth != null",
+        ".write": "root.child('users').child(auth.uid).child('role').val() === 'petugas' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".indexOn": ["createdAt"]
+      }
     }
   }
 }

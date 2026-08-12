@@ -35,15 +35,27 @@ export async function GET(request: NextRequest) {
       if (userId === currentUserId) return;
 
       // Role-based visibility rules:
-      // - ustad   → can chat with orangtua
-      // - orangtua → can chat with ustad AND admin
-      // - admin   → can chat with ustad AND orangtua
+      // - petugas  → can chat with orangtua, ustad, admin
+      // - ustad    → can chat with orangtua, admin, petugas
+      // - orangtua → can chat with ustad, admin, petugas
+      // - admin    → can chat with ustad, orangtua, petugas
       if (
-        (currentUserRole === "ustad" && user.role === "orangtua") ||
+        (currentUserRole === "petugas" &&
+          (user.role === "orangtua" ||
+            user.role === "ustad" ||
+            user.role === "admin")) ||
+        (currentUserRole === "ustad" &&
+          (user.role === "orangtua" ||
+            user.role === "admin" ||
+            user.role === "petugas")) ||
         (currentUserRole === "orangtua" &&
-          (user.role === "ustad" || user.role === "admin")) ||
+          (user.role === "ustad" ||
+            user.role === "admin" ||
+            user.role === "petugas")) ||
         (currentUserRole === "admin" &&
-          (user.role === "ustad" || user.role === "orangtua"))
+          (user.role === "ustad" ||
+            user.role === "orangtua" ||
+            user.role === "petugas"))
       ) {
         availableUsers.push({
           uid: userId,

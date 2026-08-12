@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -247,7 +248,7 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Mengapa PesantrenConnect Aman & Terpercaya?
+                Mengapa Baiturrahman An-Nizhom Aman & Terpercaya?
               </h2>
             </div>
 
@@ -349,13 +350,14 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <div className="flex items-center space-x-2 mb-2">
-                <div
-                  className="flex h-8 w-8 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: settings.primaryColor }}
-                >
-                  <span className="text-white font-bold text-lg">
-                    {settings.logoText}
-                  </span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
+                  <Image
+                    src="/logoPesantren.webp"
+                    alt="Logo Baiturrahman An-Nizhom"
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
                 </div>
                 <span className="font-bold text-xl">{settings.siteName}</span>
               </div>

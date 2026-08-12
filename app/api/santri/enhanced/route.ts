@@ -164,8 +164,8 @@ export async function GET(request: NextRequest) {
     );
 
     // Role-based data access
-    if (userData.role === "admin" || userData.role === "ustad") {
-      // Admin and Ustad can see all students
+    if (userData.role === "admin" || userData.role === "ustad" || userData.role === "petugas") {
+      // Admin, Ustad, and Petugas can see all students
 
       // PRIORITY 1: NEW FORMAT - users with role="santri"
       Object.keys(allUsers).forEach((userId) => {

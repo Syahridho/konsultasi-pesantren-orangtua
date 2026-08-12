@@ -45,20 +45,20 @@ interface SiteSettings {
 
 const defaultSettings: SiteSettings = {
   // Basic Info
-  siteName: "PesantrenConnect",
+  siteName: "Baiturrahman An-Nizhom",
   siteTagline: "Platform Komunikasi Pesantren Modern",
   siteDescription: "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri dengan sistem yang aman dan terpercaya.",
-  logoText: "P",
+  logoText: "BN",
   
   // SEO Settings
   metaKeywords: "pesantren, santri, hafalan quran, akademik, komunikasi pesantren, aplikasi pesantren",
-  metaAuthor: "PesantrenConnect",
+  metaAuthor: "Baiturrahman An-Nizhom",
   canonicalUrl: "",
-  ogTitle: "PesantrenConnect - Platform Komunikasi Pesantren Modern",
+  ogTitle: "Baiturrahman An-Nizhom - Platform Komunikasi Pesantren Modern",
   ogDescription: "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri",
   ogImage: "",
   twitterCard: "summary_large_image",
-  twitterSite: "@pesantrenconnect",
+  twitterSite: "@baiturrahmannizhom",
   
   // Hero Section
   heroTitle: "Pantau Hafalan & Akademik Santri",
@@ -217,7 +217,7 @@ export default function AdminSettingsPage() {
                     onChange={(e) =>
                       setSettings({ ...settings, siteName: e.target.value })
                     }
-                    placeholder="PesantrenConnect"
+                    placeholder="Baiturrahman An-Nizhom"
                   />
                   <p className="text-xs text-muted-foreground">
                     Muncul di header, browser tab, dan hasil pencarian
@@ -232,7 +232,7 @@ export default function AdminSettingsPage() {
                     onChange={(e) =>
                       setSettings({ ...settings, logoText: e.target.value })
                     }
-                    placeholder="P"
+                    placeholder="BN"
                     maxLength={2}
                   />
                   <p className="text-xs text-muted-foreground">
@@ -264,7 +264,7 @@ export default function AdminSettingsPage() {
                   onChange={(e) =>
                     setSettings({ ...settings, metaAuthor: e.target.value })
                   }
-                  placeholder="PesantrenConnect"
+                  placeholder="Baiturrahman An-Nizhom"
                 />
                 <p className="text-xs text-muted-foreground">
                   Nama pembuat atau pengelola website
@@ -325,7 +325,7 @@ export default function AdminSettingsPage() {
                   onChange={(e) =>
                     setSettings({ ...settings, canonicalUrl: e.target.value })
                   }
-                  placeholder="https://pesantrenconnect.com"
+                  placeholder="https://pesantren-nine.vercel.app"
                 />
                 <p className="text-xs text-muted-foreground">
                   URL utama website (untuk mencegah duplikasi konten)
@@ -342,7 +342,7 @@ export default function AdminSettingsPage() {
                   onChange={(e) =>
                     setSettings({ ...settings, ogTitle: e.target.value })
                   }
-                  placeholder="PesantrenConnect - Platform Komunikasi Pesantren"
+                  placeholder="Baiturrahman An-Nizhom - Platform Komunikasi Pesantren"
                 />
                 <p className="text-xs text-muted-foreground">
                   Judul saat dibagikan di social media (Facebook, WhatsApp, dll)
@@ -406,7 +406,7 @@ export default function AdminSettingsPage() {
                     onChange={(e) =>
                       setSettings({ ...settings, twitterSite: e.target.value })
                     }
-                    placeholder="@pesantrenconnect"
+                    placeholder="@BaiturrahmanAnNizhom"
                   />
                   <p className="text-xs text-muted-foreground">
                     Handle Twitter/X website Anda

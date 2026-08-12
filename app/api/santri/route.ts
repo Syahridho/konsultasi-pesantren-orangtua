@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
 
     const userData = userSnapshot.val();
 
-    // Only admin can access all student data for class creation
-    if (userData.role !== "admin") {
+    // Admin, ustad, and petugas can access student data for search/selection
+    if (userData.role !== "admin" && userData.role !== "ustad" && userData.role !== "petugas") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

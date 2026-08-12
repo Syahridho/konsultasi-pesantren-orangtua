@@ -22,27 +22,27 @@ export interface SiteSettings {
 }
 
 const defaultSettings: SiteSettings = {
-  siteName: "PesantrenConnect",
+  siteName: "Baiturrahman An-Nizhom",
   siteTagline: "Platform Komunikasi Pesantren Modern",
   siteDescription:
     "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri dengan sistem yang aman dan terpercaya.",
   metaKeywords:
     "pesantren, santri, hafalan quran, akademik, komunikasi pesantren, aplikasi pesantren",
-  metaAuthor: "PesantrenConnect",
+  metaAuthor: "Baiturrahman An-Nizhom",
   canonicalUrl: "",
-  ogTitle: "PesantrenConnect - Platform Komunikasi Pesantren Modern",
+  ogTitle: "Baiturrahman An-Nizhom - Platform Komunikasi Pesantren Modern",
   ogDescription:
     "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri",
   ogImage: "",
   twitterCard: "summary_large_image",
-  twitterSite: "@pesantrenconnect",
+  twitterSite: "@baiturrahmannizhom",
   heroTitle: "Pantau Hafalan & Akademik Santri",
   heroSubtitle: "Secara Real-time",
   primaryColor: "#059669",
   secondaryColor: "#3b82f6",
   accentColor: "#f59e0b",
   backgroundColor: "#ffffff",
-  logoText: "P",
+  logoText: "BN",
 };
 
 export function generateMetadata(settings?: Partial<SiteSettings>): Metadata {

@@ -20,10 +20,21 @@ import {
   TrendingUp,
   Award,
   MessageCircle,
+  Wallet,
+  History,
+  Plus,
+  Minus
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Report {
   id: string;
@@ -49,6 +60,42 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [reports, setReports] = useState<Report[]>([]);
   const [santriList, setSantriList] = useState<Santri[]>([]);
+
+  // Saldo state
+  const [saldoMap, setSaldoMap] = useState<Record<string, number>>({});
+  const [isRiwayatOpen, setIsRiwayatOpen] = useState(false);
+  const [selectedRiwayatSantri, setSelectedRiwayatSantri] = useState<Santri | null>(null);
+  const [riwayatMutasi, setRiwayatMutasi] = useState<any[]>([]);
+  const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(false);
+
+  const formatRupiah = (angka: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(angka);
+  };
+
+  const handleOpenRiwayat = async (santri: Santri) => {
+    setSelectedRiwayatSantri(santri);
+    setIsRiwayatOpen(true);
+    setIsLoadingRiwayat(true);
+    
+    try {
+      const res = await fetch(`/api/saldo/riwayat?santriId=${santri.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setRiwayatMutasi(data.riwayat || []);
+      } else {
+        toast.error("Gagal memuat riwayat saldo");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Terjadi kesalahan saat memuat riwayat");
+    } finally {
+      setIsLoadingRiwayat(false);
+    }
+  };
 
   useEffect(() => {
     if (status === "loading") return;
@@ -114,6 +161,22 @@ export default function HomePage() {
       }
 
       setSantriList(santriData);
+
+      // Fetch Saldo
+      const newSaldoMap: Record<string, number> = {};
+      const saldoRef = ref(database, "saldo");
+      const saldoSnapshot = await get(saldoRef);
+      if (saldoSnapshot.exists()) {
+        const saldoData = saldoSnapshot.val();
+        studentIds.forEach(id => {
+          if (saldoData[id]) {
+            newSaldoMap[id] = saldoData[id].amount || 0;
+          } else {
+            newSaldoMap[id] = 0;
+          }
+        });
+      }
+      setSaldoMap(newSaldoMap);
 
       // Fetch reports from Firestore
       const allReports: Report[] = [];
@@ -273,7 +336,7 @@ export default function HomePage() {
                   key={santri.id}
                   className="bg-gradient-to-br from-primary/5 to-secondary/5"
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
                         <User className="w-6 h-6 text-white" />
@@ -282,11 +345,25 @@ export default function HomePage() {
                         <p className="font-semibold text-gray-900">
                           {santri.name}
                         </p>
-                        <p className="text-sm text-gray-600">
-                          NIS: {santri.nis || "-"}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <Badge variant="outline" className="text-xs">
+                            NIS: {santri.nis || "-"}
+                          </Badge>
+                          <Badge variant="secondary" className="flex gap-1 items-center bg-green-100 text-green-800 hover:bg-green-100 border-green-200">
+                            <Wallet className="w-3 h-3" />
+                            {formatRupiah(saldoMap[santri.id] || 0)}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full sm:w-auto text-primary border-primary/20 hover:bg-primary/5"
+                      onClick={() => handleOpenRiwayat(santri)}
+                    >
+                      <History className="w-4 h-4 mr-2" /> Riwayat Saldo
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -296,17 +373,83 @@ export default function HomePage() {
 
         {/* Reports Feed */}
         {reports.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent>
-              <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Belum Ada Laporan
-              </h3>
-              <p className="text-gray-600">
-                Laporan perkembangan santri akan muncul di sini
-              </p>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card className="text-center py-10 px-4 shadow-sm border-dashed">
+              <CardContent className="space-y-5 max-w-lg mx-auto p-0">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto text-primary">
+                  <BookOpen className="w-8 h-8" />
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    Belum Ada Laporan
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Laporan perkembangan santri akan muncul di sini setelah diinput oleh Ustadz / Ustadzah pengampu.
+                  </p>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link href="/chat">
+                    <Button className="w-full sm:w-auto gap-2 bg-primary hover:bg-primary/90">
+                      <MessageCircle className="w-4 h-4" />
+                      Chat Ustadz
+                    </Button>
+                  </Link>
+                  {santriList.length > 0 && (
+                    <Button
+                      variant="outline"
+                      className="w-full sm:w-auto gap-2 border-primary/20 text-primary hover:bg-primary/5"
+                      onClick={() => handleOpenRiwayat(santriList[0])}
+                    >
+                      <Wallet className="w-4 h-4" />
+                      Riwayat Saldo
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Feature Highlights Info Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-white/80 border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-5 space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-3">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 text-sm">Hafalan Al-Qur'an</h4>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Pantau perkembangan capaian hafalan surat & kelancaran ayat santri secara real-time.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-5 space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+                    <GraduationCap className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 text-sm">Nilai Akademik</h4>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Evaluasi hasil belajar mata pelajaran santri yang diberikan oleh pengajar.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-5 space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 text-sm">Catatan Perilaku</h4>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Informasi mengenai kedisiplinan, prestasi, dan perkembangan karakter santri.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         ) : (
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="grid w-full grid-cols-4 mb-6">
@@ -389,6 +532,57 @@ export default function HomePage() {
           </Tabs>
         )}
       </div>
+
+      {/* Modal Riwayat Saldo */}
+      <Dialog open={isRiwayatOpen} onOpenChange={setIsRiwayatOpen}>
+        <DialogContent className="max-w-md max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Riwayat Saldo</DialogTitle>
+            <DialogDescription>
+              {selectedRiwayatSantri?.name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-4">
+            {isLoadingRiwayat ? (
+              <div className="flex justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : riwayatMutasi.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Wallet className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                <p>Belum ada riwayat transaksi</p>
+              </div>
+            ) : (
+              riwayatMutasi.map((item) => (
+                <div key={item.id} className="flex items-start justify-between p-3 border rounded-lg">
+                  <div className="flex gap-3">
+                    <div className={`mt-0.5 p-1.5 rounded-full ${item.tipe === "tambah" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
+                      {item.tipe === "tambah" ? <Plus className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{item.keterangan}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {new Date(item.createdAt).toLocaleString("id-ID", {
+                          day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-bold ${item.tipe === "tambah" ? "text-green-600" : "text-red-600"}`}>
+                      {item.tipe === "tambah" ? "+" : "-"}{formatRupiah(item.nominal)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Sisa: {formatRupiah(item.saldoSesudah)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

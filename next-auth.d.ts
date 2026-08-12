@@ -4,7 +4,7 @@ import { DefaultJWT } from "next-auth/jwt";
 // Perluas tipe User untuk memasukkan role
 interface CustomUser {
   id?: string;
-  role?: "admin" | "ustad" | "orangtua"; // Role yang Anda definisikan
+  role?: "admin" | "ustad" | "orangtua" | "petugas"; // Role yang Anda definisikan
 }
 
 // 1. Perluas tipe Session untuk user

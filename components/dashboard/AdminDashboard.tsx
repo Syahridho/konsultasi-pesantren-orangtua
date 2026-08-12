@@ -19,6 +19,7 @@ import {
   GraduationCap,
   School,
   FileText,
+  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -259,6 +260,12 @@ export default function AdminDashboard() {
               <Button className="w-full justify-start">
                 <GraduationCap className="w-4 h-4 mr-2" />
                 Kelola Data Santri
+              </Button>
+            </Link>
+            <Link href="/dashboard/saldo">
+              <Button variant="outline" className="w-full justify-start">
+                <Wallet className="w-4 h-4 mr-2" />
+                Manajemen Saldo Santri
               </Button>
             </Link>
             <Link href="/dashboard/ustad">

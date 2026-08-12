@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -88,13 +89,14 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={{ backgroundColor: settings.primaryColor }}
-            >
-              <span className="text-white font-bold text-lg">
-                {settings.logoText}
-              </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
+              <Image
+                src="/logoPesantren.webp"
+                alt="Logo Baiturrahman An-Nizhom"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
             </div>
             <span className="font-bold text-xl text-gray-900">
               {settings.siteName}

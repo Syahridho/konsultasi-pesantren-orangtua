@@ -25,7 +25,7 @@ interface ChatSidebarProps {
   onSelectChat: (chatId: string) => void;
   currentUserId: string;
   currentUserName: string;
-  currentUserRole: "admin" | "ustad" | "orangtua";
+  currentUserRole: "admin" | "ustad" | "orangtua" | "petugas";
 }
 
 export default function ChatSidebar({
@@ -374,9 +374,7 @@ export default function ChatSidebar({
             placeholder={
               currentUserRole === "orangtua"
                 ? "Cari percakapan..."
-                : currentUserRole === "ustad"
-                ? "Cari berdasarkan nama orang tua atau santri..."
-                : "Cari berdasarkan nama orang tua atau santri..."
+                : "Cari nama orang tua, ustad, admin, atau santri..."
             }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

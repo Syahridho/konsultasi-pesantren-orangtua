@@ -12,7 +12,7 @@ export interface FirebaseUser {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "ustad" | "orangtua";
+  role: "admin" | "ustad" | "orangtua" | "petugas";
 }
 
 export interface StudentData {
@@ -79,7 +79,7 @@ export async function registerUser(
   email: string,
   password: string,
   name: string,
-  role: "admin" | "ustad" | "orangtua" = "orangtua",
+  role: "admin" | "ustad" | "orangtua" | "petugas" = "orangtua",
   students?: StudentData[],
   authInstance?: any
 ): Promise<FirebaseUser | null> {

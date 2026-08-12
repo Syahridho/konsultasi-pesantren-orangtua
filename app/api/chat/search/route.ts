@@ -13,13 +13,32 @@ const searchSchema = z.object({
     .max(100, "Query too long"),
 });
 
-// Role-based contact visibility (same logic as /api/chat/users)
+// Role-based contact visibility
 function canChatWith(currentRole: string, targetRole: string): boolean {
-  if (currentRole === "ustad") return targetRole === "orangtua";
+  if (currentRole === "petugas")
+    return (
+      targetRole === "orangtua" ||
+      targetRole === "ustad" ||
+      targetRole === "admin"
+    );
+  if (currentRole === "ustad")
+    return (
+      targetRole === "orangtua" ||
+      targetRole === "admin" ||
+      targetRole === "petugas"
+    );
   if (currentRole === "orangtua")
-    return targetRole === "ustad" || targetRole === "admin";
+    return (
+      targetRole === "ustad" ||
+      targetRole === "admin" ||
+      targetRole === "petugas"
+    );
   if (currentRole === "admin")
-    return targetRole === "ustad" || targetRole === "orangtua";
+    return (
+      targetRole === "ustad" ||
+      targetRole === "orangtua" ||
+      targetRole === "petugas"
+    );
   return false;
 }
 

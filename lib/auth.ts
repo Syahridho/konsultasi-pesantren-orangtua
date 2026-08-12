@@ -73,7 +73,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }: { session: Session; token: JWT }) {
       // Tambahkan role dari token ke objek session
       if (token.role && session.user) {
-        session.user.role = token.role as "admin" | "ustad" | "orangtua";
+        session.user.role = token.role as "admin" | "ustad" | "orangtua" | "petugas";
       }
       if (token.id && session.user) {
         session.user.id = token.id as string;

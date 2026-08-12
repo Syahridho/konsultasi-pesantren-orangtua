@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import UstadDashboard from "@/components/dashboard/UstadDashboard";
+import PetugasDashboard from "@/components/dashboard/PetugasDashboard";
 import {
   Card,
   CardContent,
@@ -36,6 +37,9 @@ export default async function DashboardPage() {
 
       case "ustad":
         return <UstadDashboard />;
+        
+      case "petugas":
+        return <PetugasDashboard />;
 
       case "orangtua":
         return (

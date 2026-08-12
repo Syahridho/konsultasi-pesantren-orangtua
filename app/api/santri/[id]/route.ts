@@ -37,8 +37,8 @@ export async function GET(
     const userData = snapshot.val();
     console.log("User data:", userData); // Debug log
 
-    // Only allow admin and ustad to access santri data
-    if (userData.role !== "admin" && userData.role !== "ustad") {
+    // Allow admin, ustad, and petugas to access santri data
+    if (userData.role !== "admin" && userData.role !== "ustad" && userData.role !== "petugas") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -29,11 +29,12 @@ import {
   FileText,
   X,
   School,
+  Wallet,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 interface DashboardSidebarProps {
-  role: "admin" | "ustad" | "orangtua";
+  role: "admin" | "ustad" | "orangtua" | "petugas";
 }
 
 // Pre-computed menu items with frozen objects for better performance
@@ -44,6 +45,11 @@ const menuItems = Object.freeze({
       href: "/dashboard/santri",
       label: "Data Santri",
       icon: GraduationCap,
+    }),
+    Object.freeze({
+      href: "/dashboard/saldo",
+      label: "Manajemen Saldo",
+      icon: Wallet,
     }),
     Object.freeze({
       href: "/dashboard/ustad",
@@ -74,6 +80,24 @@ const menuItems = Object.freeze({
       href: "/dashboard/admin/settings",
       label: "Pengaturan",
       icon: Settings,
+    }),
+  ]),
+  petugas: Object.freeze([
+    Object.freeze({ href: "/dashboard", label: "Dashboard", icon: Home }),
+    Object.freeze({
+      href: "/dashboard/petugas/santri",
+      label: "Data Santri",
+      icon: GraduationCap,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/saldo",
+      label: "Manajemen Saldo",
+      icon: Wallet,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/chat",
+      label: "Chat",
+      icon: MessageCircle,
     }),
   ]),
   ustad: Object.freeze([
@@ -126,12 +150,14 @@ const roleLabels = Object.freeze({
   admin: "Administrator",
   ustad: "Ustadz",
   orangtua: "Orang Tua",
+  petugas: "Petugas Keuangan",
 });
 
 const roleIcons = Object.freeze({
   admin: Shield,
   ustad: BookOpen,
   orangtua: Users,
+  petugas: Wallet,
 });
 
 // Memoized MenuItem component for performance
@@ -174,7 +200,7 @@ const SidebarContent = memo(
     session,
     onItemClick,
   }: {
-    role: "admin" | "ustad" | "orangtua";
+    role: "admin" | "ustad" | "orangtua" | "petugas";
     pathname: string;
     session: any;
     onItemClick?: () => void;
@@ -218,7 +244,10 @@ const SidebarContent = memo(
             <MenuItem
               key={item.href}
               item={item}
-              isActive={pathname === item.href}
+              isActive={
+                pathname === item.href ||
+                (item.href !== "/dashboard" && pathname.startsWith(item.href))
+              }
               onClick={onItemClick}
             />
           ))}
