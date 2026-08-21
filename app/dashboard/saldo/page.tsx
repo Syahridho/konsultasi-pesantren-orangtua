@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -15,6 +15,9 @@ import {
   RefreshCw,
   TrendingUp,
   TrendingDown,
+  Filter,
+  Users,
+  GraduationCap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,15 +46,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Santri {
   id: string;
   name: string;
   nis: string;
-  kelas?: string;
+  jenisKelamin: string;
+  orangTuaName?: string;
 }
 
 interface RiwayatMutasi {
@@ -65,14 +77,33 @@ interface RiwayatMutasi {
   createdAt: string;
 }
 
+type GenderFilter = "semua" | "L" | "P";
+
+const FILTER_LABELS: Record<GenderFilter, string> = {
+  semua: "Semua Santri",
+  L: "Laki-laki",
+  P: "Perempuan",
+};
+
+const FILTER_BADGE_STYLES: Record<GenderFilter, string> = {
+  semua: "bg-gray-100 text-gray-700",
+  L: "bg-blue-100 text-blue-700",
+  P: "bg-pink-100 text-pink-700",
+};
+
 export default function ManajemenSaldoPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Search state
+  // Gender filter
+  const [genderFilter, setGenderFilter] = useState<GenderFilter>("semua");
+
+  // All santri list
+  const [allSantri, setAllSantri] = useState<Santri[]>([]);
+  const [loadingSantri, setLoadingSantri] = useState(true);
+
+  // Search query
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<Santri[]>([]);
 
   // Selected santri state
   const [selectedSantri, setSelectedSantri] = useState<Santri | null>(null);
@@ -91,43 +122,66 @@ export default function ManajemenSaldoPage() {
   const [deleteTarget, setDeleteTarget] = useState<RiwayatMutasi | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Check auth - admin & petugas have full access
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || (session.user.role !== "admin" && session.user.role !== "petugas")) {
+    if (
+      !session ||
+      (session.user.role !== "admin" && session.user.role !== "petugas")
+    ) {
       router.push("/dashboard");
       toast.error("Anda tidak memiliki akses ke halaman ini");
     }
   }, [session, status, router]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-
-    setIsSearching(true);
+  // Fetch all santri
+  const fetchAllSantri = useCallback(async () => {
     try {
-      const res = await fetch(
-        `/api/santri?search=${encodeURIComponent(searchQuery)}&limit=10`
-      );
+      setLoadingSantri(true);
+      const res = await fetch("/api/santri/enhanced");
       const data = await res.json();
       if (res.ok) {
-        setSearchResults(data.students || []);
-        if ((data.students || []).length === 0) {
-          toast.info("Santri tidak ditemukan");
-        }
+        const list: Santri[] = (data.santriList || []).map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          nis: s.nis || "",
+          jenisKelamin: s.jenisKelamin || "",
+          orangTuaName: s.orangTuaName || "",
+        }));
+        setAllSantri(list);
       } else {
-        toast.error(data.error || "Gagal mencari santri");
+        toast.error(data.error || "Gagal memuat data santri");
       }
     } catch {
-      toast.error("Terjadi kesalahan saat mencari santri");
+      toast.error("Terjadi kesalahan saat memuat data santri");
     } finally {
-      setIsSearching(false);
+      setLoadingSantri(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (session?.user?.role === "admin" || session?.user?.role === "petugas") {
+      fetchAllSantri();
+    }
+  }, [session, fetchAllSantri]);
+
+  // Filtered santri list based on search and gender
+  const filteredSantri = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    return allSantri.filter((s) => {
+      const matchGender =
+        genderFilter === "semua" || s.jenisKelamin === genderFilter;
+      const matchSearch =
+        !q ||
+        s.name.toLowerCase().includes(q) ||
+        s.nis.toLowerCase().includes(q) ||
+        (s.orangTuaName && s.orangTuaName.toLowerCase().includes(q));
+      return matchGender && matchSearch;
+    });
+  }, [allSantri, genderFilter, searchQuery]);
 
   const handleSelectSantri = (santri: Santri) => {
     setSelectedSantri(santri);
-    setSearchResults([]);
-    setSearchQuery("");
     fetchSaldoDetails(santri.id);
   };
 
@@ -190,7 +244,9 @@ export default function ManajemenSaldoPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success(
-          `Berhasil ${mutasiType === "tambah" ? "menambah" : "mengurangi"} saldo`
+          `Berhasil ${
+            mutasiType === "tambah" ? "menambah" : "mengurangi"
+          } saldo`
         );
         setIsMutasiOpen(false);
         setNominal("");
@@ -263,69 +319,174 @@ export default function ManajemenSaldoPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
-          <Wallet className="h-7 w-7 text-primary" />
-          Manajemen Saldo Santri
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Tambah, kurangi saldo, dan kelola riwayat transaksi santri.
-        </p>
+      {/* Header with Main Gender Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Wallet className="h-7 w-7 text-primary" />
+            Manajemen Saldo Santri
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Tambah, kurangi saldo, dan kelola riwayat transaksi seluruh santri (Otoritas Penuh).
+          </p>
+        </div>
+
+        {/* Gender Filter Dropdown */}
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
+          <Select
+            value={genderFilter}
+            onValueChange={(v) => {
+              setGenderFilter(v as GenderFilter);
+              if (
+                selectedSantri &&
+                v !== "semua" &&
+                selectedSantri.jenisKelamin !== v
+              ) {
+                handleClearSantri();
+              }
+            }}
+          >
+            <SelectTrigger className="w-[180px]" id="saldo-gender-filter-admin">
+              <SelectValue placeholder="Filter Gender" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="semua">
+                <span className="flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5" />
+                  Semua Santri
+                </span>
+              </SelectItem>
+              <SelectItem value="L">
+                <span className="flex items-center gap-2">
+                  <span className="text-blue-500 font-bold text-xs">♂</span>
+                  Laki-laki
+                </span>
+              </SelectItem>
+              <SelectItem value="P">
+                <span className="flex items-center gap-2">
+                  <span className="text-pink-500 font-bold text-xs">♀</span>
+                  Perempuan
+                </span>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
+      {/* Active Filter Badge */}
+      {genderFilter !== "semua" && (
+        <div className="flex items-center gap-2">
+          <Badge className={`${FILTER_BADGE_STYLES[genderFilter]} text-xs`}>
+            {genderFilter === "L" ? "♂" : "♀"} Menampilkan santri:{" "}
+            {FILTER_LABELS[genderFilter]} ({filteredSantri.length} santri)
+          </Badge>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-xs text-muted-foreground"
+            onClick={() => setGenderFilter("semua")}
+          >
+            Reset Filter
+          </Button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* ====== LEFT: Search + Info ====== */}
+        {/* ====== LEFT: Search + List + Info ====== */}
         <div className="space-y-5">
-          {/* Search Card */}
+          {/* Santri Selection Card */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Cari Santri</CardTitle>
-              <CardDescription className="text-xs">
-                Cari berdasarkan nama atau NIS
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base">Pilih Santri</CardTitle>
+                  <CardDescription className="text-xs">
+                    {genderFilter === "semua"
+                      ? "Cari nama atau NIS"
+                      : `Santri ${FILTER_LABELS[genderFilter]}`}
+                  </CardDescription>
+                </div>
+                <Badge variant="outline" className="text-xs">
+                  {filteredSantri.length} santri
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <form onSubmit={handleSearch} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Nama / NIS santri..."
-                    className="pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  disabled={isSearching || !searchQuery.trim()}
-                  size="sm"
-                >
-                  {isSearching ? (
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "Cari"
-                  )}
-                </Button>
-              </form>
+              {/* Search bar */}
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Cari nama / NIS..."
+                  className="pl-8 pr-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
 
-              {/* Search Results Dropdown */}
-              {searchResults.length > 0 && (
-                <div className="border rounded-lg divide-y overflow-hidden shadow-sm">
-                  {searchResults.map((santri) => (
-                    <button
-                      key={santri.id}
-                      className="w-full p-3 text-left hover:bg-muted transition-colors"
-                      onClick={() => handleSelectSantri(santri)}
-                    >
-                      <p className="font-medium text-sm">{santri.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        NIS: {santri.nis || "-"}
-                      </p>
-                    </button>
-                  ))}
+              {/* Santri list scroll area */}
+              {loadingSantri ? (
+                <div className="py-8 text-center text-xs text-muted-foreground">
+                  <RefreshCw className="h-4 w-4 animate-spin mx-auto mb-2" />
+                  Memuat daftar santri...
                 </div>
+              ) : filteredSantri.length === 0 ? (
+                <div className="py-8 text-center text-xs text-muted-foreground">
+                  {searchQuery
+                    ? "Santri tidak ditemukan"
+                    : `Belum ada data santri ${
+                        genderFilter !== "semua"
+                          ? FILTER_LABELS[genderFilter].toLowerCase()
+                          : ""
+                      }`}
+                </div>
+              ) : (
+                <ScrollArea className="h-[220px] border rounded-lg divide-y">
+                  {filteredSantri.map((santri) => {
+                    const isSelected = selectedSantri?.id === santri.id;
+                    return (
+                      <button
+                        key={santri.id}
+                        className={`w-full p-2.5 text-left transition-colors flex items-center justify-between gap-2 ${
+                          isSelected
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "hover:bg-muted"
+                        }`}
+                        onClick={() => handleSelectSantri(santri)}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm truncate">
+                            {santri.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            NIS: {santri.nis || "-"}
+                            {santri.orangTuaName &&
+                              ` • Wali: ${santri.orangTuaName}`}
+                          </p>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className={`shrink-0 text-[10px] px-1.5 py-0 ${
+                            santri.jenisKelamin === "L"
+                              ? "border-blue-200 text-blue-700 bg-blue-50"
+                              : "border-pink-200 text-pink-700 bg-pink-50"
+                          }`}
+                        >
+                          {santri.jenisKelamin === "L" ? "♂ L" : "♀ P"}
+                        </Badge>
+                      </button>
+                    );
+                  })}
+                </ScrollArea>
               )}
             </CardContent>
           </Card>
@@ -335,10 +496,25 @@ export default function ManajemenSaldoPage() {
             <Card className="border-primary/30">
               <CardHeader className="pb-3 bg-primary/5 rounded-t-lg">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Info Saldo</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-base">Info Saldo</CardTitle>
+                    <Badge
+                      variant="outline"
+                      className={`text-xs ${
+                        selectedSantri.jenisKelamin === "L"
+                          ? "border-blue-200 text-blue-700 bg-blue-50"
+                          : "border-pink-200 text-pink-700 bg-pink-50"
+                      }`}
+                    >
+                      {selectedSantri.jenisKelamin === "L"
+                        ? "♂ Laki-laki"
+                        : "♀ Perempuan"}
+                    </Badge>
+                  </div>
                   <button
                     onClick={handleClearSantri}
                     className="text-muted-foreground hover:text-foreground"
+                    title="Tutup info"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -348,15 +524,21 @@ export default function ManajemenSaldoPage() {
                 {/* Santri name */}
                 <div>
                   <p className="text-xs text-muted-foreground">Nama Santri</p>
-                  <p className="font-semibold text-base">{selectedSantri.name}</p>
+                  <p className="font-semibold text-base">
+                    {selectedSantri.name}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     NIS: {selectedSantri.nis || "-"}
+                    {selectedSantri.orangTuaName &&
+                      ` • Orang Tua: ${selectedSantri.orangTuaName}`}
                   </p>
                 </div>
 
                 {/* Saldo */}
                 <div className="p-4 bg-muted/50 rounded-xl border">
-                  <p className="text-xs text-muted-foreground mb-1">Sisa Saldo</p>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Sisa Saldo
+                  </p>
                   {isLoadingDetails ? (
                     <div className="h-9 w-32 bg-muted animate-pulse rounded" />
                   ) : (
@@ -372,7 +554,9 @@ export default function ManajemenSaldoPage() {
                     <div className="rounded-lg bg-green-50 border border-green-100 p-2.5">
                       <div className="flex items-center gap-1 mb-1">
                         <TrendingUp className="h-3 w-3 text-green-600" />
-                        <p className="text-xs text-green-700 font-medium">Total Masuk</p>
+                        <p className="text-xs text-green-700 font-medium">
+                          Total Masuk
+                        </p>
                       </div>
                       <p className="text-sm font-bold text-green-700">
                         {formatRupiah(totalMasuk)}
@@ -381,7 +565,9 @@ export default function ManajemenSaldoPage() {
                     <div className="rounded-lg bg-red-50 border border-red-100 p-2.5">
                       <div className="flex items-center gap-1 mb-1">
                         <TrendingDown className="h-3 w-3 text-red-600" />
-                        <p className="text-xs text-red-700 font-medium">Total Keluar</p>
+                        <p className="text-xs text-red-700 font-medium">
+                          Total Keluar
+                        </p>
                       </div>
                       <p className="text-sm font-bold text-red-700">
                         {formatRupiah(totalKeluar)}
@@ -432,8 +618,12 @@ export default function ManajemenSaldoPage() {
                   </CardTitle>
                   <CardDescription className="mt-0.5">
                     {selectedSantri
-                      ? `Transaksi untuk ${selectedSantri.name}`
-                      : "Pilih santri untuk melihat riwayat"}
+                      ? `Transaksi untuk ${selectedSantri.name} (${
+                          selectedSantri.jenisKelamin === "L"
+                            ? "Laki-laki"
+                            : "Perempuan"
+                        })`
+                      : "Pilih santri di sebelah kiri untuk melihat riwayat mutasi"}
                   </CardDescription>
                 </div>
                 {selectedSantri && !isLoadingDetails && (
@@ -454,7 +644,7 @@ export default function ManajemenSaldoPage() {
                 <div className="flex flex-col items-center justify-center text-muted-foreground min-h-[280px] gap-3">
                   <Wallet className="h-14 w-14 opacity-15" />
                   <p className="text-sm">
-                    Cari dan pilih santri terlebih dahulu
+                    Pilih salah satu santri dari daftar untuk mengelola saldo
                   </p>
                 </div>
               ) : isLoadingDetails ? (
@@ -564,8 +754,22 @@ export default function ManajemenSaldoPage() {
                 : "Kurangi Saldo (Pemakaian)"}
             </DialogTitle>
             <DialogDescription>
-              <span className="font-medium">{selectedSantri?.name}</span> —
-              Sisa Saldo:{" "}
+              <span className="font-medium">{selectedSantri?.name}</span>{" "}
+              {selectedSantri && (
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] ml-1 ${
+                    selectedSantri.jenisKelamin === "L"
+                      ? "border-blue-200 text-blue-700 bg-blue-50"
+                      : "border-pink-200 text-pink-700 bg-pink-50"
+                  }`}
+                >
+                  {selectedSantri.jenisKelamin === "L"
+                    ? "♂ Laki-laki"
+                    : "♀ Perempuan"}
+                </Badge>
+              )}{" "}
+              — Sisa Saldo:{" "}
               <span className="font-semibold text-primary">
                 {formatRupiah(currentSaldo)}
               </span>
@@ -588,7 +792,8 @@ export default function ManajemenSaldoPage() {
                   Sisa setelah:{" "}
                   <span className="font-medium">
                     {formatRupiah(
-                      currentSaldo - parseInt(nominal.replace(/\D/g, "") || "0")
+                      currentSaldo -
+                        parseInt(nominal.replace(/\D/g, "") || "0")
                     )}
                   </span>
                 </p>
@@ -674,7 +879,8 @@ export default function ManajemenSaldoPage() {
                   </span>
                   .<br />
                   <span className="text-destructive font-medium">
-                    Catatan: Tindakan ini tidak akan mengubah saldo secara otomatis.
+                    Catatan: Tindakan ini tidak akan mengubah saldo secara
+                    otomatis.
                   </span>{" "}
                   Hanya data log yang dihapus.
                 </>

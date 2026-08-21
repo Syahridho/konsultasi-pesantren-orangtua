@@ -4,10 +4,17 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Search, Eye, Wallet, GraduationCap, X } from "lucide-react";
+import { Search, Eye, Wallet, GraduationCap, X, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -56,6 +63,7 @@ export default function PetugasSantriPage() {
   const [santriList, setSantriList] = useState<Santri[]>([]);
   const [filteredList, setFilteredList] = useState<Santri[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [genderFilter, setGenderFilter] = useState<"semua" | "L" | "P">("semua");
   const [loading, setLoading] = useState(true);
   const [selectedSantri, setSelectedSantri] = useState<Santri | null>(null);
   const [saldoMap, setSaldoMap] = useState<Record<string, SaldoInfo>>({});
@@ -79,14 +87,17 @@ export default function PetugasSantriPage() {
   useEffect(() => {
     const q = searchTerm.toLowerCase();
     setFilteredList(
-      santriList.filter(
-        (s) =>
+      santriList.filter((s) => {
+        const matchesSearch =
           s.name.toLowerCase().includes(q) ||
           s.nis.toLowerCase().includes(q) ||
-          s.orangTuaName.toLowerCase().includes(q)
-      )
+          s.orangTuaName.toLowerCase().includes(q);
+        const matchesGender =
+          genderFilter === "semua" || s.jenisKelamin === genderFilter;
+        return matchesSearch && matchesGender;
+      })
     );
-  }, [santriList, searchTerm]);
+  }, [santriList, searchTerm, genderFilter]);
 
   const fetchSantri = async () => {
     try {
@@ -185,25 +196,53 @@ export default function PetugasSantriPage() {
         </Badge>
       </div>
 
-      {/* Search */}
+      {/* Search & Filter */}
       <Card>
         <CardContent className="pt-4 pb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Cari nama, NIS, atau orang tua..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-10"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Cari nama, NIS, atau orang tua..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-10"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground shrink-0 hidden sm:block" />
+              <Select
+                value={genderFilter}
+                onValueChange={(v) => setGenderFilter(v as "semua" | "L" | "P")}
               >
-                <X className="h-4 w-4" />
-              </button>
-            )}
+                <SelectTrigger className="w-full sm:w-[160px]">
+                  <SelectValue placeholder="Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="semua">Semua Gender</SelectItem>
+                  <SelectItem value="L">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-blue-500 font-bold text-xs">♂</span>
+                      Laki-laki
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="P">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-pink-500 font-bold text-xs">♀</span>
+                      Perempuan
+                    </span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>

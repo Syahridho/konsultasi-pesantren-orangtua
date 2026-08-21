@@ -20,6 +20,10 @@ import {
   School,
   FileText,
   Wallet,
+  CreditCard,
+  CheckCircle2,
+  Clock,
+  Landmark,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -37,6 +41,8 @@ interface AdminStats {
   ustadOnline: number;
   totalLaporan: number;
   laporanThisMonth: number;
+  totalSaldo?: number;
+  tagihanIuranPending?: number;
 }
 
 export default function AdminDashboard() {
@@ -75,13 +81,21 @@ export default function AdminDashboard() {
     }
   };
 
+  const formatRupiah = (angka: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(angka);
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Dashboard Admin</h1>
           <Badge variant="default" className="text-sm">
-            Administrator
+            Administrator (Kuasa Penuh)
           </Badge>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -130,27 +144,52 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Dashboard Admin</h1>
-        <Badge variant="default" className="text-sm">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard Admin</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Pusat kendali dan otoritas penuh atas seluruh santri, akademik, dan keuangan pesantren.
+          </p>
+        </div>
+        <Badge variant="default" className="text-sm bg-primary text-white">
           Administrator
         </Badge>
       </div>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+      {/* Financial & SPP Quick Banner for Admin */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Saldo Santri */}
+        <Card className="border-l-4 border-l-primary bg-primary/5">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Pengguna</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Saldo Santri</CardTitle>
+            <Wallet className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
-              +{stats.newUsersThisMonth} bulan ini
+            <div className="text-2xl font-bold text-primary">
+              {formatRupiah(stats.totalSaldo || 0)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Seluruh saldo tabungan santri
             </p>
           </CardContent>
         </Card>
 
+        {/* Verifikasi SPP Pending */}
+        <Card className="border-l-4 border-l-amber-500 bg-amber-50/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">SPP Perlu Verifikasi</CardTitle>
+            <Clock className="h-4 w-4 text-amber-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-amber-600">
+              {stats.tagihanIuranPending || 0}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Bukti transfer menunggu persetujuan
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Total Santri */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Santri</CardTitle>
@@ -158,12 +197,29 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalSantri}</div>
-            <p className="text-xs text-muted-foreground">
-              Santri terdaftar
+            <p className="text-xs text-muted-foreground mt-1">
+              Santri terdaftar aktif
             </p>
           </CardContent>
         </Card>
 
+        {/* Total Users */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Pengguna</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalUsers}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              +{stats.newUsersThisMonth} bulan ini
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Ustadz</CardTitle>
@@ -189,10 +245,7 @@ export default function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Secondary Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Kelas</CardTitle>
@@ -202,19 +255,6 @@ export default function AdminDashboard() {
             <div className="text-2xl font-bold">{stats.totalClasses}</div>
             <p className="text-xs text-muted-foreground">
               {stats.activeClasses} kelas aktif
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Percakapan</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalChats}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.activeChats} aktif hari ini
             </p>
           </CardContent>
         </Card>
@@ -231,61 +271,56 @@ export default function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pertumbuhan</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              +{((stats.newUsersThisMonth / stats.totalUsers) * 100).toFixed(1)}%
-            </div>
-            <p className="text-xs text-muted-foreground">User baru</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Quick Actions and Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Aksi Cepat</CardTitle>
+            <CardTitle>Aksi Cepat Admin</CardTitle>
             <CardDescription>
-              Tindakan admin yang sering dilakukan
+              Akses langsung ke pengelolaan data dan keuangan tertinggi
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Link href="/dashboard/santri">
-              <Button className="w-full justify-start">
-                <GraduationCap className="w-4 h-4 mr-2" />
-                Kelola Data Santri
-              </Button>
-            </Link>
-            <Link href="/dashboard/saldo">
-              <Button variant="outline" className="w-full justify-start">
-                <Wallet className="w-4 h-4 mr-2" />
-                Manajemen Saldo Santri
-              </Button>
-            </Link>
-            <Link href="/dashboard/ustad">
-              <Button variant="outline" className="w-full justify-start">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Kelola Data Ustadz
-              </Button>
-            </Link>
-            <Link href="/dashboard/kelas">
-              <Button variant="outline" className="w-full justify-start">
-                <School className="w-4 h-4 mr-2" />
-                Kelola Data Kelas
-              </Button>
-            </Link>
-            <Link href="/dashboard/chat">
-              <Button variant="outline" className="w-full justify-start">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Buka Chat
-              </Button>
-            </Link>
+          <CardContent className="space-y-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <Link href="/dashboard/santri">
+                <Button className="w-full justify-start" variant="outline">
+                  <GraduationCap className="w-4 h-4 mr-2" />
+                  Kelola Data Santri
+                </Button>
+              </Link>
+              <Link href="/dashboard/saldo">
+                <Button className="w-full justify-start bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <Wallet className="w-4 h-4 mr-2" />
+                  Manajemen Saldo
+                </Button>
+              </Link>
+              <Link href="/dashboard/iuran">
+                <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Iuran & SPP Santri
+                </Button>
+              </Link>
+              <Link href="/dashboard/ustad">
+                <Button variant="outline" className="w-full justify-start">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Kelola Data Ustadz
+                </Button>
+              </Link>
+              <Link href="/dashboard/kelas">
+                <Button variant="outline" className="w-full justify-start">
+                  <School className="w-4 h-4 mr-2" />
+                  Kelola Data Kelas
+                </Button>
+              </Link>
+              <Link href="/dashboard/chat">
+                <Button variant="outline" className="w-full justify-start">
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Buka Chat
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
 

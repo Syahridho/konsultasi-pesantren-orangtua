@@ -30,6 +30,7 @@ import {
   X,
   School,
   Wallet,
+  CreditCard,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
@@ -50,6 +51,11 @@ const menuItems = Object.freeze({
       href: "/dashboard/saldo",
       label: "Manajemen Saldo",
       icon: Wallet,
+    }),
+    Object.freeze({
+      href: "/dashboard/iuran",
+      label: "Iuran & SPP",
+      icon: CreditCard,
     }),
     Object.freeze({
       href: "/dashboard/ustad",
@@ -93,6 +99,11 @@ const menuItems = Object.freeze({
       href: "/dashboard/petugas/saldo",
       label: "Manajemen Saldo",
       icon: Wallet,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/iuran",
+      label: "Iuran & SPP",
+      icon: CreditCard,
     }),
     Object.freeze({
       href: "/dashboard/petugas/chat",

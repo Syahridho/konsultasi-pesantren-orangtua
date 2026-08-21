@@ -118,6 +118,38 @@ async function getAdminStats() {
       console.error("Error fetching laporan:", error);
     }
 
+    // Get total saldo santri
+    let totalSaldo = 0;
+    try {
+      const saldoRef = ref(database, "saldo");
+      const saldoSnapshot = await get(saldoRef);
+      if (saldoSnapshot.exists()) {
+        const saldoData = saldoSnapshot.val();
+        Object.values(saldoData).forEach((s: any) => {
+          totalSaldo += s.amount || 0;
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching saldo for admin stats:", err);
+    }
+
+    // Get tagihan iuran pending verification count
+    let tagihanIuranPending = 0;
+    try {
+      const iuranRef = ref(database, "tagihan_iuran");
+      const iuranSnapshot = await get(iuranRef);
+      if (iuranSnapshot.exists()) {
+        const iuranData = iuranSnapshot.val();
+        Object.values(iuranData).forEach((item: any) => {
+          if (item.status === "menunggu_verifikasi") {
+            tagihanIuranPending++;
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching tagihan iuran for admin stats:", err);
+    }
+
     return {
       totalUsers,
       totalSantri,
@@ -131,6 +163,8 @@ async function getAdminStats() {
       ustadOnline,
       totalLaporan,
       laporanThisMonth,
+      totalSaldo,
+      tagihanIuranPending,
     };
   } catch (error) {
     console.error("Error getting admin stats:", error);

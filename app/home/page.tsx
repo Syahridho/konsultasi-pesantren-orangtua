@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ref, get } from "firebase/database";
 import { database } from "@/lib/firebase";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,7 +23,18 @@ import {
   Wallet,
   History,
   Plus,
-  Minus
+  Minus,
+  CreditCard,
+  Landmark,
+  Copy,
+  Check,
+  UploadCloud,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  FileCheck,
+  Receipt,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -34,7 +45,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Report {
   id: string;
@@ -54,6 +68,36 @@ interface Santri {
   nis: string;
 }
 
+interface TagihanIuran {
+  id: string;
+  santriId: string;
+  santriName: string;
+  santriGender: string;
+  santriNis?: string;
+  parentId?: string;
+  bulan: string;
+  tahun: number;
+  nominal: number;
+  status: "belum_bayar" | "menunggu_verifikasi" | "lunas" | "ditolak";
+  keterangan?: string;
+  tanggalBayar?: string;
+  buktiPembayaran?: string;
+  buktiFileName?: string;
+  catatanOrangTua?: string;
+  verifiedAt?: string;
+  verifiedByName?: string;
+  catatanPetugas?: string;
+  createdAt: string;
+}
+
+interface BankSettings {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  defaultNominal: number;
+  keterangan?: string;
+}
+
 export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -67,6 +111,24 @@ export default function HomePage() {
   const [selectedRiwayatSantri, setSelectedRiwayatSantri] = useState<Santri | null>(null);
   const [riwayatMutasi, setRiwayatMutasi] = useState<any[]>([]);
   const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(false);
+
+  // Iuran / SPP state
+  const [tagihanList, setTagihanList] = useState<TagihanIuran[]>([]);
+  const [bankSettings, setBankSettings] = useState<BankSettings>({
+    bankName: "Bank Syariah Indonesia (BSI)",
+    accountNumber: "7123456789",
+    accountHolder: "Pondok Pesantren Baiturrahman",
+    defaultNominal: 350000,
+    keterangan: "Pembayaran SPP paling lambat tanggal 10 setiap bulan",
+  });
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedTagihan, setSelectedTagihan] = useState<TagihanIuran | null>(null);
+  const [buktiBase64, setBuktiBase64] = useState<string>("");
+  const [buktiFileName, setBuktiFileName] = useState<string>("");
+  const [catatanOrangTua, setCatatanOrangTua] = useState<string>("");
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
+  const [copiedRekening, setCopiedRekening] = useState(false);
+  const [previewBuktiModal, setPreviewBuktiModal] = useState<string | null>(null);
 
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -94,6 +156,78 @@ export default function HomePage() {
       toast.error("Terjadi kesalahan saat memuat riwayat");
     } finally {
       setIsLoadingRiwayat(false);
+    }
+  };
+
+  const handleCopyRekening = () => {
+    navigator.clipboard.writeText(bankSettings.accountNumber);
+    setCopiedRekening(true);
+    toast.success("Nomor rekening berhasil disalin!");
+    setTimeout(() => setCopiedRekening(false), 2000);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 5MB");
+      return;
+    }
+
+    setBuktiFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBuktiBase64(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleOpenPayment = (tagihan: TagihanIuran) => {
+    setSelectedTagihan(tagihan);
+    setBuktiBase64(tagihan.buktiPembayaran || "");
+    setBuktiFileName(tagihan.buktiFileName || "");
+    setCatatanOrangTua(tagihan.catatanOrangTua || "");
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleSubmitPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTagihan) return;
+
+    if (!buktiBase64) {
+      toast.error("Silakan pilih file bukti transfer terlebih dahulu");
+      return;
+    }
+
+    setIsSubmittingPayment(true);
+    try {
+      const res = await fetch("/api/iuran", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedTagihan.id,
+          action: "submit_pembayaran",
+          buktiPembayaran: buktiBase64,
+          buktiFileName: buktiFileName || "bukti_transfer.jpg",
+          catatanOrangTua,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(
+          "Bukti pembayaran berhasil dikirim! Petugas akan segera memverifikasi."
+        );
+        setIsPaymentModalOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || "Gagal mengirim bukti pembayaran");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat mengirim bukti pembayaran");
+    } finally {
+      setIsSubmittingPayment(false);
     }
   };
 
@@ -177,6 +311,20 @@ export default function HomePage() {
         });
       }
       setSaldoMap(newSaldoMap);
+
+      // Fetch Iuran / SPP data
+      try {
+        const iuranRes = await fetch("/api/iuran");
+        if (iuranRes.ok) {
+          const iuranData = await iuranRes.json();
+          setTagihanList(iuranData.tagihanList || []);
+          if (iuranData.bankSettings) {
+            setBankSettings(iuranData.bankSettings);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching iuran on home:", err);
+      }
 
       // Fetch reports from Firestore
       const allReports: Report[] = [];
@@ -276,6 +424,16 @@ export default function HomePage() {
     }
   };
 
+  // Pending / Unpaid SPP bills for parent notification
+  const tagihanPendingOrUnpaid = useMemo(() => {
+    return tagihanList.filter(
+      (t) =>
+        t.status === "belum_bayar" ||
+        t.status === "menunggu_verifikasi" ||
+        t.status === "ditolak"
+    );
+  }, [tagihanList]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -308,9 +466,9 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl space-y-8">
         {/* Header */}
-        <div className="mb-8">
+        <div>
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -327,6 +485,98 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
+
+          {/* ========== PEMBERITAHUAN TAGIHAN SPP BULANAN (NOTIF TANGGAL 1) ========== */}
+          {tagihanPendingOrUnpaid.length > 0 && (
+            <Card className="mt-6 border-2 border-amber-300 bg-gradient-to-r from-amber-50 via-amber-50/70 to-orange-50/50 shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-amber-900">
+                    <div className="p-2 bg-amber-200/70 rounded-lg">
+                      <CreditCard className="h-5 w-5 text-amber-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base text-amber-950 font-bold">
+                        Pemberitahuan Tagihan SPP Bulanan
+                      </CardTitle>
+                      <CardDescription className="text-xs text-amber-800">
+                        Mohon lakukan pembayaran SPP santri melalui transfer ke rekening resmi pesantren.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-amber-500 text-white hover:bg-amber-600">
+                    {tagihanPendingOrUnpaid.length} Tagihan
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="divide-y divide-amber-200/60 rounded-xl bg-white/80 border border-amber-200/80 overflow-hidden">
+                  {tagihanPendingOrUnpaid.map((tagihan) => (
+                    <div
+                      key={tagihan.id}
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-amber-50/40 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">
+                            {tagihan.santriName}
+                          </p>
+                          <Badge variant="outline" className="text-xs font-normal">
+                            SPP {tagihan.bulan} {tagihan.tahun}
+                          </Badge>
+                          {tagihan.status === "menunggu_verifikasi" && (
+                            <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 text-xs gap-1 animate-pulse">
+                              <Clock className="h-3 w-3" />
+                              Sedang Diverifikasi
+                            </Badge>
+                          )}
+                          {tagihan.status === "ditolak" && (
+                            <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 text-xs gap-1">
+                              <XCircle className="h-3 w-3" />
+                              Ditolak (Upload Ulang)
+                            </Badge>
+                          )}
+                          {tagihan.status === "belum_bayar" && (
+                            <Badge className="bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-100 text-xs gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Belum Bayar
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-bold text-emerald-700">
+                          {formatRupiah(tagihan.nominal)}
+                        </p>
+                        {tagihan.status === "ditolak" && tagihan.catatanPetugas && (
+                          <p className="text-xs text-red-600 bg-red-50 p-1.5 rounded border border-red-100">
+                            Alasan ditolak: {tagihan.catatanPetugas}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className={`gap-1.5 w-full sm:w-auto ${
+                            tagihan.status === "menunggu_verifikasi"
+                              ? "bg-blue-600 hover:bg-blue-700"
+                              : "bg-emerald-600 hover:bg-emerald-700"
+                          } text-white`}
+                          onClick={() => handleOpenPayment(tagihan)}
+                        >
+                          <Receipt className="h-4 w-4" />
+                          {tagihan.status === "menunggu_verifikasi"
+                            ? "Lihat Bukti & Status"
+                            : tagihan.status === "ditolak"
+                            ? "Upload Bukti Ulang"
+                            : "Bayar / Upload Bukti"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Student Info Cards */}
           {santriList.length > 0 && (
@@ -451,15 +701,15 @@ export default function HomePage() {
             </div>
           </div>
         ) : (
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
-              <TabsTrigger value="all">Semua</TabsTrigger>
+          <Tabs defaultValue="semua" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-100 p-1">
+              <TabsTrigger value="semua">Semua</TabsTrigger>
               <TabsTrigger value="hafalan">Hafalan</TabsTrigger>
               <TabsTrigger value="akademik">Akademik</TabsTrigger>
               <TabsTrigger value="perilaku">Perilaku</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="all" className="space-y-4">
+            <TabsContent value="semua" className="space-y-4">
               {reports.map((report) => (
                 <ReportCard key={report.id} report={report} />
               ))}
@@ -479,7 +729,7 @@ export default function HomePage() {
                       Belum Ada Laporan Hafalan
                     </h3>
                     <p className="text-gray-600">
-                      Laporan hafalan santri akan muncul di sini
+                      Laporan hafalan Qur'an santri akan muncul di sini
                     </p>
                   </CardContent>
                 </Card>
@@ -533,6 +783,211 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* ========== MODAL PEMBAYARAN & UPLOAD BUKTI SPP ========== */}
+      <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Receipt className="h-5 w-5 text-emerald-600" />
+              Pembayaran SPP Santri
+            </DialogTitle>
+            <DialogDescription>
+              Silakan transfer sesuai nominal ke rekening resmi pesantren dan unggah bukti transfer.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedTagihan && (
+            <form onSubmit={handleSubmitPayment} className="space-y-5 pt-2">
+              {/* Detail Tagihan */}
+              <div className="rounded-xl bg-muted/40 p-4 space-y-2 border">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Santri</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedTagihan.santriName}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Periode Tagihan</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedTagihan.bulan} {selectedTagihan.tahun}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm pt-2 border-t">
+                  <span className="font-medium text-gray-700">Total Pembayaran</span>
+                  <span className="font-bold text-lg text-emerald-600">
+                    {formatRupiah(selectedTagihan.nominal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Rekening Pesantren Card */}
+              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-emerald-700" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                      Rekening Resmi Pesantren
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="border-emerald-300 text-emerald-800 bg-white">
+                    {bankSettings.bankName}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-emerald-200">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Nomor Rekening</p>
+                    <p className="text-lg font-bold text-gray-900 font-mono tracking-wide">
+                      {bankSettings.accountNumber}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      a.n. {bankSettings.accountHolder}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyRekening}
+                    className="gap-1.5 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                  >
+                    {copiedRekening ? (
+                      <>
+                        <Check className="h-4 w-4 text-emerald-600" />
+                        Tersalin
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Salin
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {bankSettings.keterangan && (
+                  <p className="text-xs text-emerald-800/90 italic">
+                    ℹ️ {bankSettings.keterangan}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Info */}
+              {selectedTagihan.status === "menunggu_verifikasi" && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-2.5 text-sm text-blue-900">
+                  <Clock className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Bukti Pembayaran Sudah Terkirim</p>
+                    <p className="text-xs text-blue-700 mt-0.5">
+                      Petugas sedang mengecek mutasi bank untuk menyetujui status lunas. Anda dapat mengunggah bukti baru jika ingin memperbarui.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedTagihan.status === "ditolak" && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-sm text-red-900">
+                  <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Pembayaran Sebelumnya Ditolak</p>
+                    <p className="text-xs text-red-700 mt-0.5">
+                      {selectedTagihan.catatanPetugas || "Silakan periksa kembali nominal transfer dan unggah bukti pembayaran yang valid."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Upload Input */}
+              <div className="space-y-2">
+                <Label htmlFor="buktiUpload" className="text-sm font-semibold">
+                  Upload Bukti Transfer / Pembayaran:
+                </Label>
+                <div className="border-2 border-dashed border-gray-200 hover:border-primary/50 rounded-xl p-4 text-center cursor-pointer transition-colors bg-white">
+                  <input
+                    id="buktiUpload"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="buktiUpload" className="cursor-pointer block">
+                    <UploadCloud className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm font-medium text-gray-700">
+                      {buktiFileName || "Klik untuk memilih foto / screenshot bukti transfer"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Format: JPG, PNG, WebP (Maks. 5MB)
+                    </p>
+                  </label>
+                </div>
+
+                {/* Preview Image */}
+                {buktiBase64 && (
+                  <div className="relative mt-2 p-2 border rounded-xl bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={buktiBase64}
+                      alt="Pratinjau Bukti"
+                      className="max-h-48 rounded object-contain cursor-pointer"
+                      onClick={() => setPreviewBuktiModal(buktiBase64)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2 text-xs bg-white/80 shadow-sm"
+                      onClick={() => {
+                        setBuktiBase64("");
+                        setBuktiFileName("");
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Catatan Orang Tua */}
+              <div className="space-y-2">
+                <Label htmlFor="catatan" className="text-sm">
+                  Catatan Tambahan (Opsional):
+                </Label>
+                <Textarea
+                  id="catatan"
+                  placeholder="Contoh: Transfer dari rekening BCA a.n. Ayah Dinda"
+                  value={catatanOrangTua}
+                  onChange={(e) => setCatatanOrangTua(e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              {/* Footer */}
+              <DialogFooter className="gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsPaymentModalOpen(false)}
+                  disabled={isSubmittingPayment}
+                >
+                  Tutup
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingPayment || !buktiBase64}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {isSubmittingPayment
+                    ? "Mengirim..."
+                    : selectedTagihan.status === "menunggu_verifikasi"
+                    ? "Kirim Ulang Bukti"
+                    : "Kirim Bukti Pembayaran"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Modal Riwayat Saldo */}
       <Dialog open={isRiwayatOpen} onOpenChange={setIsRiwayatOpen}>
         <DialogContent className="max-w-md max-h-[80vh] flex flex-col">
@@ -583,6 +1038,27 @@ export default function HomePage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Full Image Preview Modal */}
+      <Dialog
+        open={!!previewBuktiModal}
+        onOpenChange={(open) => !open && setPreviewBuktiModal(null)}
+      >
+        <DialogContent className="max-w-2xl p-4">
+          <DialogHeader>
+            <DialogTitle>Bukti Pembayaran</DialogTitle>
+          </DialogHeader>
+          {previewBuktiModal && (
+            <div className="flex items-center justify-center p-2 bg-black/5 rounded-lg max-h-[75vh] overflow-auto">
+              <img
+                src={previewBuktiModal}
+                alt="Bukti Transfer Penuh"
+                className="max-h-[70vh] w-auto object-contain rounded"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -629,17 +1105,10 @@ function ReportCard({ report }: { report: Report }) {
 
   const formatDate = (dateStr: string) => {
     try {
-      // Parse date and adjust for timezone
       const date = new Date(dateStr);
-
-      // Check if date is valid
-      if (isNaN(date.getTime())) {
-        return dateStr;
-      }
+      if (isNaN(date.getTime())) return dateStr;
 
       const now = new Date();
-
-      // Calculate difference in local time
       const diffMs = now.getTime() - date.getTime();
       const diffMins = Math.floor(diffMs / 60000);
       const diffHours = Math.floor(diffMs / 3600000);
@@ -650,7 +1119,6 @@ function ReportCard({ report }: { report: Report }) {
       if (diffHours < 24) return `${diffHours} jam yang lalu`;
       if (diffDays < 7) return `${diffDays} hari yang lalu`;
 
-      // Format with time for full date
       return date.toLocaleString("id-ID", {
         day: "numeric",
         month: "long",
