@@ -253,7 +253,7 @@ export default function LaporPage() {
     if (!session) {
       router.push("/login");
     } else if (session.user.role !== "ustad") {
-      toast.error("Halaman ini hanya untuk Ustadz");
+      toast.error("Halaman ini hanya untuk Guru");
       router.push("/dashboard");
     }
   }, [session, router]);

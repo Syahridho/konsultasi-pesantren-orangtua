@@ -71,9 +71,9 @@ export default function EditKelasModal({
         // This would typically be an API call, but for now we'll use mock data
         // In a real implementation, you'd fetch from /api/ustads
         const mockTeachers = [
-          { id: "teacher1", name: "Ustadz Ahmad" },
-          { id: "teacher2", name: "Ustadz Budi" },
-          { id: "teacher3", name: "Ustadz Charli" },
+          { id: "teacher1", name: "Guru Ahmad" },
+          { id: "teacher2", name: "Guru Budi" },
+          { id: "teacher3", name: "Guru Charli" },
         ];
         setTeachers(mockTeachers);
       } catch (error) {

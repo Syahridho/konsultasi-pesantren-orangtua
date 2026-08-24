@@ -75,9 +75,9 @@ export function ViewUstadModal({ ustadId, trigger }: ViewUstadModalProps) {
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Detail Ustad</DialogTitle>
+          <DialogTitle>Detail Guru</DialogTitle>
           <DialogDescription>
-            Informasi lengkap mengenai data ustad
+            Informasi lengkap mengenai data guru
           </DialogDescription>
         </DialogHeader>
 
@@ -89,7 +89,7 @@ export function ViewUstadModal({ ustadId, trigger }: ViewUstadModalProps) {
           <div className="space-y-6">
             {/* Ustad Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Data Ustad</h3>
+              <h3 className="text-lg font-medium">Data Guru</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm font-medium text-gray-500">

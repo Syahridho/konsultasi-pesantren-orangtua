@@ -47,7 +47,7 @@ const defaultSettings: SiteSettings = {
   // Basic Info
   siteName: "Baiturrahman An-Nizhom",
   siteTagline: "Platform Komunikasi Pesantren Modern",
-  siteDescription: "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri dengan sistem yang aman dan terpercaya.",
+  siteDescription: "Kemudahan komunikasi antara Guru dan Orang Tua untuk memantau perkembangan pembelajaran santri dengan sistem yang aman dan terpercaya.",
   logoText: "BN",
   
   // SEO Settings
@@ -55,7 +55,7 @@ const defaultSettings: SiteSettings = {
   metaAuthor: "Baiturrahman An-Nizhom",
   canonicalUrl: "",
   ogTitle: "Baiturrahman An-Nizhom - Platform Komunikasi Pesantren Modern",
-  ogDescription: "Kemudahan komunikasi antara Ustadz dan Orang Tua untuk memantau perkembangan pembelajaran santri",
+  ogDescription: "Kemudahan komunikasi antara Guru dan Orang Tua untuk memantau perkembangan pembelajaran santri",
   ogImage: "",
   twitterCard: "summary_large_image",
   twitterSite: "@baiturrahmannizhom",

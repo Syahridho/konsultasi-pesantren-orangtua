@@ -78,11 +78,11 @@ export default function UstadPage() {
       if (response.status === 200) {
         setUstadList(response.data.ustadList || []);
       } else {
-        toast.error("Gagal memuat data ustad: " + response.data.error);
+        toast.error("Gagal memuat data guru: " + response.data.error);
       }
     } catch (error: any) {
       console.error("Error fetching ustad:", error);
-      toast.error("Terjadi kesalahan saat memuat data ustad");
+      toast.error("Terjadi kesalahan saat memuat data guru");
     } finally {
       setLoading(false);
     }
@@ -90,17 +90,17 @@ export default function UstadPage() {
 
   const handleUstadAdded = () => {
     fetchUstad();
-    toast.success("Ustad berhasil ditambahkan");
+    toast.success("Guru berhasil ditambahkan");
   };
 
   const handleUstadUpdated = () => {
     fetchUstad();
-    toast.success("Data ustad berhasil diperbarui");
+    toast.success("Data guru berhasil diperbarui");
   };
 
   const handleUstadDeleted = () => {
     fetchUstad();
-    toast.success("Ustad berhasil dihapus");
+    toast.success("Guru berhasil dihapus");
   };
 
   const formatDate = (dateString: string) => {
@@ -126,8 +126,8 @@ export default function UstadPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Data Ustad</h1>
-          <p className="text-muted-foreground">Kelola data ustad/pengajar</p>
+          <h1 className="text-3xl font-bold tracking-tight">Data Guru</h1>
+          <p className="text-muted-foreground">Kelola data guru/pengajar</p>
         </div>
         <AddUstadModal onUstadAdded={handleUstadAdded} />
       </div>
@@ -136,7 +136,7 @@ export default function UstadPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Daftar Ustad
+            Daftar Guru
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -144,7 +144,7 @@ export default function UstadPage() {
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Cari ustad..."
+                placeholder="Cari guru..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
@@ -156,8 +156,8 @@ export default function UstadPage() {
             <div className="text-center py-8">
               <p className="text-muted-foreground">
                 {searchTerm
-                  ? "Tidak ada ustad yang cocok dengan pencarian"
-                  : "Belum ada data ustad"}
+                  ? "Tidak ada guru yang cocok dengan pencarian"
+                  : "Belum ada data guru"}
               </p>
             </div>
           ) : (

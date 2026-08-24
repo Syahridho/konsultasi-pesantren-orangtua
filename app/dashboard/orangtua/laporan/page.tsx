@@ -316,7 +316,7 @@ export default function LaporanOrangtuaPage() {
             <p className="font-medium">{selectedReport.santriName}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Ustadz</p>
+            <p className="text-sm text-muted-foreground">Guru</p>
             <p className="font-medium">{selectedReport.ustadzName}</p>
           </div>
         </div>
@@ -553,7 +553,7 @@ export default function LaporanOrangtuaPage() {
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Cari berdasarkan nama santri atau ustadz..."
+                placeholder="Cari berdasarkan nama santri atau guru..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
@@ -606,7 +606,7 @@ export default function LaporanOrangtuaPage() {
                     <TableHead>Tanggal</TableHead>
                     <TableHead>Santri</TableHead>
                     <TableHead>Kategori</TableHead>
-                    <TableHead>Ustadz</TableHead>
+                    <TableHead>Guru</TableHead>
                     <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>

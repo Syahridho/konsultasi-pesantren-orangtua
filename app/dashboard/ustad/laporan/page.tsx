@@ -80,7 +80,7 @@ export default function LaporanUstadPage() {
     }
 
     if (session.user.role !== "ustad" && session.user.role !== "admin") {
-      toast.error("Halaman ini hanya untuk Ustadz");
+      toast.error("Halaman ini hanya untuk Guru");
       router.push("/dashboard");
       return;
     }
@@ -449,7 +449,7 @@ export default function LaporanUstadPage() {
                   <TableRow>
                     <TableHead>Kategori</TableHead>
                     <TableHead>Santri</TableHead>
-                    {session?.user.role === "admin" && <TableHead>Ustad</TableHead>}
+                    {session?.user.role === "admin" && <TableHead>Guru</TableHead>}
                     <TableHead>Detail</TableHead>
                     <TableHead>Tanggal</TableHead>
                     <TableHead className="text-right">Aksi</TableHead>

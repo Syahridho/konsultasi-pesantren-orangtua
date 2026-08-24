@@ -37,17 +37,17 @@ export function DeleteUstadModal({
       const response = await api.delete(`/api/ustads/${ustadId}`);
 
       if (response.status === 200) {
-        toast.success(`Ustad "${ustadName}" berhasil dihapus`);
+        toast.success(`Guru "${ustadName}" berhasil dihapus`);
         setOpen(false);
         if (onUstadDeleted) {
           onUstadDeleted();
         }
       } else {
-        toast.error("Gagal menghapus ustad: " + response.data.error);
+        toast.error("Gagal menghapus guru: " + response.data.error);
       }
     } catch (error: any) {
       console.error("Error deleting ustad:", error);
-      toast.error("Terjadi kesalahan saat menghapus ustad");
+      toast.error("Terjadi kesalahan saat menghapus guru");
     } finally {
       setIsSubmitting(false);
     }
@@ -64,9 +64,9 @@ export function DeleteUstadModal({
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Konfirmasi Hapus Ustad</DialogTitle>
+          <DialogTitle>Konfirmasi Hapus Guru</DialogTitle>
           <DialogDescription>
-            Apakah Anda yakin ingin menghapus data ustad ini? Tindakan ini tidak
+            Apakah Anda yakin ingin menghapus data guru ini? Tindakan ini tidak
             dapat dibatalkan.
           </DialogDescription>
         </DialogHeader>
@@ -74,7 +74,7 @@ export function DeleteUstadModal({
         <div className="py-4">
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm text-gray-600">
-              <span className="font-medium">Nama Ustad:</span> {ustadName}
+              <span className="font-medium">Nama Guru:</span> {ustadName}
             </p>
           </div>
         </div>

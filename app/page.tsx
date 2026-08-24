@@ -161,10 +161,10 @@ export default function HomePage() {
                   />
                 </div>
                 <CardTitle className="text-xl">
-                  Chat Konsultasi Ustadz
+                  Chat Konsultasi Guru
                 </CardTitle>
                 <CardDescription>
-                  Komunikasi langsung antara orang tua dan ustadz untuk
+                  Komunikasi langsung antara orang tua dan guru untuk
                   konsultasi
                 </CardDescription>
               </CardHeader>
@@ -290,7 +290,7 @@ export default function HomePage() {
                       Kolaborasi Efektif
                     </h3>
                     <p className="text-gray-600">
-                      Platform yang memudahkan koordinasi antara ustadz, orang
+                      Platform yang memudahkan koordinasi antara guru, orang
                       tua, dan pengurus pesantren.
                     </p>
                   </div>
@@ -314,7 +314,7 @@ export default function HomePage() {
                     </h3>
                     <p className="text-gray-600">
                       Informasi perkembangan santri tersedia 24/7 dengan update
-                      langsung dari ustadz pengampu.
+                      langsung dari guru pengampu.
                     </p>
                   </div>
                 </div>

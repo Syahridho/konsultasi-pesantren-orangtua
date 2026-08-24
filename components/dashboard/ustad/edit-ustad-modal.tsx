@@ -104,7 +104,7 @@ export function EditUstadModal({
   const onSubmit = async (values: FormValues) => {
     // Basic validation
     if (!values.ustad.name || values.ustad.name.length < 3) {
-      toast.error("Nama ustad minimal 3 karakter");
+      toast.error("Nama guru minimal 3 karakter");
       return;
     }
 
@@ -120,17 +120,17 @@ export function EditUstadModal({
       });
 
       if (response.status === 200) {
-        toast.success("Data ustad berhasil diperbarui");
+        toast.success("Data guru berhasil diperbarui");
         setOpen(false);
         if (onUstadUpdated) {
           onUstadUpdated();
         }
       } else {
-        toast.error("Gagal memperbarui data ustad: " + response.data.error);
+        toast.error("Gagal memperbarui data guru: " + response.data.error);
       }
     } catch (error: any) {
       console.error("Error updating ustad:", error);
-      toast.error("Terjadi kesalahan saat memperbarui data ustad");
+      toast.error("Terjadi kesalahan saat memperbarui data guru");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,8 +147,8 @@ export function EditUstadModal({
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Data Ustad</DialogTitle>
-          <DialogDescription>Perbarui informasi data ustad</DialogDescription>
+          <DialogTitle>Edit Data Guru</DialogTitle>
+          <DialogDescription>Perbarui informasi data guru</DialogDescription>
         </DialogHeader>
 
         {loading ? (
@@ -159,7 +159,7 @@ export function EditUstadModal({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Data Ustad</h3>
+                <h3 className="text-lg font-medium">Data Guru</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
@@ -169,7 +169,7 @@ export function EditUstadModal({
                       <FormItem>
                         <FormLabel>Nama Lengkap</FormLabel>
                         <FormControl>
-                          <Input placeholder="Nama ustad" {...field} />
+                          <Input placeholder="Nama guru" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -222,7 +222,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Ustadz</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Guru</CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -305,7 +305,7 @@ export default function AdminDashboard() {
               <Link href="/dashboard/ustad">
                 <Button variant="outline" className="w-full justify-start">
                   <BookOpen className="w-4 h-4 mr-2" />
-                  Kelola Data Ustadz
+                  Kelola Data Guru
                 </Button>
               </Link>
               <Link href="/dashboard/kelas">
@@ -340,7 +340,7 @@ export default function AdminDashboard() {
                 <Badge variant="secondary">{stats.activeClasses}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Ustadz online</span>
+                <span className="text-sm">Guru online</span>
                 <Badge variant="secondary">{stats.ustadOnline}</Badge>
               </div>
               <div className="flex items-center justify-between">

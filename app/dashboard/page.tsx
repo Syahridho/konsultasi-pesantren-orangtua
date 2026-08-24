@@ -117,7 +117,7 @@ export default async function DashboardPage() {
                   <Link href="/chat">
                     <Button className="w-full justify-start">
                       <MessageSquare className="w-4 h-4 mr-2" />
-                      Chat dengan Ustadz
+                      Chat dengan Guru
                     </Button>
                   </Link>
                   <Link href="/dashboard/santri/orangtua">
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
                       <div>
                         <p className="font-medium">Muhammad Ali</p>
                         <p className="text-sm text-gray-500">
-                          Ustadz Ahmad - 2 hari lalu
+                          Guru Ahmad - 2 hari lalu
                         </p>
                       </div>
                       <Badge variant="outline">Selesai</Badge>
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
                       <div>
                         <p className="font-medium">Fatimah Zahra</p>
                         <p className="text-sm text-gray-500">
-                          Ustadz Budi - 1 minggu lalu
+                          Guru Budi - 1 minggu lalu
                         </p>
                       </div>
                       <Badge variant="outline">Selesai</Badge>

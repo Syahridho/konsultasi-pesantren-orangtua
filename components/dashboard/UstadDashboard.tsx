@@ -77,9 +77,9 @@ export default function UstadDashboard() {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Dashboard Ustadz</h1>
+          <h1 className="text-3xl font-bold">Dashboard Guru</h1>
           <Badge variant="default" className="text-sm">
-            Ustadz
+            Guru
           </Badge>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -103,9 +103,9 @@ export default function UstadDashboard() {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Dashboard Ustadz</h1>
+          <h1 className="text-3xl font-bold">Dashboard Guru</h1>
           <Badge variant="default" className="text-sm">
-            Ustadz
+            Guru
           </Badge>
         </div>
         <Card className="border-red-200 bg-red-50">
@@ -130,9 +130,9 @@ export default function UstadDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Dashboard Ustadz</h1>
+        <h1 className="text-3xl font-bold">Dashboard Guru</h1>
         <Badge variant="default" className="text-sm">
-          Ustadz
+          Guru
         </Badge>
       </div>
 

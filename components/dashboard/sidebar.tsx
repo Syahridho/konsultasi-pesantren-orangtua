@@ -71,7 +71,7 @@ const menuItems = {
 
 const roleLabels = {
   admin: "Administrator",
-  ustad: "Ustadz",
+  ustad: "Guru",
   orangtua: "Orang Tua",
 };
 

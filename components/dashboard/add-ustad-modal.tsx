@@ -61,7 +61,7 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
   const onSubmit = async (values: FormValues) => {
     // Basic validation
     if (!values.ustad.name || values.ustad.name.length < 3) {
-      toast.error("Nama ustad minimal 3 karakter");
+      toast.error("Nama guru minimal 3 karakter");
       return;
     }
 
@@ -85,18 +85,18 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
       });
 
       if (response.status === 200) {
-        toast.success("Ustad berhasil ditambahkan");
+        toast.success("Guru berhasil ditambahkan");
         form.reset();
         setOpen(false);
         if (onUstadAdded) {
           onUstadAdded();
         }
       } else {
-        toast.error("Gagal menambahkan ustad: " + response.data.error);
+        toast.error("Gagal menambahkan guru: " + response.data.error);
       }
     } catch (error: any) {
       console.error("Error adding ustad:", error);
-      toast.error("Terjadi kesalahan saat menambahkan ustad");
+      toast.error("Terjadi kesalahan saat menambahkan guru");
     } finally {
       setIsSubmitting(false);
     }
@@ -107,19 +107,19 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
       <DialogTrigger asChild>
         <Button>
           <Plus className="w-4 h-4 mr-2" />
-          Tambah Ustad
+          Tambah Guru
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Tambah Ustad Baru</DialogTitle>
-          <DialogDescription>Tambahkan data ustad baru</DialogDescription>
+          <DialogTitle>Tambah Guru Baru</DialogTitle>
+          <DialogDescription>Tambahkan data guru baru</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Data Ustad</h3>
+              <h3 className="text-lg font-medium">Data Guru</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -129,7 +129,7 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
                     <FormItem>
                       <FormLabel>Nama Lengkap</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nama ustad" {...field} />
+                        <Input placeholder="Nama guru" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -481,7 +481,7 @@ export default function HomePage() {
             <Link href="/chat">
               <Button size="lg" className="gap-2">
                 <MessageCircle className="w-5 h-5" />
-                Chat Ustadz
+                Chat Guru
               </Button>
             </Link>
           </div>
@@ -635,7 +635,7 @@ export default function HomePage() {
                     Belum Ada Laporan
                   </h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    Laporan perkembangan santri akan muncul di sini setelah diinput oleh Ustadz / Ustadzah pengampu.
+                    Laporan perkembangan santri akan muncul di sini setelah diinput oleh Guru / Ustadzah pengampu.
                   </p>
                 </div>
 
@@ -644,7 +644,7 @@ export default function HomePage() {
                   <Link href="/chat">
                     <Button className="w-full sm:w-auto gap-2 bg-primary hover:bg-primary/90">
                       <MessageCircle className="w-4 h-4" />
-                      Chat Ustadz
+                      Chat Guru
                     </Button>
                   </Link>
                   {santriList.length > 0 && (

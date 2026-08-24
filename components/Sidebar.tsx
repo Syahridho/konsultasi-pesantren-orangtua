@@ -59,7 +59,7 @@ const menuItems = Object.freeze({
     }),
     Object.freeze({
       href: "/dashboard/ustad",
-      label: "Data Ustad",
+      label: "Data Guru",
       icon: BookOpen,
     }),
     Object.freeze({
@@ -159,7 +159,7 @@ const menuItems = Object.freeze({
 
 const roleLabels = Object.freeze({
   admin: "Administrator",
-  ustad: "Ustadz",
+  ustad: "Guru",
   orangtua: "Orang Tua",
   petugas: "Petugas Keuangan",
 });
