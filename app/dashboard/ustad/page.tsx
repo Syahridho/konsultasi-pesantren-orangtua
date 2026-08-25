@@ -178,7 +178,7 @@ export default function UstadPage() {
                     <TableCell className="font-medium">{ustad.name}</TableCell>
                     <TableCell>{ustad.email}</TableCell>
                     <TableCell>{ustad.phone || "-"}</TableCell>
-                    <TableCell>{ustad.role}</TableCell>
+                    <TableCell>{ustad.role === 'ustad' ? 'guru' : ustad.role }</TableCell>
                     <TableCell>{formatDate(ustad.createdAt)}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
