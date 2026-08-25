@@ -21,6 +21,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Edit } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
@@ -29,6 +36,8 @@ interface UstadData {
   name: string;
   email: string;
   phone?: string;
+  gender?: string;
+  specialization?: string;
 }
 
 interface UstadDetails {
@@ -36,6 +45,8 @@ interface UstadDetails {
   name: string;
   email: string;
   phone?: string;
+  gender?: string;
+  specialization?: string;
   role: string;
   createdAt: string;
 }
@@ -66,6 +77,8 @@ export function EditUstadModal({
         name: "",
         email: "",
         phone: "",
+        gender: "",
+        specialization: "",
       },
     },
   });
@@ -83,6 +96,8 @@ export function EditUstadModal({
             name: response.data.ustad.name || "",
             email: response.data.ustad.email || "",
             phone: response.data.ustad.phone || "",
+            gender: response.data.ustad.gender || "",
+            specialization: response.data.ustad.specialization || "",
           },
         });
       } else {
@@ -196,12 +211,54 @@ export function EditUstadModal({
 
                   <FormField
                     control={form.control}
+                    name="ustad.gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Jenis Kelamin</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih jenis kelamin" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="L">Laki-laki (Ustadz)</SelectItem>
+                            <SelectItem value="P">Perempuan (Ustadzah)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="ustad.phone"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>No. Telepon (Opsional)</FormLabel>
                         <FormControl>
                           <Input placeholder="08123456789" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="ustad.specialization"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Keahlian Mata Pelajaran</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Contoh: Matematika, IPA, Al-Quran"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -22,6 +22,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
@@ -30,6 +37,7 @@ interface UstadData {
   name: string;
   email: string;
   phone?: string;
+  gender?: string;
   password: string;
   specialization?: string;
 }
@@ -52,6 +60,7 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
         name: "",
         email: "",
         phone: "",
+        gender: "",
         password: "",
         specialization: "",
       },
@@ -149,6 +158,31 @@ export function AddUstadModal({ onUstadAdded }: AddUstadModalProps) {
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="ustad.gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Jenis Kelamin</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih jenis kelamin" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="L">Laki-laki (Ustadz)</SelectItem>
+                          <SelectItem value="P">Perempuan (Ustadzah)</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

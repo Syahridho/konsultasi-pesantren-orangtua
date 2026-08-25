@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
           id: userId,
           name: user.name,
           email: user.email,
+          gender: user.gender || "",
           specialization: user.specialization || "",
           phone: user.phone || "",
           createdAt: user.createdAt,

@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
           name: user.name,
           email: user.email,
           phone: user.phone || "",
+          gender: user.gender || "",
           role: user.role,
           createdAt: user.createdAt,
         });
@@ -136,6 +137,7 @@ export async function POST(request: NextRequest) {
       name: ustadData.name,
       email: ustadData.email,
       phone: ustadData.phone || null,
+      gender: ustadData.gender || null,
       specialization: ustadData.specialization || null,
       role: ustadData.role || "ustad",
       createdAt: new Date().toISOString(),

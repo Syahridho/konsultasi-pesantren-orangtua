@@ -5,6 +5,7 @@ export interface Teacher {
   id: string;
   name: string;
   email: string;
+  gender?: string;
   specialization: string;
   phone: string;
   currentClasses?: number;

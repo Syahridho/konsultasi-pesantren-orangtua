@@ -19,6 +19,8 @@ interface UstadDetails {
   name: string;
   email: string;
   phone?: string;
+  gender?: string;
+  specialization?: string;
   role: string;
   createdAt: string;
 }
@@ -103,13 +105,31 @@ export function ViewUstadModal({ ustadId, trigger }: ViewUstadModalProps) {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">
+                    Jenis Kelamin
+                  </p>
+                  <p className="font-medium">
+                    {ustad.gender === "L"
+                      ? "Laki-laki (Ustadz)"
+                      : ustad.gender === "P"
+                      ? "Perempuan (Ustadzah)"
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
                     No. Telepon
                   </p>
                   <p className="font-medium">{ustad.phone || "-"}</p>
                 </div>
                 <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    Keahlian Mata Pelajaran
+                  </p>
+                  <p className="font-medium">{ustad.specialization || "-"}</p>
+                </div>
+                <div>
                   <p className="text-sm font-medium text-gray-500">Peran</p>
-                  <Badge variant="secondary">{ustad.role}</Badge>
+                  <Badge variant="secondary">{ustad.role === "ustad" ? "Guru" : ustad.role}</Badge>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">

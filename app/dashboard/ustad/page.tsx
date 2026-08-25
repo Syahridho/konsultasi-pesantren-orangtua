@@ -27,6 +27,7 @@ interface Ustad {
   name: string;
   email: string;
   phone?: string;
+  gender?: string;
   role: string;
   createdAt: string;
 }
@@ -166,6 +167,7 @@ export default function UstadPage() {
                 <TableRow>
                   <TableHead>Nama</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Jenis Kelamin</TableHead>
                   <TableHead>Telepon</TableHead>
                   <TableHead>Peran</TableHead>
                   <TableHead>Tanggal Daftar</TableHead>
@@ -177,6 +179,13 @@ export default function UstadPage() {
                   <TableRow key={ustad.id}>
                     <TableCell className="font-medium">{ustad.name}</TableCell>
                     <TableCell>{ustad.email}</TableCell>
+                    <TableCell>
+                      {ustad.gender === "L"
+                        ? "Laki-laki"
+                        : ustad.gender === "P"
+                        ? "Perempuan"
+                        : "-"}
+                    </TableCell>
                     <TableCell>{ustad.phone || "-"}</TableCell>
                     <TableCell>{ustad.role === 'ustad' ? 'guru' : ustad.role }</TableCell>
                     <TableCell>{formatDate(ustad.createdAt)}</TableCell>

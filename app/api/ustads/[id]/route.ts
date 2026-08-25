@@ -49,6 +49,7 @@ export async function GET(
         name: ustadData.name,
         email: ustadData.email,
         phone: ustadData.phone || "",
+        gender: ustadData.gender || "",
         specialization: ustadData.specialization || "",
         role: ustadData.role,
         createdAt: ustadData.createdAt,
@@ -103,10 +104,11 @@ export async function PUT(
 
     // Update ustad data in Firebase
     const ustadRef = ref(database, `users/${ustadId}`);
-    const updateData = {
+    const updateData: any = {
       name: ustadData.name,
       email: ustadData.email,
       phone: ustadData.phone || "",
+      gender: ustadData.gender || null,
       specialization: ustadData.specialization || "",
       updatedAt: new Date().toISOString(),
     };
