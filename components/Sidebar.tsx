@@ -31,6 +31,10 @@ import {
   School,
   Wallet,
   CreditCard,
+  Landmark,
+  FileWarning,
+  ShoppingBag,
+  Droplets,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
@@ -58,9 +62,39 @@ const menuItems = Object.freeze({
       icon: CreditCard,
     }),
     Object.freeze({
+      href: "/dashboard/uang-masuk",
+      label: "Uang Masuk",
+      icon: Landmark,
+    }),
+    Object.freeze({
+      href: "/dashboard/seragam",
+      label: "Seragam",
+      icon: ShoppingBag,
+    }),
+    Object.freeze({
+      href: "/dashboard/buku-paket",
+      label: "Buku Paket/Kitab Kuning",
+      icon: BookOpen,
+    }),
+    Object.freeze({
+      href: "/dashboard/laundry",
+      label: "Laundry",
+      icon: Droplets,
+    }),
+    Object.freeze({
+      href: "/dashboard/peringatan",
+      label: "Peringatan",
+      icon: FileWarning,
+    }),
+    Object.freeze({
       href: "/dashboard/ustad",
       label: "Data Guru",
       icon: BookOpen,
+    }),
+    Object.freeze({
+      href: "/dashboard/data-petugas",
+      label: "Data Petugas",
+      icon: UserCheck,
     }),
     Object.freeze({
       href: "/dashboard/kelas",
@@ -104,6 +138,31 @@ const menuItems = Object.freeze({
       href: "/dashboard/petugas/iuran",
       label: "Iuran & SPP",
       icon: CreditCard,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/uang-masuk",
+      label: "Uang Masuk",
+      icon: Landmark,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/seragam",
+      label: "Seragam",
+      icon: ShoppingBag,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/buku-paket",
+      label: "Buku Paket/Kitab Kuning",
+      icon: BookOpen,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/laundry",
+      label: "Laundry",
+      icon: Droplets,
+    }),
+    Object.freeze({
+      href: "/dashboard/petugas/peringatan",
+      label: "Peringatan",
+      icon: FileWarning,
     }),
     Object.freeze({
       href: "/dashboard/petugas/chat",
