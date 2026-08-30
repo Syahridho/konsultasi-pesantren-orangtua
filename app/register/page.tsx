@@ -19,6 +19,7 @@ import api from "@/lib/api";
 interface StudentData {
   name: string;
   nis: string;
+  kelas: string;
   tahunDaftar: string;
   gender: string;
   tempatLahir: string;
@@ -45,6 +46,7 @@ export default function RegisterPage() {
     {
       name: "",
       nis: "",
+      kelas: "",
       tahunDaftar: "",
       gender: "",
       tempatLahir: "",
@@ -76,6 +78,7 @@ export default function RegisterPage() {
       {
         name: "",
         nis: "",
+        kelas: "",
         tahunDaftar: "",
         gender: "",
         tempatLahir: "",
@@ -114,6 +117,7 @@ export default function RegisterPage() {
       (student) =>
         !student.name ||
         !student.nis ||
+        !student.kelas ||
         !student.tahunDaftar ||
         !student.gender ||
         !student.tempatLahir ||
@@ -286,6 +290,19 @@ export default function RegisterPage() {
                   value={student.nis}
                   onChange={(e) =>
                     handleStudentChange(index, "nis", e.target.value)
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`kelas-${index}`}>Kelas</Label>
+                <Input
+                  id={`kelas-${index}`}
+                  type="text"
+                  placeholder="Masukkan kelas (cth: Kelas 1)"
+                  value={student.kelas}
+                  onChange={(e) =>
+                    handleStudentChange(index, "kelas", e.target.value)
                   }
                   required
                 />

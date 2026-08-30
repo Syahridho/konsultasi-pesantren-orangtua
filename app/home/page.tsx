@@ -66,6 +66,7 @@ interface Santri {
   id: string;
   name: string;
   nis: string;
+  currentClass?: string; // tingkatan kelas santri, misal "Kelas 1", "Kelas 2", dst.
 }
 
 interface TagihanIuran {
@@ -142,7 +143,7 @@ export default function HomePage() {
     setSelectedRiwayatSantri(santri);
     setIsRiwayatOpen(true);
     setIsLoadingRiwayat(true);
-    
+
     try {
       const res = await fetch(`/api/saldo/riwayat?santriId=${santri.id}`);
       const data = await res.json();
@@ -289,6 +290,7 @@ export default function HomePage() {
               id: studentId,
               name: users[studentId].name || "Tidak ada nama",
               nis: users[studentId].nis || "",
+              currentClass: users[studentId].currentClass || "",
             });
           }
         });
@@ -556,19 +558,18 @@ export default function HomePage() {
                       <div className="flex items-center gap-2">
                         <Button
                           size="sm"
-                          className={`gap-1.5 w-full sm:w-auto ${
-                            tagihan.status === "menunggu_verifikasi"
+                          className={`gap-1.5 w-full sm:w-auto ${tagihan.status === "menunggu_verifikasi"
                               ? "bg-blue-600 hover:bg-blue-700"
                               : "bg-emerald-600 hover:bg-emerald-700"
-                          } text-white`}
+                            } text-white`}
                           onClick={() => handleOpenPayment(tagihan)}
                         >
                           <Receipt className="h-4 w-4" />
                           {tagihan.status === "menunggu_verifikasi"
                             ? "Lihat Bukti & Status"
                             : tagihan.status === "ditolak"
-                            ? "Upload Bukti Ulang"
-                            : "Bayar / Upload Bukti"}
+                              ? "Upload Bukti Ulang"
+                              : "Bayar / Upload Bukti"}
                         </Button>
                       </div>
                     </div>
@@ -599,6 +600,12 @@ export default function HomePage() {
                           <Badge variant="outline" className="text-xs">
                             NIS: {santri.nis || "-"}
                           </Badge>
+                          {santri.currentClass && (
+                            <Badge className="text-xs flex gap-1 items-center bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200">
+                              <GraduationCap className="w-3 h-3" />
+                              Kelas {santri.currentClass}
+                            </Badge>
+                          )}
                           <Badge variant="secondary" className="flex gap-1 items-center bg-green-100 text-green-800 hover:bg-green-100 border-green-200">
                             <Wallet className="w-3 h-3" />
                             {formatRupiah(saldoMap[santri.id] || 0)}
@@ -606,9 +613,9 @@ export default function HomePage() {
                         </div>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full sm:w-auto text-primary border-primary/20 hover:bg-primary/5"
                       onClick={() => handleOpenRiwayat(santri)}
                     >
@@ -629,7 +636,7 @@ export default function HomePage() {
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto text-primary">
                   <BookOpen className="w-8 h-8" />
                 </div>
-                
+
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
                     Belum Ada Laporan
@@ -744,18 +751,18 @@ export default function HomePage() {
                 ))}
               {reports.filter((r) => r.kategori === "akademik").length ===
                 0 && (
-                <Card className="text-center py-12">
-                  <CardContent>
-                    <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Belum Ada Laporan Akademik
-                    </h3>
-                    <p className="text-gray-600">
-                      Laporan akademik santri akan muncul di sini
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
+                  <Card className="text-center py-12">
+                    <CardContent>
+                      <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Belum Ada Laporan Akademik
+                      </h3>
+                      <p className="text-gray-600">
+                        Laporan akademik santri akan muncul di sini
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
             </TabsContent>
 
             <TabsContent value="perilaku" className="space-y-4">
@@ -766,18 +773,18 @@ export default function HomePage() {
                 ))}
               {reports.filter((r) => r.kategori === "perilaku").length ===
                 0 && (
-                <Card className="text-center py-12">
-                  <CardContent>
-                    <AlertTriangle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Belum Ada Laporan Perilaku
-                    </h3>
-                    <p className="text-gray-600">
-                      Laporan perilaku santri akan muncul di sini
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
+                  <Card className="text-center py-12">
+                    <CardContent>
+                      <AlertTriangle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Belum Ada Laporan Perilaku
+                      </h3>
+                      <p className="text-gray-600">
+                        Laporan perilaku santri akan muncul di sini
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
             </TabsContent>
           </Tabs>
         )}
@@ -979,8 +986,8 @@ export default function HomePage() {
                   {isSubmittingPayment
                     ? "Mengirim..."
                     : selectedTagihan.status === "menunggu_verifikasi"
-                    ? "Kirim Ulang Bukti"
-                    : "Kirim Bukti Pembayaran"}
+                      ? "Kirim Ulang Bukti"
+                      : "Kirim Bukti Pembayaran"}
                 </Button>
               </DialogFooter>
             </form>
@@ -997,7 +1004,7 @@ export default function HomePage() {
               {selectedRiwayatSantri?.name}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-4">
             {isLoadingRiwayat ? (
               <div className="flex justify-center p-8">

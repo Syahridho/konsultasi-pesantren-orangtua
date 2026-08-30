@@ -123,7 +123,7 @@ export default function LaporPage() {
 
         // Fetch kelas that belong to current ustad
         const kelasResponse = await fetch(
-          `/api/classes?ustadId=${session.user.id}`
+          `/api/classes?ustadId=${session.user.id}`,
         );
         if (!kelasResponse.ok) throw new Error("Failed to fetch classes");
 
@@ -171,7 +171,7 @@ export default function LaporPage() {
               .split(",")
               .map((s: string) => s.trim());
             specializationSubjects.forEach((subject: string) =>
-              subjects.add(subject)
+              subjects.add(subject),
             );
           }
         }
@@ -244,7 +244,7 @@ export default function LaporPage() {
 
     const studentIdsInKelas = Object.keys(selectedKelasData.studentIds);
     return allSantriList.filter((santri) =>
-      studentIdsInKelas.includes(santri.id)
+      studentIdsInKelas.includes(santri.id),
     );
   }, [selectedKelas, kelasList, allSantriList]);
 
@@ -363,7 +363,7 @@ export default function LaporPage() {
 
   const onSubmitPerilaku = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedSantri || submitting || !validatePerilaku()) return;
+    if (!selectedSantri || submitting) return;
 
     setSubmitting(true);
     try {
@@ -372,7 +372,7 @@ export default function LaporPage() {
       }
 
       const selectedSantriData = allSantriList.find(
-        (s) => s.id === selectedSantri
+        (s) => s.id === selectedSantri,
       );
 
       const response = await fetch("/api/reports/behavior", {
@@ -389,12 +389,13 @@ export default function LaporPage() {
           incidentDate: new Date().toISOString().split("T")[0],
           status: "open",
           followUpRequired: false,
-          mataPelajaran: "Perilaku", // Tambahkan field mata pelajaran
+          mataPelajaran: "TIK",
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
+        console.log("Validation detail:", error.detail);
         throw new Error(error.error || "Failed to create report");
       }
 

@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -62,6 +63,7 @@ interface Santri {
   id: string;
   name: string;
   nis: string;
+  currentClass?: string;
   jenisKelamin: string;
   tempatLahir: string;
   tanggalLahir: string;
@@ -84,6 +86,7 @@ interface Parent {
 interface NewSantri {
   name: string;
   nis: string;
+  currentClass?: string;
   gender: "L" | "P";
   tempatLahir: string;
   tanggalLahir: string;
@@ -111,6 +114,7 @@ export default function SantriPage() {
   const [visibleColumns, setVisibleColumns] = useState({
     nama: true,
     nis: true,
+    kelas: true,
     jenisKelamin: true,
     orangTua: true,
     kontak: true,
@@ -120,6 +124,7 @@ export default function SantriPage() {
   const [formData, setFormData] = useState<NewSantri>({
     name: "",
     nis: "",
+    currentClass: "",
     gender: "L",
     tempatLahir: "",
     tanggalLahir: "",
@@ -192,6 +197,9 @@ export default function SantriPage() {
       (santri) =>
         santri.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         santri.nis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (santri.currentClass || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         santri.orangTuaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         santri.orangTuaEmail.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -391,6 +399,7 @@ export default function SantriPage() {
     setFormData({
       name: santri.name,
       nis: santri.nis,
+      currentClass: santri.currentClass || "",
       gender: santri.jenisKelamin as "L" | "P",
       tempatLahir: santri.tempatLahir,
       tanggalLahir: santri.tanggalLahir,
@@ -409,6 +418,7 @@ export default function SantriPage() {
     setFormData({
       name: "",
       nis: "",
+      currentClass: "",
       gender: "L",
       tempatLahir: "",
       tanggalLahir: "",
@@ -607,7 +617,21 @@ export default function SantriPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="currentClass">Kelas</Label>
+                    <Input
+                      id="currentClass"
+                      value={formData.currentClass || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          currentClass: e.target.value,
+                        })
+                      }
+                      placeholder="Cth: 1, 2, 7A"
+                    />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="gender">Jenis Kelamin</Label>
                     <Select
@@ -775,6 +799,7 @@ export default function SantriPage() {
                         >
                           {key === "nama" && "Nama"}
                           {key === "nis" && "NIS"}
+                          {key === "kelas" && "Kelas"}
                           {key === "jenisKelamin" && "Jenis Kelamin"}
                           {key === "orangTua" && "Orang Tua"}
                           {key === "kontak" && "Kontak"}
@@ -802,6 +827,7 @@ export default function SantriPage() {
                 <TableRow>
                   {visibleColumns.nama && <TableHead>Nama</TableHead>}
                   {visibleColumns.nis && <TableHead>NIS</TableHead>}
+                  {visibleColumns.kelas && <TableHead>Kelas</TableHead>}
                   {visibleColumns.jenisKelamin && (
                     <TableHead>Jenis Kelamin</TableHead>
                   )}
@@ -823,6 +849,23 @@ export default function SantriPage() {
                     )}
                     {visibleColumns.nis && (
                       <TableCell>{santri.nis || "-"}</TableCell>
+                    )}
+                    {visibleColumns.kelas && (
+                      <TableCell>
+                        {santri.currentClass ? (
+                          <Badge
+                            variant="secondary"
+                            className="bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200"
+                          >
+                            <GraduationCap className="w-3 h-3 mr-1" />
+                            {santri.currentClass.toLowerCase().startsWith("kelas")
+                              ? santri.currentClass
+                              : `Kelas ${santri.currentClass}`}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
+                      </TableCell>
                     )}
                     {visibleColumns.jenisKelamin && (
                       <TableCell>
@@ -921,7 +964,25 @@ export default function SantriPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label>Kelas</Label>
+                  <div className="mt-1">
+                    {selectedSantri.currentClass ? (
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200"
+                      >
+                        <GraduationCap className="w-3 h-3 mr-1" />
+                        {selectedSantri.currentClass.toLowerCase().startsWith("kelas")
+                          ? selectedSantri.currentClass
+                          : `Kelas ${selectedSantri.currentClass}`}
+                      </Badge>
+                    ) : (
+                      <p className="font-medium text-muted-foreground">-</p>
+                    )}
+                  </div>
+                </div>
                 <div>
                   <Label>Jenis Kelamin</Label>
                   <p className="font-medium">
@@ -1005,7 +1066,21 @@ export default function SantriPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-currentClass">Kelas</Label>
+                <Input
+                  id="edit-currentClass"
+                  value={formData.currentClass || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      currentClass: e.target.value,
+                    })
+                  }
+                  placeholder="Cth: 1, 2, 7A"
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-gender">Jenis Kelamin</Label>
                 <Select

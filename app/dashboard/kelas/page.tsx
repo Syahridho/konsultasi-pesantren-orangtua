@@ -56,11 +56,13 @@ import {
   Users,
   Calendar,
   Clock,
+  GraduationCap,
 } from "lucide-react";
 import { useClasses } from "@/lib/hooks/useClasses";
 import CreateClassWizard from "@/components/dashboard/class-wizard";
 import ViewKelasModal from "@/components/dashboard/kelas/view-kelas-modal";
 import EditKelasModal from "@/components/dashboard/kelas/edit-kelas-modal";
+import PromoteKelasModal from "@/components/dashboard/kelas/promote-kelas-modal";
 
 export default function KelasPage() {
   const { data: session, status } = useSession();
@@ -69,6 +71,7 @@ export default function KelasPage() {
     limit: 50,
   });
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isPromoteOpen, setIsPromoteOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterYear, setFilterYear] = useState("");
   const [filterTeacher, setFilterTeacher] = useState("");
@@ -179,13 +182,23 @@ export default function KelasPage() {
             Kelola data kelas dan jadwal pengajaran
           </p>
         </div>
-        <Button
-          onClick={() => setIsWizardOpen(true)}
-          className="flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          Tambah Kelas
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setIsPromoteOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <GraduationCap className="h-4 w-4" />
+            Naik Kelas
+          </Button>
+          <Button
+            onClick={() => setIsWizardOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Tambah Kelas
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -479,6 +492,17 @@ export default function KelasPage() {
         onClose={handleEditClose}
         onSuccess={handleEditSuccess}
         kelas={selectedKelas}
+      />
+
+      {/* Promote / Naik Kelas Modal */}
+      <PromoteKelasModal
+        isOpen={isPromoteOpen}
+        onClose={() => setIsPromoteOpen(false)}
+        onSuccess={() => {
+          setIsPromoteOpen(false);
+          window.location.reload();
+        }}
+        classes={classes}
       />
     </div>
   );
