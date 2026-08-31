@@ -132,7 +132,7 @@ export async function PUT(request: NextRequest) {
       accountHolder: body.accountHolder || DEFAULT_SETTINGS.accountHolder,
       defaultNominal: parseInt(body.defaultNominal) || DEFAULT_SETTINGS.defaultNominal,
       defaultTahunAjaran: body.defaultTahunAjaran || DEFAULT_SETTINGS.defaultTahunAjaran,
-      daftarBukuPerTingkat: body.daftarBukuPerTingkat || DEFAULT_SETTINGS.daftarBukuPerTingkat,
+      daftarBukuPerTingkat: Array.isArray(body.daftarBukuPerTingkat) ? body.daftarBukuPerTingkat : DEFAULT_SETTINGS.daftarBukuPerTingkat,
       keterangan: body.keterangan || DEFAULT_SETTINGS.keterangan,
       updatedAt: new Date().toISOString(),
       updatedBy: session.user.name || "Petugas",

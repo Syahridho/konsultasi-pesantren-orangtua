@@ -69,7 +69,7 @@ export async function PUT(request: NextRequest) {
       accountNumber: body.accountNumber || DEFAULT_SETTINGS.accountNumber,
       accountHolder: body.accountHolder || DEFAULT_SETTINGS.accountHolder,
       defaultNominal: parseInt(body.defaultNominal) || DEFAULT_SETTINGS.defaultNominal,
-      rincianPaket: body.rincianPaket || DEFAULT_SETTINGS.rincianPaket,
+      rincianPaket: Array.isArray(body.rincianPaket) ? body.rincianPaket : DEFAULT_SETTINGS.rincianPaket,
       keterangan: body.keterangan || DEFAULT_SETTINGS.keterangan,
       updatedAt: new Date().toISOString(),
       updatedBy: session.user.name || "Petugas",

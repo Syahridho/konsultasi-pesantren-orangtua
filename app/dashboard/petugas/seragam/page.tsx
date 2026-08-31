@@ -193,6 +193,7 @@ export default function PetugasSeragamPage() {
   const [tempAccountNumber, setTempAccountNumber] = useState("");
   const [tempAccountHolder, setTempAccountHolder] = useState("");
   const [tempDefaultNominal, setTempDefaultNominal] = useState(650000);
+  const [tempRincianPaket, setTempRincianPaket] = useState<RincianItem[]>([]);
   const [tempKeterangan, setTempKeterangan] = useState("");
 
   // ─── Fetch Data ──────────────────────────────────────────────
@@ -450,6 +451,7 @@ export default function PetugasSeragamPage() {
         accountNumber: tempAccountNumber,
         accountHolder: tempAccountHolder,
         defaultNominal: tempDefaultNominal,
+        rincianPaket: tempRincianPaket,
         keterangan: tempKeterangan,
       });
 
@@ -517,43 +519,31 @@ export default function PetugasSeragamPage() {
     setTempAccountNumber(settings.accountNumber);
     setTempAccountHolder(settings.accountHolder);
     setTempDefaultNominal(settings.defaultNominal);
+    setTempRincianPaket(
+      settings.rincianPaket ? settings.rincianPaket.map((item) => ({ ...item })) : []
+    );
     setTempKeterangan(settings.keterangan || "");
     setSettingsModalOpen(true);
   };
 
-  const sendWhatsAppNotification = (tagihan: TagihanSeragam) => {
-    if (!tagihan.parentPhone) {
-      toast.error("Nomor telepon orang tua tidak ditemukan");
-      return;
-    }
-    const cleanPhone = tagihan.parentPhone.replace(/[^0-9]/g, "");
-    const formattedPhone = cleanPhone.startsWith("0")
-      ? "62" + cleanPhone.slice(1)
-      : cleanPhone;
+  const handleAddRincianItem = () => {
+    setTempRincianPaket((prev) => [...prev, { nama: "", jumlah: 1 }]);
+  };
 
-    let message = "";
+  const handleUpdateRincianItem = (index: number, field: "nama" | "jumlah", value: any) => {
+    setTempRincianPaket((prev) => {
+      const updated = [...prev];
+      if (field === "jumlah") {
+        updated[index] = { ...updated[index], jumlah: parseInt(value) || 1 };
+      } else {
+        updated[index] = { ...updated[index], nama: value };
+      }
+      return updated;
+    });
+  };
 
-    if (tagihan.status === "lunas" && tagihan.statusPengambilan === "belum_diambil") {
-      message =
-        `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-        `Pemberitahuan dari Bagian Sarana & Prasarana Pondok Pesantren Baiturrahman:\n\n` +
-        `Paket *Seragam & Perlengkapan* (Ukuran: *${tagihan.ukuran}*) untuk ananda *${tagihan.santriName}* telah siap untuk diambil di kantor tata usaha pesantren.\n\n` +
-        `Mohon dapat mengambil seragam tersebut pada jam kerja (08.00 - 15.00 WIB). Terima kasih.\nWassalamu'alaikum Wr. Wb.`;
-    } else {
-      message =
-        `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-        `Pemberitahuan tagihan *Paket Seragam Santri* (Ukuran: *${tagihan.ukuran}*) an. *${tagihan.santriName}* (NIS: ${tagihan.santriNis || "-"}).\n\n` +
-        `*Nominal:* *${formatRupiah(tagihan.nominal)}*\n` +
-        `*Status:* *${tagihan.status === "belum_bayar" ? "Belum Bayar" : tagihan.status}*\n\n` +
-        `*Rekening Pembayaran:*\n` +
-        `- ${settings.bankName}\n` +
-        `- No. Rek: *${settings.accountNumber}*\n` +
-        `- A.n: *${settings.accountHolder}*\n\n` +
-        `Mohon segera melakukan pembayaran dan unggah bukti transfer melalui aplikasi. Terima kasih.\nWassalamu'alaikum Wr. Wb.`;
-    }
-
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+  const handleRemoveRincianItem = (index: number) => {
+    setTempRincianPaket((prev) => prev.filter((_, i) => i !== index));
   };
 
   // ─── Render ──────────────────────────────────────────────────
@@ -926,16 +916,7 @@ export default function PetugasSeragamPage() {
                             </Button>
                           )}
 
-                          {/* Quick WA */}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 h-8 px-2"
-                            title="Kirim Pesan WhatsApp"
-                            onClick={() => sendWhatsAppNotification(tagihan)}
-                          >
-                            WA
-                          </Button>
+
 
                           {/* Detail / Kwitansi */}
                           <Button
@@ -1550,11 +1531,11 @@ export default function PetugasSeragamPage() {
 
       {/* ─── Modal 7: Pengaturan Rekening & Biaya Seragam ──────────── */}
       <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Pengaturan Paket Seragam & Rekening</DialogTitle>
             <DialogDescription>
-              Atur nomor rekening tujuan dan nominal default untuk paket seragam santri baru.
+              Atur nomor rekening tujuan, nominal default, dan rincian item isi paket seragam santri baru.
             </DialogDescription>
           </DialogHeader>
 
@@ -1601,7 +1582,69 @@ export default function PetugasSeragamPage() {
               />
             </div>
 
-            <div className="space-y-2">
+            {/* ─── Dynamic CRUD Rincian Isi Paket ─── */}
+            <div className="space-y-3 pt-2 border-t">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-semibold">Rincian Isi Paket Seragam</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Kelola daftar barang/item yang termasuk dalam paket seragam ini.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddRincianItem}
+                  className="gap-1 border-primary text-primary hover:bg-primary/10"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Tambah Item
+                </Button>
+              </div>
+
+              {tempRincianPaket.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic py-2 text-center bg-gray-50 rounded-lg">
+                  Belum ada item rincian paket. Klik tombol 'Tambah Item' di atas.
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {tempRincianPaket.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <Input
+                        placeholder="Nama Item (contoh: Seragam Batik)"
+                        value={item.nama}
+                        onChange={(e) => handleUpdateRincianItem(idx, "nama", e.target.value)}
+                        className="flex-1 text-sm"
+                        required
+                      />
+                      <div className="w-24 flex items-center gap-1">
+                        <Input
+                          type="number"
+                          min="1"
+                          placeholder="Jumlah"
+                          value={item.jumlah}
+                          onChange={(e) => handleUpdateRincianItem(idx, "jumlah", e.target.value)}
+                          className="text-sm"
+                          required
+                        />
+                        <span className="text-xs text-muted-foreground">Pcs</span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveRincianItem(idx)}
+                        className="text-rose-600 hover:bg-rose-50 h-9 w-9 shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2 pt-2 border-t">
               <Label>Catatan / Instruksi</Label>
               <Textarea
                 placeholder="Instruksi pengambilan atau pemesanan ukuran seragam..."

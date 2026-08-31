@@ -35,6 +35,8 @@ import {
   FileCheck,
   Receipt,
   ExternalLink,
+  Shirt,
+  Package,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -91,12 +93,174 @@ interface TagihanIuran {
   createdAt: string;
 }
 
+interface RincianBiayaItem {
+  nama: string;
+  nominal: number;
+}
+
+interface TagihanUangMasuk {
+  id: string;
+  santriId: string;
+  santriName: string;
+  santriGender: string;
+  santriNis?: string;
+  parentId?: string;
+  tahun: number;
+  nominal: number;
+  rincianBiaya?: RincianBiayaItem[];
+  status: "belum_bayar" | "menunggu_verifikasi" | "lunas" | "ditolak";
+  keterangan?: string;
+  tanggalBayar?: string;
+  buktiPembayaran?: string;
+  buktiFileName?: string;
+  catatanOrangTua?: string;
+  verifiedAt?: string;
+  verifiedByName?: string;
+  catatanPetugas?: string;
+  createdAt: string;
+}
+
+interface UangMasukSettings {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  defaultNominal: number;
+  keterangan?: string;
+}
+
+interface RincianPaketSeragamItem {
+  nama: string;
+  jumlah: number;
+}
+
+interface TagihanSeragam {
+  id: string;
+  santriId: string;
+  santriName: string;
+  santriGender: string;
+  santriNis?: string;
+  parentId?: string;
+  tahun: number;
+  nominal: number;
+  ukuran?: string;
+  rincianPaket?: RincianPaketSeragamItem[];
+  status: "belum_bayar" | "menunggu_verifikasi" | "lunas" | "ditolak";
+  statusPengambilan?: "belum_diambil" | "siap_diambil" | "sudah_diambil";
+  keterangan?: string;
+  tanggalBayar?: string;
+  buktiPembayaran?: string;
+  buktiFileName?: string;
+  catatanOrangTua?: string;
+  verifiedAt?: string;
+  verifiedByName?: string;
+  catatanPetugas?: string;
+  createdAt: string;
+}
+
+interface SeragamSettings {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  defaultNominal: number;
+  keterangan?: string;
+}
+
+interface TagihanBukuPaket {
+  id: string;
+  santriId: string;
+  santriName: string;
+  santriGender: string;
+  santriNis?: string;
+  parentId?: string;
+  tingkatKelas?: string;
+  tahunAjaran?: string;
+  nominal: number;
+  daftarBuku?: string[];
+  status: "belum_bayar" | "menunggu_verifikasi" | "lunas" | "ditolak";
+  statusPengambilan?: "belum_diambil" | "siap_diambil" | "sudah_diambil";
+  keterangan?: string;
+  tanggalBayar?: string;
+  buktiPembayaran?: string;
+  buktiFileName?: string;
+  catatanOrangTua?: string;
+  verifiedAt?: string;
+  verifiedByName?: string;
+  catatanPetugas?: string;
+  createdAt: string;
+}
+
+interface BukuPaketSettings {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  defaultNominal: number;
+  defaultTahunAjaran?: string;
+  keterangan?: string;
+}
+
+interface TagihanLaundry {
+  id: string;
+  santriId: string;
+  santriName: string;
+  santriGender: string;
+  santriNis?: string;
+  parentId?: string;
+  bulan: string;
+  tahun: number;
+  nominal: number;
+  namaPaket?: string;
+  kuotaKg?: number;
+  terpakaiKg?: number;
+  status: "belum_bayar" | "menunggu_verifikasi" | "lunas" | "ditolak";
+  statusLayanan?: "aktif" | "nonaktif" | "selesai";
+  keterangan?: string;
+  tanggalBayar?: string;
+  buktiPembayaran?: string;
+  buktiFileName?: string;
+  catatanOrangTua?: string;
+  verifiedAt?: string;
+  verifiedByName?: string;
+  catatanPetugas?: string;
+  createdAt: string;
+}
+
+interface LaundrySettings {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  defaultNominal: number;
+  defaultPaket?: string;
+  kuotaKg?: number;
+  keterangan?: string;
+}
+
 interface BankSettings {
   bankName: string;
   accountNumber: string;
   accountHolder: string;
   defaultNominal: number;
   keterangan?: string;
+}
+
+interface PeringatanTagihan {
+  id: string;
+  santriId: string;
+  santriName: string;
+  santriNis?: string;
+  santriGender?: string;
+  parentId?: string;
+  parentName?: string;
+  parentPhone?: string;
+  judul: string;
+  tingkatPeringatan?: "pemberitahuan" | "teguran" | "sp1" | "sp2" | "sp3";
+  jenisTagihan?: string;
+  nominalTunggakan?: number;
+  pesan: string;
+  batasWaktu?: string;
+  status: "aktif" | "dibaca" | "diselesaikan";
+  createdAt: string;
+  createdBy?: string;
+  createdByName?: string;
 }
 
 export default function HomePage() {
@@ -130,6 +294,79 @@ export default function HomePage() {
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
   const [copiedRekening, setCopiedRekening] = useState(false);
   const [previewBuktiModal, setPreviewBuktiModal] = useState<string | null>(null);
+
+  // Uang Masuk state
+  const [tagihanUangMasukList, setTagihanUangMasukList] = useState<TagihanUangMasuk[]>([]);
+  const [uangMasukSettings, setUangMasukSettings] = useState<UangMasukSettings>({
+    bankName: "Bank Syariah Indonesia (BSI)",
+    accountNumber: "7123456789",
+    accountHolder: "Pondok Pesantren Baiturrahman",
+    defaultNominal: 2500000,
+  });
+  const [isUangMasukModalOpen, setIsUangMasukModalOpen] = useState(false);
+  const [selectedUangMasukTagihan, setSelectedUangMasukTagihan] = useState<TagihanUangMasuk | null>(null);
+  const [buktiUangMasukBase64, setBuktiUangMasukBase64] = useState<string>("");
+  const [buktiUangMasukFileName, setBuktiUangMasukFileName] = useState<string>("");
+  const [catatanUangMasuk, setCatatanUangMasuk] = useState<string>("");
+  const [isSubmittingUangMasuk, setIsSubmittingUangMasuk] = useState(false);
+  const [copiedUangMasukRekening, setCopiedUangMasukRekening] = useState(false);
+  const [previewUangMasukModal, setPreviewUangMasukModal] = useState<string | null>(null);
+
+  // Seragam state
+  const [tagihanSeragamList, setTagihanSeragamList] = useState<TagihanSeragam[]>([]);
+  const [seragamSettings, setSeragamSettings] = useState<SeragamSettings>({
+    bankName: "Bank Syariah Indonesia (BSI)",
+    accountNumber: "7123456789",
+    accountHolder: "Pondok Pesantren Baiturrahman",
+    defaultNominal: 650000,
+  });
+  const [isSeragamModalOpen, setIsSeragamModalOpen] = useState(false);
+  const [selectedSeragamTagihan, setSelectedSeragamTagihan] = useState<TagihanSeragam | null>(null);
+  const [buktiSeragamBase64, setBuktiSeragamBase64] = useState<string>("");
+  const [buktiSeragamFileName, setBuktiSeragamFileName] = useState<string>("");
+  const [catatanSeragam, setCatatanSeragam] = useState<string>("");
+  const [isSubmittingSeragam, setIsSubmittingSeragam] = useState(false);
+  const [copiedSeragamRekening, setCopiedSeragamRekening] = useState(false);
+  const [previewSeragamModal, setPreviewSeragamModal] = useState<string | null>(null);
+
+  // Buku Paket / Kitab Kuning state
+  const [tagihanBukuPaketList, setTagihanBukuPaketList] = useState<TagihanBukuPaket[]>([]);
+  const [bukuPaketSettings, setBukuPaketSettings] = useState<BukuPaketSettings>({
+    bankName: "Bank Syariah Indonesia (BSI)",
+    accountNumber: "7123456789",
+    accountHolder: "Pondok Pesantren Baiturrahman",
+    defaultNominal: 450000,
+  });
+  const [isBukuPaketModalOpen, setIsBukuPaketModalOpen] = useState(false);
+  const [selectedBukuPaketTagihan, setSelectedBukuPaketTagihan] = useState<TagihanBukuPaket | null>(null);
+  const [buktiBukuPaketBase64, setBuktiBukuPaketBase64] = useState<string>("");
+  const [buktiBukuPaketFileName, setBuktiBukuPaketFileName] = useState<string>("");
+  const [catatanBukuPaket, setCatatanBukuPaket] = useState<string>("");
+  const [isSubmittingBukuPaket, setIsSubmittingBukuPaket] = useState(false);
+  const [copiedBukuPaketRekening, setCopiedBukuPaketRekening] = useState(false);
+  const [previewBukuPaketModal, setPreviewBukuPaketModal] = useState<string | null>(null);
+
+  // Laundry state
+  const [tagihanLaundryList, setTagihanLaundryList] = useState<TagihanLaundry[]>([]);
+  const [laundrySettings, setLaundrySettings] = useState<LaundrySettings>({
+    bankName: "Bank Syariah Indonesia (BSI)",
+    accountNumber: "7123456789",
+    accountHolder: "Pondok Pesantren Baiturrahman",
+    defaultNominal: 100000,
+  });
+  const [isLaundryModalOpen, setIsLaundryModalOpen] = useState(false);
+  const [selectedLaundryTagihan, setSelectedLaundryTagihan] = useState<TagihanLaundry | null>(null);
+  const [buktiLaundryBase64, setBuktiLaundryBase64] = useState<string>("");
+  const [buktiLaundryFileName, setBuktiLaundryFileName] = useState<string>("");
+  const [catatanLaundry, setCatatanLaundry] = useState<string>("");
+  const [isSubmittingLaundry, setIsSubmittingLaundry] = useState(false);
+  const [copiedLaundryRekening, setCopiedLaundryRekening] = useState(false);
+  const [previewLaundryModal, setPreviewLaundryModal] = useState<string | null>(null);
+
+  // Peringatan / Warning state
+  const [peringatanList, setPeringatanList] = useState<PeringatanTagihan[]>([]);
+  const [isPeringatanModalOpen, setIsPeringatanModalOpen] = useState(false);
+  const [selectedPeringatan, setSelectedPeringatan] = useState<PeringatanTagihan | null>(null);
 
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -167,6 +404,34 @@ export default function HomePage() {
     setTimeout(() => setCopiedRekening(false), 2000);
   };
 
+  const handleCopyUangMasukRekening = () => {
+    navigator.clipboard.writeText(uangMasukSettings.accountNumber);
+    setCopiedUangMasukRekening(true);
+    toast.success("Nomor rekening berhasil disalin!");
+    setTimeout(() => setCopiedUangMasukRekening(false), 2000);
+  };
+
+  const handleCopySeragamRekening = () => {
+    navigator.clipboard.writeText(seragamSettings.accountNumber);
+    setCopiedSeragamRekening(true);
+    toast.success("Nomor rekening berhasil disalin!");
+    setTimeout(() => setCopiedSeragamRekening(false), 2000);
+  };
+
+  const handleCopyBukuPaketRekening = () => {
+    navigator.clipboard.writeText(bukuPaketSettings.accountNumber);
+    setCopiedBukuPaketRekening(true);
+    toast.success("Nomor rekening berhasil disalin!");
+    setTimeout(() => setCopiedBukuPaketRekening(false), 2000);
+  };
+
+  const handleCopyLaundryRekening = () => {
+    navigator.clipboard.writeText(laundrySettings.accountNumber);
+    setCopiedLaundryRekening(true);
+    toast.success("Nomor rekening berhasil disalin!");
+    setTimeout(() => setCopiedLaundryRekening(false), 2000);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -184,12 +449,289 @@ export default function HomePage() {
     reader.readAsDataURL(file);
   };
 
+  const handleUangMasukFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 5MB");
+      return;
+    }
+
+    setBuktiUangMasukFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBuktiUangMasukBase64(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSeragamFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 5MB");
+      return;
+    }
+
+    setBuktiSeragamFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBuktiSeragamBase64(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleBukuPaketFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 5MB");
+      return;
+    }
+
+    setBuktiBukuPaketFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBuktiBukuPaketBase64(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLaundryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 5MB");
+      return;
+    }
+
+    setBuktiLaundryFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBuktiLaundryBase64(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleOpenPayment = (tagihan: TagihanIuran) => {
     setSelectedTagihan(tagihan);
     setBuktiBase64(tagihan.buktiPembayaran || "");
     setBuktiFileName(tagihan.buktiFileName || "");
     setCatatanOrangTua(tagihan.catatanOrangTua || "");
     setIsPaymentModalOpen(true);
+  };
+
+  const handleOpenUangMasukPayment = (tagihan: TagihanUangMasuk) => {
+    setSelectedUangMasukTagihan(tagihan);
+    setBuktiUangMasukBase64(tagihan.buktiPembayaran || "");
+    setBuktiUangMasukFileName(tagihan.buktiFileName || "");
+    setCatatanUangMasuk(tagihan.catatanOrangTua || "");
+    setIsUangMasukModalOpen(true);
+  };
+
+  const handleOpenSeragamPayment = (tagihan: TagihanSeragam) => {
+    setSelectedSeragamTagihan(tagihan);
+    setBuktiSeragamBase64(tagihan.buktiPembayaran || "");
+    setBuktiSeragamFileName(tagihan.buktiFileName || "");
+    setCatatanSeragam(tagihan.catatanOrangTua || "");
+    setIsSeragamModalOpen(true);
+  };
+
+  const handleOpenBukuPaketPayment = (tagihan: TagihanBukuPaket) => {
+    setSelectedBukuPaketTagihan(tagihan);
+    setBuktiBukuPaketBase64(tagihan.buktiPembayaran || "");
+    setBuktiBukuPaketFileName(tagihan.buktiFileName || "");
+    setCatatanBukuPaket(tagihan.catatanOrangTua || "");
+    setIsBukuPaketModalOpen(true);
+  };
+
+  const handleOpenLaundryPayment = (tagihan: TagihanLaundry) => {
+    setSelectedLaundryTagihan(tagihan);
+    setBuktiLaundryBase64(tagihan.buktiPembayaran || "");
+    setBuktiLaundryFileName(tagihan.buktiFileName || "");
+    setCatatanLaundry(tagihan.catatanOrangTua || "");
+    setIsLaundryModalOpen(true);
+  };
+
+  const handleOpenPeringatanDetail = async (item: PeringatanTagihan) => {
+    setSelectedPeringatan(item);
+    setIsPeringatanModalOpen(true);
+    if (item.status === "aktif") {
+      try {
+        await fetch("/api/peringatan", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: item.id, status: "dibaca" }),
+        });
+        fetchData();
+      } catch (err) {
+        console.error("Error marking peringatan as read:", err);
+      }
+    }
+  };
+
+  const handleSubmitUangMasuk = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUangMasukTagihan) return;
+
+    if (!buktiUangMasukBase64) {
+      toast.error("Silakan pilih file bukti transfer terlebih dahulu");
+      return;
+    }
+
+    setIsSubmittingUangMasuk(true);
+    try {
+      const res = await fetch("/api/uang-masuk", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedUangMasukTagihan.id,
+          action: "submit_pembayaran",
+          buktiPembayaran: buktiUangMasukBase64,
+          buktiFileName: buktiUangMasukFileName || "bukti_uang_masuk.jpg",
+          catatanOrangTua: catatanUangMasuk,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(
+          "Bukti pembayaran uang masuk berhasil dikirim! Petugas akan segera memverifikasi."
+        );
+        setIsUangMasukModalOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || "Gagal mengirim bukti pembayaran");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat mengirim bukti pembayaran");
+    } finally {
+      setIsSubmittingUangMasuk(false);
+    }
+  };
+
+  const handleSubmitSeragam = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedSeragamTagihan) return;
+
+    if (!buktiSeragamBase64) {
+      toast.error("Silakan pilih file bukti transfer terlebih dahulu");
+      return;
+    }
+
+    setIsSubmittingSeragam(true);
+    try {
+      const res = await fetch("/api/seragam", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedSeragamTagihan.id,
+          action: "submit_pembayaran",
+          buktiPembayaran: buktiSeragamBase64,
+          buktiFileName: buktiSeragamFileName || "bukti_seragam.jpg",
+          catatanOrangTua: catatanSeragam,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(
+          "Bukti pembayaran seragam berhasil dikirim! Petugas akan segera memverifikasi."
+        );
+        setIsSeragamModalOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || "Gagal mengirim bukti pembayaran");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat mengirim bukti pembayaran");
+    } finally {
+      setIsSubmittingSeragam(false);
+    }
+  };
+
+  const handleSubmitBukuPaket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedBukuPaketTagihan) return;
+
+    if (!buktiBukuPaketBase64) {
+      toast.error("Silakan pilih file bukti transfer terlebih dahulu");
+      return;
+    }
+
+    setIsSubmittingBukuPaket(true);
+    try {
+      const res = await fetch("/api/buku-paket", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedBukuPaketTagihan.id,
+          action: "submit_pembayaran",
+          buktiPembayaran: buktiBukuPaketBase64,
+          buktiFileName: buktiBukuPaketFileName || "bukti_buku_paket.jpg",
+          catatanOrangTua: catatanBukuPaket,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(
+          "Bukti pembayaran buku paket / kitab berhasil dikirim! Petugas akan segera memverifikasi."
+        );
+        setIsBukuPaketModalOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || "Gagal mengirim bukti pembayaran");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat mengirim bukti pembayaran");
+    } finally {
+      setIsSubmittingBukuPaket(false);
+    }
+  };
+
+  const handleSubmitLaundry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedLaundryTagihan) return;
+
+    if (!buktiLaundryBase64) {
+      toast.error("Silakan pilih file bukti transfer terlebih dahulu");
+      return;
+    }
+
+    setIsSubmittingLaundry(true);
+    try {
+      const res = await fetch("/api/laundry", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedLaundryTagihan.id,
+          action: "submit_pembayaran",
+          buktiPembayaran: buktiLaundryBase64,
+          buktiFileName: buktiLaundryFileName || "bukti_laundry.jpg",
+          catatanOrangTua: catatanLaundry,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(
+          "Bukti pembayaran iuran laundry berhasil dikirim! Petugas akan segera memverifikasi."
+        );
+        setIsLaundryModalOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || "Gagal mengirim bukti pembayaran");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat mengirim bukti pembayaran");
+    } finally {
+      setIsSubmittingLaundry(false);
+    }
   };
 
   const handleSubmitPayment = async (e: React.FormEvent) => {
@@ -328,6 +870,73 @@ export default function HomePage() {
         console.error("Error fetching iuran on home:", err);
       }
 
+      // Fetch Uang Masuk data
+      try {
+        const uangMasukRes = await fetch("/api/uang-masuk");
+        if (uangMasukRes.ok) {
+          const uangMasukData = await uangMasukRes.json();
+          setTagihanUangMasukList(uangMasukData.tagihanList || []);
+          if (uangMasukData.settings) {
+            setUangMasukSettings(uangMasukData.settings);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching uang masuk on home:", err);
+      }
+
+      // Fetch Seragam data
+      try {
+        const seragamRes = await fetch("/api/seragam");
+        if (seragamRes.ok) {
+          const seragamData = await seragamRes.json();
+          setTagihanSeragamList(seragamData.tagihanList || []);
+          if (seragamData.settings) {
+            setSeragamSettings(seragamData.settings);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching seragam on home:", err);
+      }
+
+      // Fetch Buku Paket data
+      try {
+        const bukuRes = await fetch("/api/buku-paket");
+        if (bukuRes.ok) {
+          const bukuData = await bukuRes.json();
+          setTagihanBukuPaketList(bukuData.tagihanList || []);
+          if (bukuData.settings) {
+            setBukuPaketSettings(bukuData.settings);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching buku paket on home:", err);
+      }
+
+      // Fetch Laundry data
+      try {
+        const laundryRes = await fetch("/api/laundry");
+        if (laundryRes.ok) {
+          const laundryData = await laundryRes.json();
+          setTagihanLaundryList(laundryData.tagihanList || []);
+          if (laundryData.settings) {
+            setLaundrySettings(laundryData.settings);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching laundry on home:", err);
+      }
+
+      // Fetch Peringatan data
+      try {
+        const peringatanRes = await fetch("/api/peringatan");
+        if (peringatanRes.ok) {
+          const peringatanData = await peringatanRes.json();
+          setPeringatanList(peringatanData.peringatanList || []);
+        }
+      } catch (err) {
+        console.error("Error fetching peringatan on home:", err);
+      }
+
       // Fetch reports from Firestore
       const allReports: Report[] = [];
 
@@ -436,6 +1045,53 @@ export default function HomePage() {
     );
   }, [tagihanList]);
 
+  // Pending / Unpaid Uang Masuk bills for parent notification
+  const tagihanUangMasukPending = useMemo(() => {
+    return tagihanUangMasukList.filter(
+      (t) =>
+        t.status === "belum_bayar" ||
+        t.status === "menunggu_verifikasi" ||
+        t.status === "ditolak"
+    );
+  }, [tagihanUangMasukList]);
+
+  // Pending / Unpaid Seragam bills for parent notification
+  const tagihanSeragamPending = useMemo(() => {
+    return tagihanSeragamList.filter(
+      (t) =>
+        t.status === "belum_bayar" ||
+        t.status === "menunggu_verifikasi" ||
+        t.status === "ditolak"
+    );
+  }, [tagihanSeragamList]);
+
+  // Pending / Unpaid Buku Paket bills for parent notification
+  const tagihanBukuPaketPending = useMemo(() => {
+    return tagihanBukuPaketList.filter(
+      (t) =>
+        t.status === "belum_bayar" ||
+        t.status === "menunggu_verifikasi" ||
+        t.status === "ditolak"
+    );
+  }, [tagihanBukuPaketList]);
+
+  // Pending / Unpaid Laundry bills for parent notification
+  const tagihanLaundryPending = useMemo(() => {
+    return tagihanLaundryList.filter(
+      (t) =>
+        t.status === "belum_bayar" ||
+        t.status === "menunggu_verifikasi" ||
+        t.status === "ditolak"
+    );
+  }, [tagihanLaundryList]);
+
+  // Active warning notices for parent notification
+  const peringatanActive = useMemo(() => {
+    return peringatanList.filter(
+      (p) => p.status === "aktif" || p.status === "dibaca"
+    );
+  }, [peringatanList]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -487,6 +1143,97 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
+
+          {/* ========== PEMBERITAHUAN SURAT PERINGATAN / TEGURAN TAGIHAN ========== */}
+          {peringatanActive.length > 0 && (
+            <Card className="mt-6 border-2 border-rose-400 bg-gradient-to-r from-rose-50 via-rose-50/80 to-red-50/60 shadow-lg animate-pulse">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-rose-950">
+                    <div className="p-2 bg-rose-200/80 rounded-lg">
+                      <AlertTriangle className="h-5 w-5 text-rose-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base text-rose-950 font-bold">
+                        Surat Peringatan & Teguran Tagihan
+                      </CardTitle>
+                      <CardDescription className="text-xs text-rose-900 font-medium">
+                        Perhatian: Anda memiliki surat peringatan / teguran keterlambatan pembayaran tagihan dari pihak pesantren.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-rose-600 text-white hover:bg-rose-700 font-bold">
+                    {peringatanActive.length} Peringatan
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="divide-y divide-rose-200/80 rounded-xl bg-white/90 border border-rose-200 overflow-hidden shadow-sm">
+                  {peringatanActive.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-rose-50/50 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-bold text-gray-900 text-sm">
+                            {item.santriName}
+                          </p>
+                          <Badge
+                            className={`text-xs font-bold uppercase tracking-wider ${
+                              item.tingkatPeringatan === "sp3"
+                                ? "bg-red-600 text-white"
+                                : item.tingkatPeringatan === "sp2"
+                                  ? "bg-orange-600 text-white"
+                                  : item.tingkatPeringatan === "sp1"
+                                    ? "bg-amber-500 text-white"
+                                    : "bg-rose-100 text-rose-800 border-rose-200"
+                            }`}
+                          >
+                            {item.tingkatPeringatan ? item.tingkatPeringatan.toUpperCase() : "PERINGATAN"}
+                          </Badge>
+                          {item.jenisTagihan && (
+                            <Badge variant="outline" className="text-xs border-rose-300 text-rose-800">
+                              Tagihan: {item.jenisTagihan}
+                            </Badge>
+                          )}
+                          {item.status === "aktif" && (
+                            <Badge className="bg-rose-600 text-white text-xs gap-1 animate-ping">
+                              Baru
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-semibold text-rose-950">
+                          {item.judul}
+                        </p>
+                        {item.nominalTunggakan ? (
+                          <p className="text-xs font-bold text-rose-700">
+                            Total Tunggakan: {formatRupiah(item.nominalTunggakan)}
+                          </p>
+                        ) : null}
+                        {item.batasWaktu && (
+                          <p className="text-xs font-semibold text-rose-800">
+                            ⚠️ Batas Waktu Penyelesaian: {item.batasWaktu}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="gap-1.5 w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-sm"
+                          onClick={() => handleOpenPeringatanDetail(item)}
+                        >
+                          <FileCheck className="h-4 w-4" />
+                          Buka & Baca Surat Peringatan
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* ========== PEMBERITAHUAN TAGIHAN SPP BULANAN (NOTIF TANGGAL 1) ========== */}
           {tagihanPendingOrUnpaid.length > 0 && (
@@ -563,6 +1310,398 @@ export default function HomePage() {
                               : "bg-emerald-600 hover:bg-emerald-700"
                             } text-white`}
                           onClick={() => handleOpenPayment(tagihan)}
+                        >
+                          <Receipt className="h-4 w-4" />
+                          {tagihan.status === "menunggu_verifikasi"
+                            ? "Lihat Bukti & Status"
+                            : tagihan.status === "ditolak"
+                              ? "Upload Bukti Ulang"
+                              : "Bayar / Upload Bukti"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ========== PEMBERITAHUAN TAGIHAN UANG MASUK (1x BAYAR) ========== */}
+          {tagihanUangMasukPending.length > 0 && (
+            <Card className="mt-4 border-2 border-teal-300 bg-gradient-to-r from-teal-50 via-teal-50/70 to-emerald-50/50 shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-teal-900">
+                    <div className="p-2 bg-teal-200/70 rounded-lg">
+                      <Landmark className="h-5 w-5 text-teal-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base text-teal-950 font-bold">
+                        Tagihan Uang Masuk Pesantren
+                      </CardTitle>
+                      <CardDescription className="text-xs text-teal-800">
+                        Tagihan pendaftaran/masuk pesantren (1x bayar). Mohon segera selesaikan pembayaran.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-teal-600 text-white hover:bg-teal-700">
+                    {tagihanUangMasukPending.length} Tagihan
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="divide-y divide-teal-200/60 rounded-xl bg-white/80 border border-teal-200/80 overflow-hidden">
+                  {tagihanUangMasukPending.map((tagihan) => (
+                    <div
+                      key={tagihan.id}
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-teal-50/40 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">
+                            {tagihan.santriName}
+                          </p>
+                          <Badge variant="outline" className="text-xs font-normal border-teal-300 text-teal-700">
+                            Uang Masuk {tagihan.tahun}
+                          </Badge>
+                          {tagihan.status === "menunggu_verifikasi" && (
+                            <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 text-xs gap-1 animate-pulse">
+                              <Clock className="h-3 w-3" />
+                              Sedang Diverifikasi
+                            </Badge>
+                          )}
+                          {tagihan.status === "ditolak" && (
+                            <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 text-xs gap-1">
+                              <XCircle className="h-3 w-3" />
+                              Ditolak (Upload Ulang)
+                            </Badge>
+                          )}
+                          {tagihan.status === "belum_bayar" && (
+                            <Badge className="bg-teal-100 text-teal-800 border-teal-200 hover:bg-teal-100 text-xs gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Belum Bayar
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-bold text-teal-700">
+                          {formatRupiah(tagihan.nominal)}
+                        </p>
+                        {tagihan.keterangan && (
+                          <p className="text-xs text-gray-500">{tagihan.keterangan}</p>
+                        )}
+                        {tagihan.status === "ditolak" && tagihan.catatanPetugas && (
+                          <p className="text-xs text-red-600 bg-red-50 p-1.5 rounded border border-red-100">
+                            Alasan ditolak: {tagihan.catatanPetugas}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className={`gap-1.5 w-full sm:w-auto ${
+                            tagihan.status === "menunggu_verifikasi"
+                              ? "bg-blue-600 hover:bg-blue-700"
+                              : "bg-teal-600 hover:bg-teal-700"
+                          } text-white`}
+                          onClick={() => handleOpenUangMasukPayment(tagihan)}
+                        >
+                          <Receipt className="h-4 w-4" />
+                          {tagihan.status === "menunggu_verifikasi"
+                            ? "Lihat Bukti & Status"
+                            : tagihan.status === "ditolak"
+                              ? "Upload Bukti Ulang"
+                              : "Bayar / Upload Bukti"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ========== PEMBERITAHUAN TAGIHAN SERAGAM ========== */}
+          {tagihanSeragamPending.length > 0 && (
+            <Card className="mt-4 border-2 border-purple-300 bg-gradient-to-r from-purple-50 via-purple-50/70 to-indigo-50/50 shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-purple-900">
+                    <div className="p-2 bg-purple-200/70 rounded-lg">
+                      <Shirt className="h-5 w-5 text-purple-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base text-purple-950 font-bold">
+                        Tagihan Seragam Santri
+                      </CardTitle>
+                      <CardDescription className="text-xs text-purple-800">
+                        Tagihan pemesanan paket seragam santri. Mohon lakukan pembayaran dan unggah bukti transfer.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-purple-600 text-white hover:bg-purple-700">
+                    {tagihanSeragamPending.length} Tagihan
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="divide-y divide-purple-200/60 rounded-xl bg-white/80 border border-purple-200/80 overflow-hidden">
+                  {tagihanSeragamPending.map((tagihan) => (
+                    <div
+                      key={tagihan.id}
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-purple-50/40 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">
+                            {tagihan.santriName}
+                          </p>
+                          <Badge variant="outline" className="text-xs font-normal border-purple-300 text-purple-700">
+                            Seragam {tagihan.tahun}
+                          </Badge>
+                          {tagihan.ukuran && (
+                            <Badge variant="secondary" className="text-xs font-semibold bg-purple-100 text-purple-800">
+                              Ukuran: {tagihan.ukuran}
+                            </Badge>
+                          )}
+                          {tagihan.status === "menunggu_verifikasi" && (
+                            <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 text-xs gap-1 animate-pulse">
+                              <Clock className="h-3 w-3" />
+                              Sedang Diverifikasi
+                            </Badge>
+                          )}
+                          {tagihan.status === "ditolak" && (
+                            <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 text-xs gap-1">
+                              <XCircle className="h-3 w-3" />
+                              Ditolak (Upload Ulang)
+                            </Badge>
+                          )}
+                          {tagihan.status === "belum_bayar" && (
+                            <Badge className="bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-100 text-xs gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Belum Bayar
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-bold text-purple-700">
+                          {formatRupiah(tagihan.nominal)}
+                        </p>
+                        {tagihan.keterangan && (
+                          <p className="text-xs text-gray-500">{tagihan.keterangan}</p>
+                        )}
+                        {tagihan.status === "ditolak" && tagihan.catatanPetugas && (
+                          <p className="text-xs text-red-600 bg-red-50 p-1.5 rounded border border-red-100">
+                            Alasan ditolak: {tagihan.catatanPetugas}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className={`gap-1.5 w-full sm:w-auto ${
+                            tagihan.status === "menunggu_verifikasi"
+                              ? "bg-blue-600 hover:bg-blue-700"
+                              : "bg-purple-600 hover:bg-purple-700"
+                          } text-white`}
+                          onClick={() => handleOpenSeragamPayment(tagihan)}
+                        >
+                          <Receipt className="h-4 w-4" />
+                          {tagihan.status === "menunggu_verifikasi"
+                            ? "Lihat Bukti & Status"
+                            : tagihan.status === "ditolak"
+                              ? "Upload Bukti Ulang"
+                              : "Bayar / Upload Bukti"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ========== PEMBERITAHUAN TAGIHAN BUKU PAKET / KITAB KUNING ========== */}
+          {tagihanBukuPaketPending.length > 0 && (
+            <Card className="mt-4 border-2 border-indigo-300 bg-gradient-to-r from-indigo-50 via-indigo-50/70 to-blue-50/50 shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-indigo-900">
+                    <div className="p-2 bg-indigo-200/70 rounded-lg">
+                      <BookOpen className="h-5 w-5 text-indigo-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base text-indigo-950 font-bold">
+                        Tagihan Buku Paket & Kitab Kuning
+                      </CardTitle>
+                      <CardDescription className="text-xs text-indigo-800">
+                        Tagihan modul pelajaran & kitab santri. Mohon lakukan pembayaran dan unggah bukti transfer.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-indigo-600 text-white hover:bg-indigo-700">
+                    {tagihanBukuPaketPending.length} Tagihan
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="divide-y divide-indigo-200/60 rounded-xl bg-white/80 border border-indigo-200/80 overflow-hidden">
+                  {tagihanBukuPaketPending.map((tagihan) => (
+                    <div
+                      key={tagihan.id}
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-indigo-50/40 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">
+                            {tagihan.santriName}
+                          </p>
+                          {tagihan.tingkatKelas && (
+                            <Badge variant="outline" className="text-xs font-normal border-indigo-300 text-indigo-700">
+                              {tagihan.tingkatKelas}
+                            </Badge>
+                          )}
+                          {tagihan.tahunAjaran && (
+                            <Badge variant="secondary" className="text-xs font-semibold bg-indigo-100 text-indigo-800">
+                              T.A {tagihan.tahunAjaran}
+                            </Badge>
+                          )}
+                          {tagihan.status === "menunggu_verifikasi" && (
+                            <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 text-xs gap-1 animate-pulse">
+                              <Clock className="h-3 w-3" />
+                              Sedang Diverifikasi
+                            </Badge>
+                          )}
+                          {tagihan.status === "ditolak" && (
+                            <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 text-xs gap-1">
+                              <XCircle className="h-3 w-3" />
+                              Ditolak (Upload Ulang)
+                            </Badge>
+                          )}
+                          {tagihan.status === "belum_bayar" && (
+                            <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200 hover:bg-indigo-100 text-xs gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Belum Bayar
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-bold text-indigo-700">
+                          {formatRupiah(tagihan.nominal)}
+                        </p>
+                        {tagihan.keterangan && (
+                          <p className="text-xs text-gray-500">{tagihan.keterangan}</p>
+                        )}
+                        {tagihan.status === "ditolak" && tagihan.catatanPetugas && (
+                          <p className="text-xs text-red-600 bg-red-50 p-1.5 rounded border border-red-100">
+                            Alasan ditolak: {tagihan.catatanPetugas}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className={`gap-1.5 w-full sm:w-auto ${
+                            tagihan.status === "menunggu_verifikasi"
+                              ? "bg-blue-600 hover:bg-blue-700"
+                              : "bg-indigo-600 hover:bg-indigo-700"
+                          } text-white`}
+                          onClick={() => handleOpenBukuPaketPayment(tagihan)}
+                        >
+                          <Receipt className="h-4 w-4" />
+                          {tagihan.status === "menunggu_verifikasi"
+                            ? "Lihat Bukti & Status"
+                            : tagihan.status === "ditolak"
+                              ? "Upload Bukti Ulang"
+                              : "Bayar / Upload Bukti"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ========== PEMBERITAHUAN TAGIHAN LAUNDRY SANTRI ========== */}
+          {tagihanLaundryPending.length > 0 && (
+            <Card className="mt-4 border-2 border-cyan-300 bg-gradient-to-r from-cyan-50 via-cyan-50/70 to-blue-50/50 shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-cyan-900">
+                    <div className="p-2 bg-cyan-200/70 rounded-lg">
+                      <Receipt className="h-5 w-5 text-cyan-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base text-cyan-950 font-bold">
+                        Tagihan Laundry Santri
+                      </CardTitle>
+                      <CardDescription className="text-xs text-cyan-800">
+                        Tagihan iuran bulanan layanan cuci & setrika santri. Mohon lakukan pembayaran dan unggah bukti transfer.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-cyan-600 text-white hover:bg-cyan-700">
+                    {tagihanLaundryPending.length} Tagihan
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="divide-y divide-cyan-200/60 rounded-xl bg-white/80 border border-cyan-200/80 overflow-hidden">
+                  {tagihanLaundryPending.map((tagihan) => (
+                    <div
+                      key={tagihan.id}
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-cyan-50/40 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">
+                            {tagihan.santriName}
+                          </p>
+                          <Badge variant="outline" className="text-xs font-normal border-cyan-300 text-cyan-700">
+                            Laundry {tagihan.bulan} {tagihan.tahun}
+                          </Badge>
+                          {tagihan.status === "menunggu_verifikasi" && (
+                            <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 text-xs gap-1 animate-pulse">
+                              <Clock className="h-3 w-3" />
+                              Sedang Diverifikasi
+                            </Badge>
+                          )}
+                          {tagihan.status === "ditolak" && (
+                            <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 text-xs gap-1">
+                              <XCircle className="h-3 w-3" />
+                              Ditolak (Upload Ulang)
+                            </Badge>
+                          )}
+                          {tagihan.status === "belum_bayar" && (
+                            <Badge className="bg-cyan-100 text-cyan-800 border-cyan-200 hover:bg-cyan-100 text-xs gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Belum Bayar
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-bold text-cyan-700">
+                          {formatRupiah(tagihan.nominal)}
+                        </p>
+                        {tagihan.namaPaket && (
+                          <p className="text-xs text-gray-500">{tagihan.namaPaket}</p>
+                        )}
+                        {tagihan.status === "ditolak" && tagihan.catatanPetugas && (
+                          <p className="text-xs text-red-600 bg-red-50 p-1.5 rounded border border-red-100">
+                            Alasan ditolak: {tagihan.catatanPetugas}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className={`gap-1.5 w-full sm:w-auto ${
+                            tagihan.status === "menunggu_verifikasi"
+                              ? "bg-blue-600 hover:bg-blue-700"
+                              : "bg-cyan-600 hover:bg-cyan-700"
+                          } text-white`}
+                          onClick={() => handleOpenLaundryPayment(tagihan)}
                         >
                           <Receipt className="h-4 w-4" />
                           {tagihan.status === "menunggu_verifikasi"
@@ -789,6 +1928,1155 @@ export default function HomePage() {
           </Tabs>
         )}
       </div>
+
+      {/* ========== MODAL DETAIL SURAT PERINGATAN / TEGURAN ========== */}
+      <Dialog
+        open={isPeringatanModalOpen}
+        onOpenChange={setIsPeringatanModalOpen}
+      >
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto border-2 border-rose-300">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-rose-900">
+              <AlertTriangle className="h-5 w-5 text-rose-600" />
+              Surat Peringatan & Teguran Resmi
+            </DialogTitle>
+            <DialogDescription className="text-rose-800 text-xs">
+              Pemberitahuan resmi dari Bagian Keuangan / Pesantren mengenai keterlambatan pembayaran tagihan santri.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedPeringatan && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-xl bg-rose-50/80 p-4 space-y-2 border border-rose-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Santri</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedPeringatan.santriName}
+                  </span>
+                </div>
+                {selectedPeringatan.santriNis && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">NIS</span>
+                    <span className="font-medium text-gray-700">
+                      {selectedPeringatan.santriNis}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Tingkat Peringatan</span>
+                  <Badge
+                    className={`font-bold uppercase tracking-wider ${
+                      selectedPeringatan.tingkatPeringatan === "sp3"
+                        ? "bg-red-600 text-white"
+                        : selectedPeringatan.tingkatPeringatan === "sp2"
+                          ? "bg-orange-600 text-white"
+                          : selectedPeringatan.tingkatPeringatan === "sp1"
+                            ? "bg-amber-500 text-white"
+                            : "bg-rose-100 text-rose-800"
+                    }`}
+                  >
+                    {selectedPeringatan.tingkatPeringatan
+                      ? selectedPeringatan.tingkatPeringatan.toUpperCase()
+                      : "PERINGATAN"}
+                  </Badge>
+                </div>
+                {selectedPeringatan.jenisTagihan && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Jenis Tagihan</span>
+                    <span className="font-medium text-gray-800">
+                      {selectedPeringatan.jenisTagihan}
+                    </span>
+                  </div>
+                )}
+                {selectedPeringatan.nominalTunggakan ? (
+                  <div className="flex justify-between items-center text-sm pt-1 border-t border-rose-200">
+                    <span className="font-medium text-gray-700">Total Nominal Tunggakan</span>
+                    <span className="font-bold text-lg text-rose-700">
+                      {formatRupiah(selectedPeringatan.nominalTunggakan)}
+                    </span>
+                  </div>
+                ) : null}
+                {selectedPeringatan.batasWaktu && (
+                  <div className="flex justify-between items-center text-sm pt-1 border-t border-rose-200">
+                    <span className="font-semibold text-rose-800">Batas Waktu Settlement</span>
+                    <span className="font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded text-xs">
+                      {selectedPeringatan.batasWaktu}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Isi Surat / Pesan Peringatan */}
+              <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                  Judul: {selectedPeringatan.judul}
+                </p>
+                <div className="text-sm text-gray-800 whitespace-pre-line leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100 font-sans">
+                  {selectedPeringatan.pesan}
+                </div>
+                {selectedPeringatan.createdByName && (
+                  <p className="text-xs text-muted-foreground text-right italic pt-1">
+                    Diterbitkan oleh: {selectedPeringatan.createdByName} (Petugas Pesantren)
+                  </p>
+                )}
+              </div>
+
+              <DialogFooter className="pt-2">
+                <Button
+                  type="button"
+                  onClick={() => setIsPeringatanModalOpen(false)}
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white"
+                >
+                  Saya Mengerti & Tutup
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ========== MODAL PEMBAYARAN & UPLOAD BUKTI LAUNDRY SANTRI ========== */}
+      <Dialog open={isLaundryModalOpen} onOpenChange={setIsLaundryModalOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Receipt className="h-5 w-5 text-cyan-600" />
+              Pembayaran Laundry Santri
+            </DialogTitle>
+            <DialogDescription>
+              Tagihan iuran laundry santri bulanan. Silakan transfer ke rekening resmi pesantren dan unggah bukti transfer.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedLaundryTagihan && (
+            <form onSubmit={handleSubmitLaundry} className="space-y-5 pt-2">
+              {/* Detail Tagihan */}
+              <div className="rounded-xl bg-cyan-50/60 p-4 space-y-2 border border-cyan-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Santri</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedLaundryTagihan.santriName}
+                  </span>
+                </div>
+                {selectedLaundryTagihan.santriNis && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">NIS</span>
+                    <span className="font-medium text-gray-700">{selectedLaundryTagihan.santriNis}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Periode Tagihan</span>
+                  <span className="font-medium text-gray-700">
+                    {selectedLaundryTagihan.bulan} {selectedLaundryTagihan.tahun}
+                  </span>
+                </div>
+                {selectedLaundryTagihan.namaPaket && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Nama Paket</span>
+                    <Badge variant="outline" className="font-medium border-cyan-300 text-cyan-800">
+                      {selectedLaundryTagihan.namaPaket}
+                    </Badge>
+                  </div>
+                )}
+                {selectedLaundryTagihan.kuotaKg && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Kuota Kuota / Bulan</span>
+                    <span className="font-semibold text-cyan-800">
+                      {selectedLaundryTagihan.kuotaKg} Kg
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm pt-2 border-t border-cyan-200">
+                  <span className="font-medium text-gray-700">Total Pembayaran</span>
+                  <span className="font-bold text-lg text-cyan-700">
+                    {formatRupiah(selectedLaundryTagihan.nominal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Rekening Pesantren Card */}
+              <div className="rounded-xl border-2 border-cyan-200 bg-cyan-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-cyan-700" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-cyan-800">
+                      Rekening Resmi Pesantren
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="border-cyan-300 text-cyan-800 bg-white">
+                    {laundrySettings.bankName}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-cyan-200">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Nomor Rekening</p>
+                    <p className="text-lg font-bold text-gray-900 font-mono tracking-wide">
+                      {laundrySettings.accountNumber}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      a.n. {laundrySettings.accountHolder}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyLaundryRekening}
+                    className="gap-1.5 border-cyan-300 text-cyan-700 hover:bg-cyan-50"
+                  >
+                    {copiedLaundryRekening ? (
+                      <>
+                        <Check className="h-4 w-4 text-cyan-600" />
+                        Tersalin
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Salin
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {laundrySettings.keterangan && (
+                  <p className="text-xs text-cyan-800/90 italic">
+                    ℹ️ {laundrySettings.keterangan}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Info */}
+              {selectedLaundryTagihan.status === "menunggu_verifikasi" && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-2.5 text-sm text-blue-900">
+                  <Clock className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Bukti Pembayaran Sudah Terkirim</p>
+                    <p className="text-xs text-blue-700 mt-0.5">
+                      Petugas sedang memverifikasi pembayaran iuran laundry Anda. Anda dapat mengunggah bukti baru jika ingin memperbarui.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedLaundryTagihan.status === "ditolak" && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-sm text-red-900">
+                  <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Pembayaran Sebelumnya Ditolak</p>
+                    <p className="text-xs text-red-700 mt-0.5">
+                      {selectedLaundryTagihan.catatanPetugas || "Silakan periksa kembali nominal transfer dan unggah bukti pembayaran yang valid."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Upload Input */}
+              <div className="space-y-2">
+                <Label htmlFor="buktiLaundryUpload" className="text-sm font-semibold">
+                  Upload Bukti Transfer / Pembayaran:
+                </Label>
+                <div className="border-2 border-dashed border-cyan-200 hover:border-cyan-400/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-white">
+                  <input
+                    id="buktiLaundryUpload"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    onChange={handleLaundryFileChange}
+                  />
+                  <label htmlFor="buktiLaundryUpload" className="cursor-pointer block">
+                    <UploadCloud className="h-8 w-8 text-cyan-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-gray-700">
+                      {buktiLaundryFileName || "Klik untuk memilih foto / screenshot bukti transfer"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Format: JPG, PNG, WebP (Maks. 5MB)
+                    </p>
+                  </label>
+                </div>
+
+                {/* Preview Image */}
+                {buktiLaundryBase64 && (
+                  <div className="relative mt-2 p-2 border rounded-xl bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={buktiLaundryBase64}
+                      alt="Pratinjau Bukti Laundry"
+                      className="max-h-48 rounded object-contain cursor-pointer"
+                      onClick={() => setPreviewLaundryModal(buktiLaundryBase64)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2 text-xs bg-white/80 shadow-sm"
+                      onClick={() => {
+                        setBuktiLaundryBase64("");
+                        setBuktiLaundryFileName("");
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Catatan Orang Tua */}
+              <div className="space-y-2">
+                <Label htmlFor="catatanLaundry" className="text-sm">
+                  Catatan Tambahan (Opsional):
+                </Label>
+                <Textarea
+                  id="catatanLaundry"
+                  placeholder="Contoh: Pembayaran laundry bulan September"
+                  value={catatanLaundry}
+                  onChange={(e) => setCatatanLaundry(e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              {/* Footer */}
+              <DialogFooter className="gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsLaundryModalOpen(false)}
+                  disabled={isSubmittingLaundry}
+                >
+                  Tutup
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingLaundry || !buktiLaundryBase64}
+                  className="bg-cyan-600 hover:bg-cyan-700 text-white gap-1.5"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {isSubmittingLaundry
+                    ? "Mengirim..."
+                    : selectedLaundryTagihan.status === "menunggu_verifikasi"
+                      ? "Kirim Ulang Bukti"
+                      : "Kirim Bukti Pembayaran"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Image Preview Modal - Laundry */}
+      <Dialog
+        open={!!previewLaundryModal}
+        onOpenChange={(open) => !open && setPreviewLaundryModal(null)}
+      >
+        <DialogContent className="max-w-2xl p-4">
+          <DialogHeader>
+            <DialogTitle>Bukti Pembayaran Laundry</DialogTitle>
+          </DialogHeader>
+          {previewLaundryModal && (
+            <div className="flex items-center justify-center p-2 bg-black/5 rounded-lg max-h-[75vh] overflow-auto">
+              <img
+                src={previewLaundryModal}
+                alt="Bukti Transfer Laundry"
+                className="max-h-[70vh] w-auto object-contain rounded"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ========== MODAL PEMBAYARAN & UPLOAD BUKTI BUKU PAKET / KITAB KUNING ========== */}
+      <Dialog open={isBukuPaketModalOpen} onOpenChange={setIsBukuPaketModalOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-indigo-600" />
+              Pembayaran Buku Paket & Kitab Kuning
+            </DialogTitle>
+            <DialogDescription>
+              Tagihan paket modul & kitab santri. Silakan transfer ke rekening resmi pesantren dan unggah bukti transfer.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedBukuPaketTagihan && (
+            <form onSubmit={handleSubmitBukuPaket} className="space-y-5 pt-2">
+              {/* Detail Tagihan */}
+              <div className="rounded-xl bg-indigo-50/60 p-4 space-y-2 border border-indigo-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Santri</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedBukuPaketTagihan.santriName}
+                  </span>
+                </div>
+                {selectedBukuPaketTagihan.santriNis && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">NIS</span>
+                    <span className="font-medium text-gray-700">{selectedBukuPaketTagihan.santriNis}</span>
+                  </div>
+                )}
+                {selectedBukuPaketTagihan.tingkatKelas && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Tingkat Kelas</span>
+                    <Badge variant="outline" className="font-bold border-indigo-300 text-indigo-800">
+                      {selectedBukuPaketTagihan.tingkatKelas}
+                    </Badge>
+                  </div>
+                )}
+                {selectedBukuPaketTagihan.tahunAjaran && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Tahun Ajaran</span>
+                    <span className="font-medium text-gray-700">{selectedBukuPaketTagihan.tahunAjaran}</span>
+                  </div>
+                )}
+                {/* Daftar Buku */}
+                {selectedBukuPaketTagihan.daftarBuku && selectedBukuPaketTagihan.daftarBuku.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-indigo-200/80">
+                    <p className="text-xs font-semibold text-indigo-800 mb-1.5">Daftar Buku & Kitab Kuning:</p>
+                    <div className="space-y-1">
+                      {selectedBukuPaketTagihan.daftarBuku.map((bukuName, idx) => (
+                        <div key={idx} className="flex justify-between text-xs text-gray-600">
+                          <span>• {bukuName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm pt-2 border-t border-indigo-200">
+                  <span className="font-medium text-gray-700">Total Pembayaran</span>
+                  <span className="font-bold text-lg text-indigo-700">
+                    {formatRupiah(selectedBukuPaketTagihan.nominal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Rekening Pesantren Card */}
+              <div className="rounded-xl border-2 border-indigo-200 bg-indigo-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-indigo-700" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-800">
+                      Rekening Resmi Pesantren
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="border-indigo-300 text-indigo-800 bg-white">
+                    {bukuPaketSettings.bankName}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-indigo-200">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Nomor Rekening</p>
+                    <p className="text-lg font-bold text-gray-900 font-mono tracking-wide">
+                      {bukuPaketSettings.accountNumber}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      a.n. {bukuPaketSettings.accountHolder}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyBukuPaketRekening}
+                    className="gap-1.5 border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                  >
+                    {copiedBukuPaketRekening ? (
+                      <>
+                        <Check className="h-4 w-4 text-indigo-600" />
+                        Tersalin
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Salin
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {bukuPaketSettings.keterangan && (
+                  <p className="text-xs text-indigo-800/90 italic">
+                    ℹ️ {bukuPaketSettings.keterangan}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Info */}
+              {selectedBukuPaketTagihan.status === "menunggu_verifikasi" && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-2.5 text-sm text-blue-900">
+                  <Clock className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Bukti Pembayaran Sudah Terkirim</p>
+                    <p className="text-xs text-blue-700 mt-0.5">
+                      Petugas sedang memverifikasi pembayaran buku paket/kitab Anda. Anda dapat mengunggah bukti baru jika ingin memperbarui.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedBukuPaketTagihan.status === "ditolak" && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-sm text-red-900">
+                  <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Pembayaran Sebelumnya Ditolak</p>
+                    <p className="text-xs text-red-700 mt-0.5">
+                      {selectedBukuPaketTagihan.catatanPetugas || "Silakan periksa kembali nominal transfer dan unggah bukti pembayaran yang valid."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Status Pengambilan Info */}
+              {selectedBukuPaketTagihan.statusPengambilan && (
+                <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center justify-between text-xs text-indigo-900">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-4 w-4 text-indigo-700" />
+                    <span>Status Pengambilan Fisik Buku/Kitab:</span>
+                  </div>
+                  <Badge variant="outline" className="border-indigo-300 text-indigo-800 font-semibold bg-white">
+                    {selectedBukuPaketTagihan.statusPengambilan === "sudah_diambil"
+                      ? "Sudah Diambil"
+                      : selectedBukuPaketTagihan.statusPengambilan === "siap_diambil"
+                        ? "Siap Diambil di Pesantren"
+                        : "Belum Diambil"}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Upload Input */}
+              <div className="space-y-2">
+                <Label htmlFor="buktiBukuPaketUpload" className="text-sm font-semibold">
+                  Upload Bukti Transfer / Pembayaran:
+                </Label>
+                <div className="border-2 border-dashed border-indigo-200 hover:border-indigo-400/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-white">
+                  <input
+                    id="buktiBukuPaketUpload"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    onChange={handleBukuPaketFileChange}
+                  />
+                  <label htmlFor="buktiBukuPaketUpload" className="cursor-pointer block">
+                    <UploadCloud className="h-8 w-8 text-indigo-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-gray-700">
+                      {buktiBukuPaketFileName || "Klik untuk memilih foto / screenshot bukti transfer"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Format: JPG, PNG, WebP (Maks. 5MB)
+                    </p>
+                  </label>
+                </div>
+
+                {/* Preview Image */}
+                {buktiBukuPaketBase64 && (
+                  <div className="relative mt-2 p-2 border rounded-xl bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={buktiBukuPaketBase64}
+                      alt="Pratinjau Bukti Buku Paket"
+                      className="max-h-48 rounded object-contain cursor-pointer"
+                      onClick={() => setPreviewBukuPaketModal(buktiBukuPaketBase64)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2 text-xs bg-white/80 shadow-sm"
+                      onClick={() => {
+                        setBuktiBukuPaketBase64("");
+                        setBuktiBukuPaketFileName("");
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Catatan Orang Tua */}
+              <div className="space-y-2">
+                <Label htmlFor="catatanBukuPaket" className="text-sm">
+                  Catatan Tambahan (Opsional):
+                </Label>
+                <Textarea
+                  id="catatanBukuPaket"
+                  placeholder="Contoh: Pembayaran paket kitab kelas 7"
+                  value={catatanBukuPaket}
+                  onChange={(e) => setCatatanBukuPaket(e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              {/* Footer */}
+              <DialogFooter className="gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsBukuPaketModalOpen(false)}
+                  disabled={isSubmittingBukuPaket}
+                >
+                  Tutup
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingBukuPaket || !buktiBukuPaketBase64}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1.5"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {isSubmittingBukuPaket
+                    ? "Mengirim..."
+                    : selectedBukuPaketTagihan.status === "menunggu_verifikasi"
+                      ? "Kirim Ulang Bukti"
+                      : "Kirim Bukti Pembayaran"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Image Preview Modal - Buku Paket */}
+      <Dialog
+        open={!!previewBukuPaketModal}
+        onOpenChange={(open) => !open && setPreviewBukuPaketModal(null)}
+      >
+        <DialogContent className="max-w-2xl p-4">
+          <DialogHeader>
+            <DialogTitle>Bukti Pembayaran Buku Paket & Kitab</DialogTitle>
+          </DialogHeader>
+          {previewBukuPaketModal && (
+            <div className="flex items-center justify-center p-2 bg-black/5 rounded-lg max-h-[75vh] overflow-auto">
+              <img
+                src={previewBukuPaketModal}
+                alt="Bukti Transfer Buku Paket"
+                className="max-h-[70vh] w-auto object-contain rounded"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ========== MODAL PEMBAYARAN & UPLOAD BUKTI SERAGAM ========== */}
+      <Dialog open={isSeragamModalOpen} onOpenChange={setIsSeragamModalOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Shirt className="h-5 w-5 text-purple-600" />
+              Pembayaran Seragam Santri
+            </DialogTitle>
+            <DialogDescription>
+              Tagihan paket seragam santri. Silakan transfer ke rekening resmi pesantren dan unggah bukti transfer.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedSeragamTagihan && (
+            <form onSubmit={handleSubmitSeragam} className="space-y-5 pt-2">
+              {/* Detail Tagihan */}
+              <div className="rounded-xl bg-purple-50/60 p-4 space-y-2 border border-purple-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Santri</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedSeragamTagihan.santriName}
+                  </span>
+                </div>
+                {selectedSeragamTagihan.santriNis && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">NIS</span>
+                    <span className="font-medium text-gray-700">{selectedSeragamTagihan.santriNis}</span>
+                  </div>
+                )}
+                {selectedSeragamTagihan.ukuran && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Ukuran Seragam</span>
+                    <Badge variant="outline" className="font-bold border-purple-300 text-purple-800">
+                      {selectedSeragamTagihan.ukuran}
+                    </Badge>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Tahun Pemesanan</span>
+                  <span className="font-medium text-gray-700">{selectedSeragamTagihan.tahun}</span>
+                </div>
+                {/* Rincian Paket */}
+                {selectedSeragamTagihan.rincianPaket && selectedSeragamTagihan.rincianPaket.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-purple-200/80">
+                    <p className="text-xs font-semibold text-purple-800 mb-1.5">Rincian Isi Paket Seragam:</p>
+                    <div className="space-y-1">
+                      {selectedSeragamTagihan.rincianPaket.map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-xs text-gray-600">
+                          <span>• {item.nama}</span>
+                          <span className="font-medium">{item.jumlah} Pcs</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm pt-2 border-t border-purple-200">
+                  <span className="font-medium text-gray-700">Total Pembayaran</span>
+                  <span className="font-bold text-lg text-purple-700">
+                    {formatRupiah(selectedSeragamTagihan.nominal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Rekening Pesantren Card */}
+              <div className="rounded-xl border-2 border-purple-200 bg-purple-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-purple-700" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-purple-800">
+                      Rekening Resmi Pesantren
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="border-purple-300 text-purple-800 bg-white">
+                    {seragamSettings.bankName}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-purple-200">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Nomor Rekening</p>
+                    <p className="text-lg font-bold text-gray-900 font-mono tracking-wide">
+                      {seragamSettings.accountNumber}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      a.n. {seragamSettings.accountHolder}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopySeragamRekening}
+                    className="gap-1.5 border-purple-300 text-purple-700 hover:bg-purple-50"
+                  >
+                    {copiedSeragamRekening ? (
+                      <>
+                        <Check className="h-4 w-4 text-purple-600" />
+                        Tersalin
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Salin
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {seragamSettings.keterangan && (
+                  <p className="text-xs text-purple-800/90 italic">
+                    ℹ️ {seragamSettings.keterangan}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Info */}
+              {selectedSeragamTagihan.status === "menunggu_verifikasi" && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-2.5 text-sm text-blue-900">
+                  <Clock className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Bukti Pembayaran Sudah Terkirim</p>
+                    <p className="text-xs text-blue-700 mt-0.5">
+                      Petugas sedang memverifikasi pembayaran seragam Anda. Anda dapat mengunggah bukti baru jika ingin memperbarui.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedSeragamTagihan.status === "ditolak" && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-sm text-red-900">
+                  <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Pembayaran Sebelumnya Ditolak</p>
+                    <p className="text-xs text-red-700 mt-0.5">
+                      {selectedSeragamTagihan.catatanPetugas || "Silakan periksa kembali nominal transfer dan unggah bukti pembayaran yang valid."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Status Pengambilan Info */}
+              {selectedSeragamTagihan.statusPengambilan && (
+                <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl flex items-center justify-between text-xs text-purple-900">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-4 w-4 text-purple-700" />
+                    <span>Status Pengambilan Fisik Seragam:</span>
+                  </div>
+                  <Badge variant="outline" className="border-purple-300 text-purple-800 font-semibold bg-white">
+                    {selectedSeragamTagihan.statusPengambilan === "sudah_diambil"
+                      ? "Sudah Diambil"
+                      : selectedSeragamTagihan.statusPengambilan === "siap_diambil"
+                        ? "Siap Diambil di Pesantren"
+                        : "Belum Diambil"}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Upload Input */}
+              <div className="space-y-2">
+                <Label htmlFor="buktiSeragamUpload" className="text-sm font-semibold">
+                  Upload Bukti Transfer / Pembayaran:
+                </Label>
+                <div className="border-2 border-dashed border-purple-200 hover:border-purple-400/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-white">
+                  <input
+                    id="buktiSeragamUpload"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    onChange={handleSeragamFileChange}
+                  />
+                  <label htmlFor="buktiSeragamUpload" className="cursor-pointer block">
+                    <UploadCloud className="h-8 w-8 text-purple-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-gray-700">
+                      {buktiSeragamFileName || "Klik untuk memilih foto / screenshot bukti transfer"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Format: JPG, PNG, WebP (Maks. 5MB)
+                    </p>
+                  </label>
+                </div>
+
+                {/* Preview Image */}
+                {buktiSeragamBase64 && (
+                  <div className="relative mt-2 p-2 border rounded-xl bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={buktiSeragamBase64}
+                      alt="Pratinjau Bukti Seragam"
+                      className="max-h-48 rounded object-contain cursor-pointer"
+                      onClick={() => setPreviewSeragamModal(buktiSeragamBase64)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2 text-xs bg-white/80 shadow-sm"
+                      onClick={() => {
+                        setBuktiSeragamBase64("");
+                        setBuktiSeragamFileName("");
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Catatan Orang Tua */}
+              <div className="space-y-2">
+                <Label htmlFor="catatanSeragam" className="text-sm">
+                  Catatan Tambahan (Opsional):
+                </Label>
+                <Textarea
+                  id="catatanSeragam"
+                  placeholder="Contoh: Ukuran baju yang diinginkan L"
+                  value={catatanSeragam}
+                  onChange={(e) => setCatatanSeragam(e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              {/* Footer */}
+              <DialogFooter className="gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsSeragamModalOpen(false)}
+                  disabled={isSubmittingSeragam}
+                >
+                  Tutup
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingSeragam || !buktiSeragamBase64}
+                  className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {isSubmittingSeragam
+                    ? "Mengirim..."
+                    : selectedSeragamTagihan.status === "menunggu_verifikasi"
+                      ? "Kirim Ulang Bukti"
+                      : "Kirim Bukti Pembayaran"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Image Preview Modal - Seragam */}
+      <Dialog
+        open={!!previewSeragamModal}
+        onOpenChange={(open) => !open && setPreviewSeragamModal(null)}
+      >
+        <DialogContent className="max-w-2xl p-4">
+          <DialogHeader>
+            <DialogTitle>Bukti Pembayaran Seragam</DialogTitle>
+          </DialogHeader>
+          {previewSeragamModal && (
+            <div className="flex items-center justify-center p-2 bg-black/5 rounded-lg max-h-[75vh] overflow-auto">
+              <img
+                src={previewSeragamModal}
+                alt="Bukti Transfer Seragam"
+                className="max-h-[70vh] w-auto object-contain rounded"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ========== MODAL PEMBAYARAN & UPLOAD BUKTI UANG MASUK ========== */}
+      <Dialog open={isUangMasukModalOpen} onOpenChange={setIsUangMasukModalOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Landmark className="h-5 w-5 text-teal-600" />
+              Pembayaran Uang Masuk Pesantren
+            </DialogTitle>
+            <DialogDescription>
+              Tagihan 1x bayar uang masuk pesantren. Silakan transfer ke rekening resmi dan unggah bukti.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedUangMasukTagihan && (
+            <form onSubmit={handleSubmitUangMasuk} className="space-y-5 pt-2">
+              {/* Detail Tagihan */}
+              <div className="rounded-xl bg-teal-50/60 p-4 space-y-2 border border-teal-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Santri</span>
+                  <span className="font-semibold text-gray-900">
+                    {selectedUangMasukTagihan.santriName}
+                  </span>
+                </div>
+                {selectedUangMasukTagihan.santriNis && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">NIS</span>
+                    <span className="font-medium text-gray-700">{selectedUangMasukTagihan.santriNis}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Tahun Masuk</span>
+                  <span className="font-medium text-gray-700">{selectedUangMasukTagihan.tahun}</span>
+                </div>
+                {/* Rincian Biaya */}
+                {selectedUangMasukTagihan.rincianBiaya && selectedUangMasukTagihan.rincianBiaya.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-teal-200/80">
+                    <p className="text-xs font-semibold text-teal-800 mb-1.5">Rincian Biaya:</p>
+                    <div className="space-y-1">
+                      {selectedUangMasukTagihan.rincianBiaya.map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-xs text-gray-600">
+                          <span>• {item.nama}</span>
+                          <span className="font-medium">{formatRupiah(item.nominal)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-sm pt-2 border-t border-teal-200">
+                  <span className="font-medium text-gray-700">Total Pembayaran</span>
+                  <span className="font-bold text-lg text-teal-700">
+                    {formatRupiah(selectedUangMasukTagihan.nominal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Rekening Pesantren Card */}
+              <div className="rounded-xl border-2 border-teal-200 bg-teal-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-teal-700" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                      Rekening Resmi Pesantren
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="border-teal-300 text-teal-800 bg-white">
+                    {uangMasukSettings.bankName}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-teal-200">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Nomor Rekening</p>
+                    <p className="text-lg font-bold text-gray-900 font-mono tracking-wide">
+                      {uangMasukSettings.accountNumber}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      a.n. {uangMasukSettings.accountHolder}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyUangMasukRekening}
+                    className="gap-1.5 border-teal-300 text-teal-700 hover:bg-teal-50"
+                  >
+                    {copiedUangMasukRekening ? (
+                      <>
+                        <Check className="h-4 w-4 text-teal-600" />
+                        Tersalin
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Salin
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {uangMasukSettings.keterangan && (
+                  <p className="text-xs text-teal-800/90 italic">
+                    ℹ️ {uangMasukSettings.keterangan}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Info */}
+              {selectedUangMasukTagihan.status === "menunggu_verifikasi" && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-2.5 text-sm text-blue-900">
+                  <Clock className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Bukti Pembayaran Sudah Terkirim</p>
+                    <p className="text-xs text-blue-700 mt-0.5">
+                      Petugas sedang memverifikasi pembayaran uang masuk Anda. Anda dapat mengunggah bukti baru jika ingin memperbarui.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedUangMasukTagihan.status === "ditolak" && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-sm text-red-900">
+                  <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Pembayaran Sebelumnya Ditolak</p>
+                    <p className="text-xs text-red-700 mt-0.5">
+                      {selectedUangMasukTagihan.catatanPetugas || "Silakan periksa kembali nominal transfer dan unggah bukti pembayaran yang valid."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Verifikasi info jika sudah ada bukti terverifikasi */}
+              {selectedUangMasukTagihan.verifiedAt && selectedUangMasukTagihan.status === "menunggu_verifikasi" && (
+                <div className="p-3 bg-teal-50 border border-teal-200 rounded-xl text-xs text-teal-800">
+                  <p className="font-medium">Diperiksa oleh: {selectedUangMasukTagihan.verifiedByName || "Petugas"}</p>
+                  <p className="mt-0.5 text-teal-700">
+                    {new Date(selectedUangMasukTagihan.verifiedAt).toLocaleDateString("id-ID", {
+                      day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
+                    })}
+                  </p>
+                </div>
+              )}
+
+              {/* Upload Input */}
+              <div className="space-y-2">
+                <Label htmlFor="buktiUangMasukUpload" className="text-sm font-semibold">
+                  Upload Bukti Transfer / Pembayaran:
+                </Label>
+                <div className="border-2 border-dashed border-teal-200 hover:border-teal-400/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-white">
+                  <input
+                    id="buktiUangMasukUpload"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    onChange={handleUangMasukFileChange}
+                  />
+                  <label htmlFor="buktiUangMasukUpload" className="cursor-pointer block">
+                    <UploadCloud className="h-8 w-8 text-teal-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-gray-700">
+                      {buktiUangMasukFileName || "Klik untuk memilih foto / screenshot bukti transfer"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Format: JPG, PNG, WebP (Maks. 5MB)
+                    </p>
+                  </label>
+                </div>
+
+                {/* Preview Image */}
+                {buktiUangMasukBase64 && (
+                  <div className="relative mt-2 p-2 border rounded-xl bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={buktiUangMasukBase64}
+                      alt="Pratinjau Bukti Uang Masuk"
+                      className="max-h-48 rounded object-contain cursor-pointer"
+                      onClick={() => setPreviewUangMasukModal(buktiUangMasukBase64)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2 text-xs bg-white/80 shadow-sm"
+                      onClick={() => {
+                        setBuktiUangMasukBase64("");
+                        setBuktiUangMasukFileName("");
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Catatan Orang Tua */}
+              <div className="space-y-2">
+                <Label htmlFor="catatanUangMasuk" className="text-sm">
+                  Catatan Tambahan (Opsional):
+                </Label>
+                <Textarea
+                  id="catatanUangMasuk"
+                  placeholder="Contoh: Transfer dari rekening BCA a.n. Ayah Ahmad"
+                  value={catatanUangMasuk}
+                  onChange={(e) => setCatatanUangMasuk(e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              {/* Footer */}
+              <DialogFooter className="gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsUangMasukModalOpen(false)}
+                  disabled={isSubmittingUangMasuk}
+                >
+                  Tutup
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingUangMasuk || !buktiUangMasukBase64}
+                  className="bg-teal-600 hover:bg-teal-700 text-white gap-1.5"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {isSubmittingUangMasuk
+                    ? "Mengirim..."
+                    : selectedUangMasukTagihan.status === "menunggu_verifikasi"
+                      ? "Kirim Ulang Bukti"
+                      : "Kirim Bukti Pembayaran"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Image Preview Modal - Uang Masuk */}
+      <Dialog
+        open={!!previewUangMasukModal}
+        onOpenChange={(open) => !open && setPreviewUangMasukModal(null)}
+      >
+        <DialogContent className="max-w-2xl p-4">
+          <DialogHeader>
+            <DialogTitle>Bukti Pembayaran Uang Masuk</DialogTitle>
+          </DialogHeader>
+          {previewUangMasukModal && (
+            <div className="flex items-center justify-center p-2 bg-black/5 rounded-lg max-h-[75vh] overflow-auto">
+              <img
+                src={previewUangMasukModal}
+                alt="Bukti Transfer Uang Masuk"
+                className="max-h-[70vh] w-auto object-contain rounded"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* ========== MODAL PEMBAYARAN & UPLOAD BUKTI SPP ========== */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
