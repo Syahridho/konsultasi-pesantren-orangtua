@@ -299,18 +299,6 @@ export default function DataPetugasPage() {
     setDeleteDialogOpen(true);
   };
 
-  const sendWhatsApp = (phone?: string) => {
-    if (!phone) {
-      toast.error("Nomor telepon tidak tersedia");
-      return;
-    }
-    const cleanPhone = phone.replace(/[^0-9]/g, "");
-    const formattedPhone = cleanPhone.startsWith("0")
-      ? "62" + cleanPhone.slice(1)
-      : cleanPhone;
-
-    window.open(`https://wa.me/${formattedPhone}`, "_blank");
-  };
 
   // ─── Render ──────────────────────────────────────────────────
   return (
@@ -490,18 +478,7 @@ export default function DataPetugasPage() {
 
                       <TableCell>
                         {petugas.phone ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-800">{petugas.phone}</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 px-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-[11px]"
-                              onClick={() => sendWhatsApp(petugas.phone)}
-                              title="Chat WhatsApp"
-                            >
-                              WA
-                            </Button>
-                          </div>
+                          <span className="text-xs text-gray-800">{petugas.phone}</span>
                         ) : (
                           <span className="text-xs text-muted-foreground">-</span>
                         )}
@@ -738,16 +715,6 @@ export default function DataPetugasPage() {
           )}
 
           <DialogFooter>
-            {selectedPetugas?.phone && (
-              <Button
-                type="button"
-                variant="outline"
-                className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 mr-auto"
-                onClick={() => sendWhatsApp(selectedPetugas.phone)}
-              >
-                Chat WhatsApp
-              </Button>
-            )}
             <Button
               type="button"
               variant="outline"

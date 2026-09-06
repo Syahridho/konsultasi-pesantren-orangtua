@@ -589,41 +589,6 @@ export default function PetugasBukuPaketPage() {
     setSettingsModalOpen(true);
   };
 
-  const sendWhatsAppNotification = (tagihan: TagihanBukuPaket) => {
-    if (!tagihan.parentPhone) {
-      toast.error("Nomor telepon orang tua tidak ditemukan");
-      return;
-    }
-    const cleanPhone = tagihan.parentPhone.replace(/[^0-9]/g, "");
-    const formattedPhone = cleanPhone.startsWith("0")
-      ? "62" + cleanPhone.slice(1)
-      : cleanPhone;
-
-    let message = "";
-
-    if (tagihan.status === "lunas" && tagihan.statusPengambilan === "belum_diambil") {
-      message =
-        `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-        `Pemberitahuan dari Bagian Kurikulum & Perpustakaan Pondok Pesantren Baiturrahman:\n\n` +
-        `Paket *Buku Paket / Kitab Kuning Santri* (${tagihan.tingkatKelas}, Th. Ajaran ${tagihan.tahunAjaran}) untuk ananda *${tagihan.santriName}* telah siap untuk diambil di bagian administrasi kitab.\n\n` +
-        `Mohon ananda/wali santri dapat mengambil paket buku & kitab tersebut pada jam kerja. Terima kasih.\nWassalamu'alaikum Wr. Wb.`;
-    } else {
-      message =
-        `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-        `Pemberitahuan tagihan *Buku Paket / Kitab Kuning Kenaikan Kelas* (${tagihan.tingkatKelas}, Th. Ajaran ${tagihan.tahunAjaran}) an. *${tagihan.santriName}* (NIS: ${tagihan.santriNis || "-"}).\n\n` +
-        `*Nominal:* *${formatRupiah(tagihan.nominal)}*\n` +
-        `*Status:* *${tagihan.status === "belum_bayar" ? "Belum Bayar" : tagihan.status}*\n\n` +
-        `*Rekening Pembayaran:*\n` +
-        `- ${settings.bankName}\n` +
-        `- No. Rek: *${settings.accountNumber}*\n` +
-        `- A.n: *${settings.accountHolder}*\n\n` +
-        `Mohon segera melakukan pembayaran dan konfirmasi melalui aplikasi. Terima kasih.\nWassalamu'alaikum Wr. Wb.`;
-    }
-
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  };
-
   // ─── Render ──────────────────────────────────────────────────
   return (
     <div className="space-y-6 pb-12">
@@ -1001,16 +966,7 @@ export default function PetugasBukuPaketPage() {
                             </Button>
                           )}
 
-                          {/* Quick WA */}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 h-8 px-2"
-                            title="Kirim Pesan WhatsApp"
-                            onClick={() => sendWhatsAppNotification(tagihan)}
-                          >
-                            WA
-                          </Button>
+
 
                           {/* Detail / Kwitansi */}
                           <Button

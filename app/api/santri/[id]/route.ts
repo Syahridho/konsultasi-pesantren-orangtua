@@ -55,20 +55,34 @@ export async function GET(
     let orangtuaData: any = null;
     let userId: string | null = null;
 
-    // Find the santri across all orangtua accounts
-    Object.keys(allUsers).forEach((uid) => {
-      const user = allUsers[uid];
-      if (user.role === "orangtua" && user.santri && user.santri[santriId]) {
-        santriData = user.santri[santriId];
+    // Find the santri across standalone accounts and orangtua accounts
+    if (allUsers[santriId] && allUsers[santriId].role === "santri") {
+      santriData = allUsers[santriId];
+      const pId = santriData.parentId;
+      if (pId && allUsers[pId]) {
         orangtuaData = {
-          id: uid,
-          name: user.name,
-          email: user.email,
-          phone: user.phone || "",
+          id: pId,
+          name: allUsers[pId].name,
+          email: allUsers[pId].email,
+          phone: allUsers[pId].phone || "",
         };
-        userId = uid;
       }
-    });
+      userId = pId || santriId;
+    } else {
+      Object.keys(allUsers).forEach((uid) => {
+        const user = allUsers[uid];
+        if (user.role === "orangtua" && user.santri && user.santri[santriId]) {
+          santriData = user.santri[santriId];
+          orangtuaData = {
+            id: uid,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || "",
+          };
+          userId = uid;
+        }
+      });
+    }
 
     if (!santriData) {
       return NextResponse.json({ error: "Santri not found" }, { status: 404 });
@@ -80,10 +94,11 @@ export async function GET(
         userId,
         name: santriData.name,
         nis: santriData.nis || "",
+        currentClass: santriData.currentClass || santriData.kelas || "",
         gender: santriData.gender || "",
         tempatLahir: santriData.tempatLahir || "",
         tanggalLahir: santriData.tanggalLahir || "",
-        tahunDaftar: santriData.tahunDaftar || "",
+        tahunDaftar: santriData.tahunDaftar || santriData.entryYear || "",
         createdAt: santriData.createdAt || "",
         orangtua: orangtuaData,
       },
@@ -143,7 +158,39 @@ export async function PUT(
       );
     }
 
-    // Get all users to find the santri
+    // Check if standalone santri user exists
+    const standaloneRef = ref(database, `users/${santriId}`);
+    const standaloneSnap = await get(standaloneRef);
+
+    const updateData: any = {
+      name: santriData.name,
+      nis: santriData.nis || "",
+      tahunDaftar:
+        santriData.tahunDaftar || new Date().getFullYear().toString(),
+      entryYear:
+        santriData.tahunDaftar || new Date().getFullYear().toString(),
+      gender: santriData.gender || "",
+      tempatLahir: santriData.tempatLahir || "",
+      tanggalLahir: santriData.tanggalLahir,
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (santriData.currentClass !== undefined || santriData.kelas !== undefined) {
+      updateData.currentClass = santriData.currentClass || santriData.kelas || "";
+    }
+
+    if (standaloneSnap.exists() && standaloneSnap.val().role === "santri") {
+      await update(standaloneRef, updateData);
+      return NextResponse.json({
+        message: "Santri updated successfully",
+        santri: {
+          id: santriId,
+          ...updateData,
+        },
+      });
+    }
+
+    // Get all users to find the nested santri
     const usersRef = ref(database, "users");
     const usersSnapshot = await get(usersRef);
 
@@ -168,17 +215,6 @@ export async function PUT(
 
     // Update santri data in Firebase
     const santriRef = ref(database, `users/${targetUserId}/santri/${santriId}`);
-    const updateData = {
-      name: santriData.name,
-      nis: santriData.nis || "",
-      tahunDaftar:
-        santriData.tahunDaftar || new Date().getFullYear().toString(),
-      gender: santriData.gender || "",
-      tempatLahir: santriData.tempatLahir || "",
-      tanggalLahir: santriData.tanggalLahir,
-      updatedAt: new Date().toISOString(),
-    };
-
     await update(santriRef, updateData);
 
     return NextResponse.json({

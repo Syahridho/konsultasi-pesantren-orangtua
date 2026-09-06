@@ -66,7 +66,7 @@ async function getAdminStats() {
             if (createdDate >= firstDayOfMonth) {
               newUsersThisMonth++;
             }
-          } catch (e) {}
+          } catch (e) { }
         }
 
         // Count online ustad (last active within 30 minutes)
@@ -77,7 +77,7 @@ async function getAdminStats() {
             if (lastActive >= thirtyMinutesAgo) {
               ustadOnline++;
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       });
     }
@@ -112,7 +112,7 @@ async function getAdminStats() {
             if (lastMessageDate >= oneDayAgo) {
               activeChats++;
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       });
     }
@@ -139,7 +139,7 @@ async function getAdminStats() {
                 if (repDate >= firstDayOfMonth) {
                   laporanThisMonth++;
                 }
-              } catch (e) {}
+              } catch (e) { }
             }
           });
         }
@@ -449,12 +449,12 @@ async function getUstadStats(ustadId: string) {
                   if (repDate >= firstDayOfMonth) {
                     laporanThisMonth++;
                   }
-                } catch (e) {}
+                } catch (e) { }
               }
             }
           });
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     return {
@@ -507,12 +507,12 @@ async function getOrangtuaStats(parentId: string) {
                     if (repDate >= oneWeekAgo) {
                       recentReports++;
                     }
-                  } catch (e) {}
+                  } catch (e) { }
                 }
               }
             });
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     }
 
@@ -537,7 +537,7 @@ export async function GET(request: NextRequest) {
     }
 
     const role = (session.user.role || "").toLowerCase().trim();
-    const userId = session.user.id;
+    const userId: any = session.user.id;
 
     let statsData;
 

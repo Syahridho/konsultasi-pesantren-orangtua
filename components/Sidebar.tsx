@@ -52,6 +52,31 @@ const menuItems = Object.freeze({
       icon: GraduationCap,
     }),
     Object.freeze({
+      href: "/dashboard/ustad",
+      label: "Data Guru",
+      icon: BookOpen,
+    }),
+    Object.freeze({
+      href: "/dashboard/data-petugas",
+      label: "Data Petugas",
+      icon: UserCheck,
+    }),
+    Object.freeze({
+      href: "/dashboard/kelas",
+      label: "Data Kelas",
+      icon: School,
+    }),
+    Object.freeze({
+      href: "/dashboard/orangtua",
+      label: "Data Orang Tua",
+      icon: Users,
+    }),
+    Object.freeze({
+      href: "/dashboard/ustad/laporan",
+      label: "Daftar Laporan",
+      icon: FileText,
+    }),
+    Object.freeze({
       href: "/dashboard/saldo",
       label: "Manajemen Saldo",
       icon: Wallet,
@@ -86,31 +111,7 @@ const menuItems = Object.freeze({
       label: "Peringatan",
       icon: FileWarning,
     }),
-    Object.freeze({
-      href: "/dashboard/ustad",
-      label: "Data Guru",
-      icon: BookOpen,
-    }),
-    Object.freeze({
-      href: "/dashboard/data-petugas",
-      label: "Data Petugas",
-      icon: UserCheck,
-    }),
-    Object.freeze({
-      href: "/dashboard/kelas",
-      label: "Data Kelas",
-      icon: School,
-    }),
-    Object.freeze({
-      href: "/dashboard/orangtua",
-      label: "Data Orang Tua",
-      icon: Users,
-    }),
-    Object.freeze({
-      href: "/dashboard/ustad/laporan",
-      label: "Daftar Laporan",
-      icon: FileText,
-    }),
+
     Object.freeze({
       href: "/dashboard/chat",
       label: "Chat",

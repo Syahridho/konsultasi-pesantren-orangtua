@@ -542,41 +542,6 @@ export default function PetugasLaundryPage() {
     setSettingsModalOpen(true);
   };
 
-  const sendWhatsAppNotification = (tagihan: TagihanLaundry) => {
-    if (!tagihan.parentPhone) {
-      toast.error("Nomor telepon orang tua tidak ditemukan");
-      return;
-    }
-    const cleanPhone = tagihan.parentPhone.replace(/[^0-9]/g, "");
-    const formattedPhone = cleanPhone.startsWith("0")
-      ? "62" + cleanPhone.slice(1)
-      : cleanPhone;
-
-    let message = "";
-
-    if (tagihan.status === "lunas") {
-      message =
-        `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-        `Terima kasih, pembayaran layanan *Laundry Santri* bulan *${tagihan.bulan} ${tagihan.tahun}* an. *${tagihan.santriName}* sebesar *${formatRupiah(tagihan.nominal)}* telah *LUNAS* dan terverifikasi.\n\n` +
-        `Layanan laundry santri aktif berjalan normal. Jazakumullah khairan katsiran.\nWassalamu'alaikum Wr. Wb.`;
-    } else {
-      message =
-        `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-        `Pemberitahuan tagihan bulanan *Layanan Laundry Santri* (Bulan *${tagihan.bulan} ${tagihan.tahun}*) an. *${tagihan.santriName}* (NIS: ${tagihan.santriNis || "-"}).\n\n` +
-        `*Nominal:* *${formatRupiah(tagihan.nominal)}*\n` +
-        `*Paket:* ${tagihan.paketLaundry || "Cuci + Setrika"}\n` +
-        `*Status:* *${tagihan.status === "belum_bayar" ? "Belum Bayar" : tagihan.status}*\n\n` +
-        `*Rekening Pembayaran:*\n` +
-        `- ${settings.bankName}\n` +
-        `- No. Rek: *${settings.accountNumber}*\n` +
-        `- A.n: *${settings.accountHolder}*\n\n` +
-        `Mohon dapat segera melakukan pembayaran dan konfirmasi melalui aplikasi. Terima kasih.\nWassalamu'alaikum Wr. Wb.`;
-    }
-
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  };
-
   // ─── Render ──────────────────────────────────────────────────
   return (
     <div className="space-y-6 pb-12">
@@ -971,16 +936,7 @@ export default function PetugasLaundryPage() {
                             </Button>
                           )}
 
-                          {/* Quick WA */}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 h-8 px-2"
-                            title="Kirim Pesan WhatsApp"
-                            onClick={() => sendWhatsAppNotification(tagihan)}
-                          >
-                            WA
-                          </Button>
+
 
                           {/* Detail / Kwitansi */}
                           <Button

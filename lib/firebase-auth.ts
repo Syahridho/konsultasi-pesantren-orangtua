@@ -18,6 +18,8 @@ export interface FirebaseUser {
 export interface StudentData {
   name: string;
   nis: string;
+  kelas?: string;
+  currentClass?: string;
   tahunDaftar: string;
   gender: string;
   tempatLahir: string;
@@ -126,6 +128,7 @@ export async function registerUser(
           email: `santri_${santriId}@pesantren.local`, // Dummy email for display
           role: "santri",
           nis: student.nis || "",
+          currentClass: student.kelas || student.currentClass || "",
           entryYear: student.tahunDaftar || new Date().getFullYear().toString(),
           status: "active",
           phone: "",

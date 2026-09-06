@@ -228,10 +228,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const session = await getServerSession(authOptions);
-    if (
-      !session ||
-      (session.user.role !== "admin" && session.user.role !== "petugas")
-    ) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -243,6 +240,22 @@ export async function PUT(request: NextRequest) {
         { error: "ID peringatan wajib diisi" },
         { status: 400 }
       );
+    }
+
+    // Allow orang tua to mark warning as read ("dibaca")
+    if (session.user.role === "orangtua") {
+      if (body.status === "dibaca") {
+        const pRef = ref(database, `peringatan_tagihan/${id}`);
+        await update(pRef, { status: "dibaca", readAt: new Date().toISOString() });
+        return addCorsHeaders(
+          NextResponse.json({ message: "Peringatan telah ditandai dibaca" })
+        );
+      }
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    if (session.user.role !== "admin" && session.user.role !== "petugas") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const pRef = ref(database, `peringatan_tagihan/${id}`);

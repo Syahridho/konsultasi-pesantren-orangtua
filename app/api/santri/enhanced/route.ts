@@ -10,6 +10,7 @@ import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 const createSantriSchema = z.object({
   name: z.string().min(1, "Nama santri wajib diisi"),
   nis: z.string().min(1, "NIS wajib diisi"),
+  currentClass: z.string().optional(),
   gender: z.enum(["L", "P"], { message: "Jenis kelamin harus L atau P" }),
   tempatLahir: z.string().min(1, "Tempat lahir wajib diisi"),
   tanggalLahir: z.string().min(1, "Tanggal lahir wajib diisi"),
@@ -20,6 +21,7 @@ const createSantriSchema = z.object({
 const updateSantriSchema = z.object({
   name: z.string().min(1, "Nama santri wajib diisi").optional(),
   nis: z.string().min(1, "NIS wajib diisi").optional(),
+  currentClass: z.string().optional(),
   gender: z
     .enum(["L", "P"], { message: "Jenis kelamin harus L atau P" })
     .optional(),
@@ -184,6 +186,7 @@ export async function GET(request: NextRequest) {
             id: userId,
             name: user.name,
             nis: user.nis || "",
+            currentClass: user.currentClass || user.kelas || "",
             jenisKelamin: user.gender || "",
             tempatLahir: user.tempatLahir || "",
             tanggalLahir: user.tanggalLahir || "",
@@ -213,6 +216,7 @@ export async function GET(request: NextRequest) {
               id: student.id,
               name: student.name,
               nis: student.nis || "",
+              currentClass: student.currentClass || student.kelas || "",
               jenisKelamin: student.gender || student.jenisKelamin || "",
               tempatLahir: student.tempatLahir || "",
               tanggalLahir: student.tanggalLahir || "",
@@ -242,6 +246,7 @@ export async function GET(request: NextRequest) {
               id: studentId,
               name: student.name,
               nis: student.nis || "",
+              currentClass: student.currentClass || student.kelas || "",
               jenisKelamin: student.gender || "",
               tempatLahir: student.tempatLahir || "",
               tanggalLahir: student.tanggalLahir || "",
@@ -372,6 +377,7 @@ export async function POST(request: NextRequest) {
       email: `santri_${santriId}@pesantren.local`, // Dummy email for display
       role: "santri",
       nis: validatedData.nis,
+      currentClass: validatedData.currentClass || "",
       entryYear: validatedData.tahunDaftar,
       status: "active",
       phone: "",
@@ -472,9 +478,12 @@ export async function PUT(request: NextRequest) {
 
       // Verify this santri belongs to current parent
       if (santriData.role === "santri" && santriData.parentId === orangTuaId) {
-        const updateData = {
+        const updateData: any = {
           ...(validatedData.name && { name: validatedData.name }),
           ...(validatedData.nis && { nis: validatedData.nis }),
+          ...(validatedData.currentClass !== undefined && {
+            currentClass: validatedData.currentClass,
+          }),
           ...(validatedData.gender && { gender: validatedData.gender }),
           ...(validatedData.tempatLahir && {
             tempatLahir: validatedData.tempatLahir,

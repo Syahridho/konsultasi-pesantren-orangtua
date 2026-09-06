@@ -463,31 +463,6 @@ export default function PetugasUangMasukPage() {
     setSettingsModalOpen(true);
   };
 
-  const sendWhatsAppReminder = (tagihan: TagihanUangMasuk) => {
-    if (!tagihan.parentPhone) {
-      toast.error("Nomor telepon orang tua tidak ditemukan");
-      return;
-    }
-    const cleanPhone = tagihan.parentPhone.replace(/[^0-9]/g, "");
-    const formattedPhone = cleanPhone.startsWith("0")
-      ? "62" + cleanPhone.slice(1)
-      : cleanPhone;
-
-    const message = `Assalamu'alaikum Wr. Wb. Bapak/Ibu ${tagihan.parentName || "Wali Santri"},\n\n` +
-      `Kami dari Bagian Keuangan Pondok Pesantren Baiturrahman memberitahukan tagihan *Uang Masuk (1x Bayar)* santri baru an. *${tagihan.santriName}* (NIS: ${tagihan.santriNis || "-"}).\n\n` +
-      `*Rincian Tagihan:*\n` +
-      `- Nominal: *${formatRupiah(tagihan.nominal)}*\n` +
-      `- Status: *${tagihan.status === "belum_bayar" ? "Belum Dibayar" : tagihan.status}*\n\n` +
-      `*Rekening Pembayaran:*\n` +
-      `- ${settings.bankName}\n` +
-      `- No. Rek: *${settings.accountNumber}*\n` +
-      `- A.n: *${settings.accountHolder}*\n\n` +
-      `Mohon segera melakukan konfirmasi dan mengunggah bukti pembayaran melalui aplikasi. Terima kasih.\nWassalamu'alaikum Wr. Wb.`;
-
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  };
-
   // ─── Render ──────────────────────────────────────────────────
   return (
     <div className="space-y-6 pb-12">
@@ -821,18 +796,7 @@ export default function PetugasUangMasukPage() {
                             </Button>
                           )}
 
-                          {/* Quick WA reminder if not paid */}
-                          {tagihan.status !== "lunas" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 h-8 px-2"
-                              title="Kirim Pengingat WhatsApp"
-                              onClick={() => sendWhatsAppReminder(tagihan)}
-                            >
-                              WA
-                            </Button>
-                          )}
+
 
                           {/* Detail / Kwitansi */}
                           <Button

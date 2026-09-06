@@ -28,6 +28,7 @@ import api from "@/lib/api";
 interface StudentData {
   name: string;
   nis?: string;
+  currentClass?: string;
   tahunDaftar?: string;
   gender?: "L" | "P" | "";
   tempatLahir?: string;
@@ -39,6 +40,7 @@ interface SantriDetails {
   userId: string;
   name: string;
   nis?: string;
+  currentClass?: string;
   gender?: "L" | "P" | "";
   tempatLahir?: string;
   tanggalLahir?: string;
@@ -77,6 +79,7 @@ export function EditSantriModal({
       student: {
         name: "",
         nis: "",
+        currentClass: "",
         tahunDaftar: new Date().getFullYear().toString(),
         gender: "",
         tempatLahir: "",
@@ -97,6 +100,7 @@ export function EditSantriModal({
           student: {
             name: response.data.santri.name || "",
             nis: response.data.santri.nis || "",
+            currentClass: response.data.santri.currentClass || "",
             tahunDaftar:
               response.data.santri.tahunDaftar ||
               new Date().getFullYear().toString(),
@@ -209,6 +213,20 @@ export function EditSantriModal({
                         <FormLabel>NIS (Opsional)</FormLabel>
                         <FormControl>
                           <Input placeholder="Nomor Induk Siswa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="student.currentClass"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Kelas</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Contoh: Kelas 1" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

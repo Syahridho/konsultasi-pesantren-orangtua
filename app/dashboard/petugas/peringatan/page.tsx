@@ -450,19 +450,6 @@ export default function PetugasPeringatanPage() {
     }
   };
 
-  const sendWhatsApp = (item: Peringatan) => {
-    if (!item.parentPhone) {
-      toast.error("Nomor WhatsApp orang tua tidak tersedia");
-      return;
-    }
-    const cleanPhone = item.parentPhone.replace(/[^0-9]/g, "");
-    const formattedPhone = cleanPhone.startsWith("0")
-      ? "62" + cleanPhone.slice(1)
-      : cleanPhone;
-
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(item.pesan)}`;
-    window.open(url, "_blank");
-  };
 
   const openEditModal = (item: Peringatan) => {
     setSelectedPeringatan(item);
@@ -526,7 +513,7 @@ export default function PetugasPeringatanPage() {
             Peringatan & Reminder Tagihan
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Kelola Surat Peringatan (SP 1, SP 2, SP 3), reminder tunggakan, dan kirim via WhatsApp
+            Kelola Surat Peringatan (SP 1, SP 2, SP 3) dan reminder tunggakan santri secara langsung melalui sistem.
           </p>
         </div>
 
@@ -779,17 +766,6 @@ export default function PetugasPeringatanPage() {
 
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          {/* Send WhatsApp */}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 h-8 px-2.5 text-xs gap-1"
-                            onClick={() => sendWhatsApp(item)}
-                            title="Kirim ke WhatsApp Wali Santri"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5" />
-                            Kirim WA
-                          </Button>
 
                           {/* Preview Letter */}
                           <Button
@@ -849,7 +825,7 @@ export default function PetugasPeringatanPage() {
               Buat Surat Peringatan / Reminder
             </DialogTitle>
             <DialogDescription>
-              Terbitkan surat peringatan resmi dan siapkan pesan notifikasi/WhatsApp.
+              Terbitkan surat peringatan resmi yang akan dikirim langsung sebagai notifikasi kepada orang tua melalui sistem.
             </DialogDescription>
           </DialogHeader>
 
@@ -981,7 +957,7 @@ export default function PetugasPeringatanPage() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>Isi Surat & Pesan WhatsApp *</Label>
+                <Label>Isi Surat Peringatan *</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -1107,17 +1083,6 @@ export default function PetugasPeringatanPage() {
             >
               Tutup
             </Button>
-            {selectedPeringatan && (
-              <Button
-                type="button"
-                variant="outline"
-                className="text-emerald-700 border-emerald-300"
-                onClick={() => sendWhatsApp(selectedPeringatan)}
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Kirim WA
-              </Button>
-            )}
             <Button onClick={() => window.print()} className="gap-2">
               <Printer className="w-4 h-4" /> Cetak Surat
             </Button>

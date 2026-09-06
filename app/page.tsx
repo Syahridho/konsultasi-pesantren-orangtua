@@ -43,7 +43,7 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
+                <h1 className="text-2xl sm:text-5xl font-bold text-gray-900 mb-6">
                   {settings.heroTitle}
                   <span
                     className="block"
@@ -52,7 +52,7 @@ export default function HomePage() {
                     {settings.heroSubtitle}
                   </span>
                 </h1>
-                <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                <p className="text-md text-gray-600 mb-10 max-w-2xl mx-auto">
                   {settings.siteDescription}
                 </p>
               </>

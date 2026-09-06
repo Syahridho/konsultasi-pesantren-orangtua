@@ -454,6 +454,15 @@ export async function POST(request: NextRequest) {
 
     await set(newClassRef, classData);
 
+    // Update currentClass di profil setiap santri yang dimasukkan
+    const studentUpdates: Record<string, any> = {};
+    validatedData.studentIds.forEach((studentId) => {
+      studentUpdates[`users/${studentId}/currentClass`] = validatedData.name;
+    });
+    if (Object.keys(studentUpdates).length > 0) {
+      await update(ref(database), studentUpdates);
+    }
+
     console.log("[CLASSES API] Successfully created class:", classId);
 
     return NextResponse.json({
