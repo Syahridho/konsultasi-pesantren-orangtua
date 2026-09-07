@@ -886,7 +886,6 @@ export default function PetugasUangMasukPage() {
                 <Input
                   type="number"
                   min="0"
-                  step="50000"
                   value={formNominal}
                   onChange={(e) => setFormNominal(parseInt(e.target.value) || 0)}
                   required
@@ -1328,7 +1327,6 @@ export default function PetugasUangMasukPage() {
               <Input
                 type="number"
                 min="0"
-                step="50000"
                 value={tempDefaultNominal}
                 onChange={(e) => setTempDefaultNominal(parseInt(e.target.value) || 0)}
                 required

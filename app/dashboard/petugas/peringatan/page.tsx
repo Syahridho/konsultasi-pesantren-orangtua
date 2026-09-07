@@ -904,7 +904,6 @@ export default function PetugasPeringatanPage() {
                 <Input
                   type="number"
                   min="0"
-                  step="50000"
                   value={formNominal}
                   onChange={(e) => {
                     const val = parseInt(e.target.value) || 0;
